@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formation NetDevOps — Hakim Oumeziane</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #d29922;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    header h1 { font-size: 1.8rem; color: var(--accent); }
+    header p { color: var(--muted); margin-top: 0.4rem; }
+    .badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2em;
+      margin-top: 0.6rem;
+    }
+    section { margin-bottom: 2.5rem; }
+    h2 {
+      font-size: 1.2rem;
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.4rem; }
+    .module {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .module h3 { font-size: 1rem; color: var(--green); margin-bottom: 0.4rem; }
+    .module p { color: var(--muted); font-size: 0.9rem; }
+    .pipeline {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85rem;
+      color: var(--green);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .tags span {
+      display: inline-block;
+      background: var(--border);
+      color: var(--text);
+      font-size: 0.78rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2em;
+      margin: 0.2rem 0.2rem 0 0;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Formation NetDevOps</h1>
+    <p>Automatisation réseau de bout en bout — du prompt IA au déploiement physique</p>
+    <p><strong>Hakim Oumeziane</strong> · Administrateur Réseaux &amp; Télécoms</p>
+    <span class="badge">🎬 Vidéo en production</span>
+  </header>
+
+  <section>
+    <h2>Objectifs</h2>
+    <ul>
+      <li>Comprendre l'approche NetDevOps et son positionnement par rapport au NetOps traditionnel</li>
+      <li>Construire un pipeline CI/CD complet pour la gestion de configurations réseau multi-constructeurs</li>
+      <li>Automatiser le déploiement via Python / Netmiko sur équipements physiques</li>
+      <li>Intégrer Claude AI comme moteur de génération et de validation de configurations</li>
+      <li>Appliquer les bonnes pratiques Git (branching, PR, review) dans un contexte réseau</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Pipeline couvert</h2>
+    <div class="pipeline">Claude AI  ──►  Claude Code  ──►  GitHub Actions  ──►  Netmiko  ──►  Équipements
+(stratégie)    (génère+push)      (validation CI)      (Python)       (déploiement)</div>
+  </section>
+
+  <section>
+    <h2>Modules</h2>
+
+    <div class="module">
+      <h3>Module 1 — Introduction NetDevOps</h3>
+      <p>Concepts, différences avec NetOps/DevOps classique, cas d'usage réels, retour d'expérience terrain.</p>
+    </div>
+
+    <div class="module">
+      <h3>Module 2 — Git &amp; GitHub pour les réseaux</h3>
+      <p>Branching strategy, gestion de fichiers de configuration, PRs, révision de configs en code review.</p>
+    </div>
+
+    <div class="module">
+      <h3>Module 3 — Python &amp; Netmiko</h3>
+      <p>Connexion SSH multi-constructeurs (Cisco, Fortinet, HP/Aruba), envoi de commandes, récupération de sorties, gestion des erreurs.</p>
+    </div>
+
+    <div class="module">
+      <h3>Module 4 — GitHub Actions CI/CD</h3>
+      <p>Validation de syntaxe, lint de configurations, tests de connectivité, auto-merge sur validation.</p>
+    </div>
+
+    <div class="module">
+      <h3>Module 5 — Claude AI comme co-pilote réseau</h3>
+      <p>Génération de configurations depuis des prompts, validation sémantique, stratégie de prompts pour les équipements réseau.</p>
+    </div>
+
+    <div class="module">
+      <h3>Module 6 — Déploiement bout en bout</h3>
+      <p>Pipeline complet de A à Z : prompt → génération → commit → CI → déploiement physique sur lab.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stack technique</h2>
+    <div class="tags">
+      <span>Python</span>
+      <span>Netmiko</span>
+      <span>GitHub Actions</span>
+      <span>Claude AI</span>
+      <span>Claude Code</span>
+      <span>Cisco IOS/IOS-XE</span>
+      <span>Fortinet FortiGate</span>
+      <span>HP/Aruba</span>
+      <span>WSL</span>
+      <span>Git</span>
+      <span>YAML</span>
+      <span>Jinja2</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Public visé</h2>
+    <ul>
+      <li>Administrateurs réseau souhaitant monter en compétences sur l'automatisation</li>
+      <li>Ingénieurs souhaitant intégrer l'IA dans leurs workflows réseau</li>
+      <li>Équipes Ops cherchant à structurer un pipeline NetDevOps from scratch</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>© 2026 Hakim Oumeziane ·
+      <a href="https://github.com/oumeziane69-prog" style="color: var(--accent);">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/oumeziane69/" style="color: var(--accent);">LinkedIn</a>
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>

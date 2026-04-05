@@ -101,6 +101,16 @@ Claude AI  ──►  Claude Code  ──►  GitHub Actions  ──►  Netmiko
 
 ---
 
+## 📚 Formation NetDevOps
+
+Pipeline CI/CD complet pour automatiser le déploiement de configurations réseau multi-constructeurs, de la génération IA au déploiement physique via Netmiko.
+
+📄 [Voir la formation](docs/formation_netdevops.html)
+
+![Vidéo en production](https://img.shields.io/badge/🎬_Vidéo-en_production-orange?style=flat-square)
+
+---
+
 ## 📬 Contact
 
 Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
