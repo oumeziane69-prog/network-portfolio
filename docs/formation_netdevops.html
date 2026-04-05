@@ -1,189 +1,2335 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formation NetDevOps — Hakim Oumeziane</title>
-  <style>
-    :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --border: #30363d;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --orange: #d29922;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      padding: 2rem 1rem;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
-    header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    header h1 { font-size: 1.8rem; color: var(--accent); }
-    header p { color: var(--muted); margin-top: 0.4rem; }
-    .badge {
-      display: inline-block;
-      background: var(--orange);
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 2em;
-      margin-top: 0.6rem;
-    }
-    section { margin-bottom: 2.5rem; }
-    h2 {
-      font-size: 1.2rem;
-      color: var(--accent);
-      border-left: 3px solid var(--accent);
-      padding-left: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    ul { padding-left: 1.5rem; }
-    li { margin-bottom: 0.4rem; }
-    .module {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-    }
-    .module h3 { font-size: 1rem; color: var(--green); margin-bottom: 0.4rem; }
-    .module p { color: var(--muted); font-size: 0.9rem; }
-    .pipeline {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 0.85rem;
-      color: var(--green);
-      white-space: pre;
-      overflow-x: auto;
-    }
-    .tags span {
-      display: inline-block;
-      background: var(--border);
-      color: var(--text);
-      font-size: 0.78rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 2em;
-      margin: 0.2rem 0.2rem 0 0;
-    }
-    footer {
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
-      color: var(--muted);
-      font-size: 0.85rem;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetDevOps — Formation Complète</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070b14;
+  --bg2: #0d1526;
+  --bg3: #111e35;
+  --accent: #00e5ff;
+  --accent2: #9d4edd;
+  --accent3: #06d6a0;
+  --accent4: #ffd60a;
+  --accent5: #ff4d6d;
+  --accent6: #ff6b35;
+  --accent7: #4cc9f0;
+  --glow: rgba(0,229,255,0.15);
+  --text: #f0f4ff;
+  --text2: #8892b0;
+  --border: rgba(0,229,255,0.18);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,14,26,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  overflow-x: auto;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  white-space: nowrap;
+  margin-right: 2rem;
+  letter-spacing: 0.05em;
+}
+.nav-links { display: flex; gap: 0; list-style: none; }
+.nav-links a {
+  display: block;
+  padding: 0 14px;
+  height: 56px;
+  line-height: 56px;
+  font-size: 12px;
+  color: var(--text2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+  font-family: var(--mono);
+}
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+.nav-links a.active { border-bottom: 2px solid var(--accent); }
+#progress-bar {
+  position: fixed;
+  top: 56px; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    var(--accent),
+    var(--accent2),
+    var(--accent3),
+    var(--accent4),
+    var(--accent));
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+  z-index: 101;
+  transition: width 0.15s ease;
+  width: 0%;
+  box-shadow: 0 0 12px rgba(0,229,255,0.6);
+}
+#progress-label {
+  position: fixed;
+  top: 62px;
+  right: 1rem;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  z-index: 102;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#progress-label.show { opacity: 1; }
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 2rem 4rem;
+}
+.hero-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+  animation: fadeUp 0.6s ease both;
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.hero h1 span { color: var(--accent); }
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text2);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+.pipeline-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.pipe-node {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 2px;
+  color: var(--text2);
+  transition: all 0.2s;
+}
+.pipe-node:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+.pipe-arrow { color: var(--accent); font-size: 14px; opacity: 0.5; }
+.modules-section {
+  position: relative; z-index: 1;
+  padding: 0 2rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.module-card {
+  background: var(--bg2);
+  padding: 2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--card-color, var(--accent));
+  transform: scaleY(0);
+  transition: transform 0.3s;
+  transform-origin: top;
+}
+.module-card:hover {
+  background: var(--bg3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0,229,255,0.12);
+  transition: all 0.3s ease;
+}
+.module-card:hover::before { transform: scaleY(1); }
+.module-num { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-bottom: 0.75rem; letter-spacing: 0.1em; }
+.module-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.module-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 1rem; }
+.module-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 2px; background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+.content-section {
+  position: relative; z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+}
+.section-header { display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 3rem; }
+.section-num { font-family: var(--mono); font-size: clamp(3rem,8vw,5rem); font-weight: 800; color: rgba(0,212,255,0.08); line-height: 1; flex-shrink: 0; }
+.section-titles { flex: 1; }
+.section-label2 { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.section-title { font-size: clamp(1.5rem,4vw,2.2rem); font-weight: 800; margin-bottom: 0.5rem; }
+.section-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+.concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+@media (max-width: 600px) { .concept-grid { grid-template-columns: 1fr; } }
+.concept-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+.concept-card:hover { border-color: rgba(0,212,255,0.4); }
+.concept-name { font-weight: 600; font-size: 15px; margin-bottom: 0.5rem; }
+.concept-def { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.concept-def strong { color: var(--accent); font-weight: 400; }
+.analogy {
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.05));
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 2px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+.analogy::before {
+  content: '💡 ANALOGIE';
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent2);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.analogy p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+.analogy strong { color: var(--text); }
+.code-block {
+  background: #0d1117;
+  border: 1px solid rgba(0,212,255,0.1);
+  border-radius: 2px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.code-label { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.1em; margin-bottom: 0.75rem; display: block; }
+.code-block code { font-family: var(--mono); font-size: 12px; color: #79c0ff; line-height: 1.8; display: block; }
+.code-block code .c { color: #6e7681; }
+.code-block code .s { color: #a5d6ff; }
+.code-block code .k { color: #ff7b72; }
+.code-block code .accent { color: var(--accent); }
+.pipeline-flow { display: flex; flex-direction: column; gap: 0; margin: 2rem 0; }
+.flow-step { display: flex; align-items: stretch; gap: 1rem; }
+.flow-left { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+.flow-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--step-color, var(--accent)); border: 2px solid var(--bg); flex-shrink: 0; margin-top: 4px; }
+.flow-line { width: 2px; flex: 1; background: var(--border); margin: 4px auto 0; min-height: 20px; }
+.flow-step:last-child .flow-line { display: none; }
+.flow-content {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.25rem;
+  margin-bottom: 12px;
+  flex: 1;
+  transition: border-color 0.2s;
+}
+.flow-content:hover { border-color: rgba(0,212,255,0.3); }
+.flow-tool { font-family: var(--mono); font-size: 12px; color: var(--step-color, var(--accent)); margin-bottom: 4px; }
+.flow-action { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.flow-detail { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.skills-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 13px; }
+.skills-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text2); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.skills-table td { padding: 10px 12px; border-bottom: 1px solid rgba(0,212,255,0.05); }
+.skills-table tr:hover td { background: var(--bg3); }
+.skill-name { font-family: var(--mono); color: var(--accent3); font-size: 12px; }
+.check { color: var(--accent3); } .dash { color: var(--text2); opacity: 0.3; }
+.quiz-section { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 2rem; margin: 2rem 0; }
+.quiz-q { font-size: 15px; font-weight: 600; margin-bottom: 1rem; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: var(--sans);
+}
+.quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+.quiz-opt.correct { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.08); }
+.quiz-opt.wrong { border-color: var(--accent5); color: var(--accent5); background: rgba(239,68,68,0.08); }
+.quiz-feedback { margin-top: 1rem; font-size: 13px; color: var(--text2); display: none; line-height: 1.6; }
+.quiz-feedback.show { display: block; }
+.rule-box { border-left: 3px solid var(--accent4); padding: 1rem 1.5rem; background: rgba(245,158,11,0.05); margin: 1.5rem 0; font-size: 14px; color: var(--text2); line-height: 1.7; }
+.rule-box strong { color: var(--accent4); display: block; margin-bottom: 4px; font-size: 11px; font-family: var(--mono); letter-spacing: 0.1em; }
+.session-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 13px; }
+.session-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text2); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.session-table td { padding: 10px 12px; border-bottom: 1px solid rgba(0,212,255,0.05); }
+.session-table tr:hover td { background: var(--bg3); }
+footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--text2); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(0,229,255,0.3); }
+  50%       { box-shadow: 0 0 24px rgba(0,229,255,0.7), 0 0 48px rgba(157,78,221,0.3); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+              transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── FRESCO ── */
+#fresco { position:relative; z-index:1; padding:3rem 2rem 2rem; max-width:1100px; margin:0 auto; }
+.fresco-title { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.15em; margin-bottom:1.5rem; }
+.fresco-wrap { position:relative; width:100%; max-width:900px; margin:0 auto; overflow:visible; }
+#pipeline-svg { width:100%; height:auto; display:block; }
+.fresco-badges { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin:1.5rem auto 0; max-width:700px; }
+.fresco-badge {
+  font-family:var(--mono); font-size:11px; display:flex; align-items:center; gap:6px;
+  background:var(--bg3); border:1px solid var(--border); padding:5px 12px; border-radius:2px;
+  color:var(--text2); cursor:pointer; text-decoration:none; transition:all .2s;
+}
+.fresco-badge:hover { border-color:var(--accent); color:var(--accent); }
+.fresco-badge .bn { color:var(--accent); font-weight:700; }
+.progress-global { max-width:700px; margin:2rem auto 0; }
+.progress-label { display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:11px; color:var(--text2); margin-bottom:8px; }
+.progress-label span { color:var(--accent); }
+.progress-track { height:4px; background:var(--bg3); border-radius:2px; overflow:hidden; border:1px solid var(--border); }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; transition:width .5s ease; width:0%; }
+.fresco-tooltip { position:fixed; background:var(--bg2); border:1px solid var(--accent); color:var(--text); font-family:var(--mono); font-size:11px; padding:6px 10px; border-radius:2px; pointer-events:none; z-index:999; opacity:0; transition:opacity .15s; white-space:nowrap; }
+
+/* ── PIPELINE SIMULATOR ── */
+.sim-pipeline { margin:2rem 0; }
+.sim-steps { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; }
+.sim-step {
+  display:flex; align-items:center; gap:8px; background:var(--bg3);
+  border:1px solid var(--border); border-radius:2px; padding:8px 16px;
+  font-family:var(--mono); font-size:11px; color:var(--text2);
+  transition:all .3s; flex:1; min-width:100px; justify-content:center;
+}
+.sim-step.active { border-color:var(--accent); color:var(--accent); box-shadow:0 0 12px rgba(0,212,255,.25); }
+.sim-dot { width:8px; height:8px; border-radius:50%; background:var(--border); flex-shrink:0; transition:background .3s; }
+.sim-step.active .sim-dot { background:var(--accent); box-shadow:0 0 6px var(--accent); }
+.sim-log { background:#0d1117; border:1px solid rgba(0,212,255,.1); border-radius:2px; padding:1rem; min-height:120px; font-family:var(--mono); font-size:12px; color:#79c0ff; line-height:1.8; overflow:auto; max-height:160px; }
+.sim-log .log-line { opacity:0; animation:fadeIn .2s ease forwards; }
+@keyframes fadeIn { to { opacity:1; } }
+.sim-controls { display:flex; gap:8px; margin-top:1rem; }
+.sim-btn {
+  font-family:var(--mono); font-size:11px; background:transparent; border:1px solid var(--accent);
+  color:var(--accent); padding:6px 16px; border-radius:2px; cursor:pointer; transition:all .2s;
+}
+.sim-btn:hover { background:rgba(0,212,255,.1); }
+.sim-btn:disabled { opacity:.35; cursor:not-allowed; }
+.sim-btn.reset { border-color:var(--text2); color:var(--text2); }
+.sim-btn.reset:hover { border-color:var(--accent5); color:var(--accent5); background:rgba(239,68,68,.08); }
+
+/* ── ROLE SELECTOR ── */
+.role-selector { margin:2rem 0; }
+.role-cards { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+@media(max-width:500px){ .role-cards{grid-template-columns:1fr;} }
+.role-card {
+  background:var(--bg3); border:2px solid var(--border); border-radius:2px; padding:1.5rem;
+  cursor:pointer; text-align:center; transition:all .3s; user-select:none;
+}
+.role-card:hover { border-color:rgba(0,212,255,.4); }
+.role-card.active { border-color:var(--accent); box-shadow:0 0 20px rgba(0,212,255,.15); background:rgba(0,212,255,.05); }
+.role-card h3 { font-family:var(--mono); font-size:14px; margin-bottom:4px; }
+.role-card p { font-size:12px; color:var(--text2); }
+.role-panel { background:var(--bg3); border:1px solid var(--border); border-radius:2px; padding:1.5rem; min-height:160px; transition:opacity .3s; }
+.role-panel-title { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.1em; margin-bottom:1rem; }
+.role-action { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; font-size:13px; }
+.role-action .ri { flex-shrink:0; font-size:14px; }
+
+/* ── BRANCH GRAPH ── */
+.branch-sim { margin:2rem 0; }
+#branch-svg { width:100%; height:auto; display:block; background:var(--bg3); border:1px solid var(--border); border-radius:2px; }
+.branch-controls { display:flex; gap:8px; margin-top:1rem; flex-wrap:wrap; }
+.branch-btn {
+  font-family:var(--mono); font-size:11px; background:transparent; border:1px solid var(--accent2);
+  color:var(--accent2); padding:6px 16px; border-radius:2px; cursor:pointer; transition:all .2s;
+}
+.branch-btn:hover { background:rgba(124,58,237,.1); }
+.branch-btn.merge-btn { border-color:var(--accent3); color:var(--accent3); }
+.branch-btn.merge-btn:hover { background:rgba(16,185,129,.1); }
+
+/* ── INTERACTIVE TERMINAL ── */
+.terminal-wrap { margin:1.5rem 0; background:#0d1117; border:1px solid rgba(0,212,255,.15); border-radius:4px; overflow:hidden; }
+.terminal-header { background:#161b22; padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(0,212,255,.08); }
+.term-btn { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.term-btn.red { background:#ef4444; } .term-btn.yellow { background:#f59e0b; } .term-btn.green { background:#10b981; }
+.term-title { font-family:var(--mono); font-size:11px; color:var(--text2); flex:1; text-align:center; }
+.term-copy {
+  font-family:var(--mono); font-size:10px; background:transparent; border:1px solid var(--border);
+  color:var(--text2); padding:3px 10px; border-radius:2px; cursor:pointer; transition:all .2s;
+}
+.term-copy:hover { border-color:var(--accent); color:var(--accent); }
+.terminal-body { padding:1.25rem 1.5rem; }
+.terminal-body code { font-family:var(--mono); font-size:12px; color:#79c0ff; line-height:1.8; display:block; white-space:pre-wrap; }
+.term-output { padding:0 1.5rem 1rem; font-family:var(--mono); font-size:12px; color:var(--accent3); line-height:1.8; min-height:30px; }
+.term-output .to-line { display:block; }
+.term-controls { padding:0 1.5rem 1rem; display:flex; gap:8px; }
+.run-btn { font-family:var(--mono); font-size:11px; background:transparent; border:1px solid var(--accent3); color:var(--accent3); padding:6px 16px; border-radius:2px; cursor:pointer; transition:all .2s; }
+.run-btn:hover { background:rgba(16,185,129,.1); }
+
+/* ── REPO EXPLORER ── */
+.repo-explorer { margin:2rem 0; }
+.repo-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1rem; }
+@media(max-width:700px){ .repo-cards{grid-template-columns:1fr;} }
+.repo-card {
+  background:var(--bg3); border:2px solid var(--border); border-radius:2px; padding:1.25rem;
+  cursor:pointer; transition:all .3s;
+}
+.repo-card:hover { border-color:rgba(0,212,255,.4); }
+.repo-card.active { border-color:var(--accent4); box-shadow:0 0 16px rgba(245,158,11,.15); }
+.repo-card h4 { font-family:var(--mono); font-size:12px; margin-bottom:4px; color:var(--accent4); }
+.repo-card p { font-size:12px; color:var(--text2); }
+.repo-tree { background:#0d1117; border:1px solid rgba(0,212,255,.1); border-radius:2px; padding:1.25rem; font-family:var(--mono); font-size:12px; line-height:2; min-height:120px; }
+.tree-item { display:flex; gap:8px; align-items:center; position:relative; }
+.tree-item.animate-in { animation:fadeUp .3s ease both; }
+.tree-file { cursor:default; position:relative; }
+.tree-file:hover .tree-tip { opacity:1; pointer-events:auto; }
+.tree-tip {
+  position:absolute; left:100%; top:50%; transform:translateY(-50%); margin-left:12px;
+  background:var(--bg2); border:1px solid var(--border); color:var(--text2);
+  font-size:10px; padding:4px 10px; border-radius:2px; white-space:nowrap; opacity:0;
+  transition:opacity .2s; pointer-events:none; z-index:10;
+}
+.tree-dir { color:var(--accent4); }
+.tree-f { color:var(--text2); }
+.tree-sk { color:var(--accent3); }
+
+/* ── PROMPT BUILDER ── */
+.prompt-builder { background:var(--bg3); border:1px solid var(--border); border-radius:2px; padding:2rem; margin:2rem 0; }
+.pb-title { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.1em; margin-bottom:1.5rem; }
+.pb-selects { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:1.5rem; }
+.pb-select {
+  flex:1; min-width:160px; background:var(--bg2); border:1px solid var(--border);
+  color:var(--text); font-family:var(--mono); font-size:12px; padding:8px 12px;
+  border-radius:2px; appearance:none; cursor:pointer; transition:border-color .2s;
+}
+.pb-select:hover, .pb-select:focus { border-color:var(--accent); outline:none; }
+.pb-output {
+  background:#0d1117; border:1px solid rgba(0,212,255,.1); border-radius:2px;
+  padding:1rem 1.25rem; font-family:var(--mono); font-size:12px; color:#79c0ff;
+  line-height:1.8; white-space:pre-wrap; min-height:80px;
+}
+.pb-actions { display:flex; align-items:center; gap:12px; margin-top:1rem; flex-wrap:wrap; }
+.pb-indicator { font-family:var(--mono); font-size:11px; }
+.pb-indicator.exec { color:var(--accent4); }
+.pb-indicator.info { color:var(--text2); }
+
+@media(prefers-reduced-motion:reduce){
+  .sim-log .log-line { animation:none; opacity:1; }
+  .tree-item.animate-in { animation:none; }
+  #pipeline-svg .particle { display:none; }
+  .reveal { transition:none; }
+  .fresco-badge, .sim-step, .role-card, .repo-card { transition:none; }
+}
+
+/* ── DASHBOARD ── */
+.dashboard-section {
+  position: relative; z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+.dashboard-inner {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(0,229,255,0.04),
+    rgba(157,78,221,0.04));
+  pointer-events: none;
+}
+.dash-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+}
+.modules-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.prog-item { display: flex; flex-direction: column; gap: 4px; }
+.prog-bar-wrap {
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.prog-bar {
+  height: 100%;
+  width: var(--pct);
+  background: var(--clr);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--clr);
+  transition: width 1s cubic-bezier(0.16,1,0.3,1);
+}
+.prog-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.prog-num {
+  font-family: var(--mono);
+  color: var(--text2);
+  font-size: 10px;
+  width: 20px;
+}
+.prog-name { color: var(--text); flex: 1; }
+.prog-status { color: var(--accent3); font-size: 11px; }
+.dash-total {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.dash-count {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+.dash-label2 { color: var(--text2); font-size: 13px; flex: 1; }
+.dash-version {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent2);
+  border: 1px solid var(--accent2);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* ── LIGHT MODE ── */
+body.light-mode {
+  --bg: #f8faff;
+  --bg2: #eef2ff;
+  --bg3: #e4ebff;
+  --text: #0d1526;
+  --text2: #4a5568;
+  --border: rgba(0,120,200,0.2);
+}
+body.light-mode .nav-logo,
+body.light-mode .nav-links a { color: #0d1526; }
+body.light-mode .code-block { background: #1a1f35; }
+/* ── MODULE OBJECTIVES ── */
+.module-objectives {
+  background: linear-gradient(135deg,rgba(0,229,255,0.06),rgba(0,229,255,0.02));
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.module-objectives .obj-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.8rem;
+  opacity: 0.8;
+}
+.module-objectives ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.module-objectives li { font-size: 13px; color: var(--text2); padding-left: 1.2rem; position: relative; }
+.module-objectives li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+/* ── MODULE META ── */
+.module-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; align-items: center; }
+.meta-badge { font-family: var(--mono); font-size: 10px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,229,255,0.2); color: var(--text2); background: rgba(0,229,255,0.04); }
+.meta-badge.time { border-color: rgba(0,229,255,0.35); color: var(--accent); }
+/* ── TERRAIN STORY ── */
+.terrain-story {
+  background: linear-gradient(135deg,rgba(6,214,160,0.06),rgba(6,214,160,0.02));
+  border: 1px solid rgba(6,214,160,0.25);
+  border-left: 3px solid var(--accent3);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+}
+.terrain-story::before { content: '// EXEMPLE TERRAIN'; display: block; font-family: var(--mono); font-size: 9px; color: var(--accent3); letter-spacing: 0.12em; margin-bottom: 0.6rem; opacity: 0.8; }
+.terrain-story p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+/* ── CHEATSHEET ── */
+.cheatsheet { background: rgba(13,21,38,0.8); border: 1px solid rgba(157,78,221,0.25); border-radius: 8px; padding: 1rem 1.5rem; margin-top: 1rem; }
+.cheatsheet .cs-title { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+.cheatsheet table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cheatsheet td { padding: 5px 0; vertical-align: top; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.cheatsheet td:first-child { font-family: var(--mono); color: var(--accent2); white-space: nowrap; padding-right: 1rem; width: 42%; }
+.cheatsheet td:last-child { color: var(--text2); }
+/* ── BACK TO TOP ── */
+#back-to-top { position:fixed; bottom:2rem; right:2rem; z-index:200; font-family:var(--mono); font-size:11px; background:var(--bg2); border:1px solid var(--border); color:var(--text2); padding:8px 14px; border-radius:2px; cursor:pointer; transition:all 0.2s; opacity:0; pointer-events:none; }
+#back-to-top.show { opacity:1; pointer-events:auto; }
+#back-to-top:hover { border-color:var(--accent); color:var(--accent); }
+.trap-box { border-left:3px solid var(--accent5); padding:1rem 1.5rem; background:rgba(255,77,109,0.05); margin:1.5rem 0; font-size:13px; color:var(--text2); line-height:1.7; }
+.trap-box strong { color:var(--accent5); display:block; margin-bottom:4px; font-size:10px; font-family:var(--mono); letter-spacing:0.1em; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin:1.5rem 0; }
+@media(max-width:600px){ .before-after { grid-template-columns:1fr; } }
+.ba-col { background:var(--bg2); padding:1.25rem; }
+.ba-label { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; margin-bottom:0.75rem; display:block; }
+.ba-col.before .ba-label { color:var(--accent5); }
+.ba-col.after .ba-label { color:var(--accent3); }
+.ba-content { font-size:13px; color:var(--text2); line-height:1.6; }
+.ba-content strong { color:var(--text); }
+.cheatsheet-copy { font-family:var(--mono); font-size:10px; background:transparent; border:1px solid var(--border); color:var(--text2); padding:3px 10px; border-radius:2px; cursor:pointer; transition:all 0.2s; float:right; margin-top:-2px; }
+.cheatsheet-copy:hover { border-color:var(--accent); color:var(--accent); }
+</style>
 </head>
 <body>
-<div class="container">
 
-  <header>
-    <h1>Formation NetDevOps</h1>
-    <p>Automatisation réseau de bout en bout — du prompt IA au déploiement physique</p>
-    <p><strong>Hakim Oumeziane</strong> · Administrateur Réseaux &amp; Télécoms</p>
-    <span class="badge">🎬 Vidéo en production</span>
-  </header>
+<div id="progress-bar"></div>
+<div id="progress-label">0%</div>
 
-  <section>
-    <h2>Objectifs</h2>
+<nav>
+  <div class="nav-logo">⬡ NetDevOps</div>
+  <button id="theme-toggle" style="
+    margin-left:auto;
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text2);
+    font-family:var(--mono);
+    font-size:11px;
+    padding:4px 12px;
+    cursor:pointer;
+    border-radius:2px;
+    transition:all 0.2s;
+    white-space:nowrap;
+  " onclick="document.body.classList.toggle('light-mode');
+    this.textContent = document.body.classList.contains('light-mode') ? '◐ DARK' : '◑ LIGHT';">
+    ◑ LIGHT
+  </button>
+  <ul class="nav-links">
+    <li><a href="#accueil" class="active">Accueil</a></li>
+    <li><a href="#m1">01 · Fondations</a></li>
+    <li><a href="#m2">02 · Outils IA</a></li>
+    <li><a href="#m3">03 · GitHub</a></li>
+    <li><a href="#m4">04 · Déploiement</a></li>
+    <li><a href="#m5">05 · Projets</a></li>
+    <li><a href="#m6">06 · Pratique</a></li>
+    <li><a href="#m7">07 · Plugins</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="accueil">
+  <div class="hero-badge">FORMATION COMPLÈTE · USAGE PERSONNEL</div>
+  <h1>Net<span>DevOps</span><br>de A à Z</h1>
+  <p>Du concept DevOps jusqu'au déploiement sur équipements réseau — expliqué simplement, avec tes propres outils et projets.</p>
+  <div class="pipeline-preview">
+    <span class="pipe-node">Claude.ai</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-node">Claude Code</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-node">GitHub</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-node">GitHub Actions</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-node">Netmiko</span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-node">Équipements</span>
+  </div>
+</section>
+
+<section class="dashboard-section reveal" id="dashboard">
+  <div class="dashboard-inner">
+    <div class="dash-label">// PROGRESSION DE LA FORMATION</div>
+    <div class="modules-progress">
+      <div class="prog-item" data-module="m1">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#00e5ff"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">01</span>
+          <span class="prog-name">Fondations</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m2">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#9d4edd"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">02</span>
+          <span class="prog-name">Outils IA</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m3">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#06d6a0"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">03</span>
+          <span class="prog-name">GitHub</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m4">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#ffd60a"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">04</span>
+          <span class="prog-name">Déploiement</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m5">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#ff4d6d"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">05</span>
+          <span class="prog-name">Projets</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m6">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#00e5ff"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">06</span>
+          <span class="prog-name">Pratique</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+      <div class="prog-item" data-module="m7">
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" style="--pct:100%;--clr:#9d4edd"></div>
+        </div>
+        <div class="prog-info">
+          <span class="prog-num">07</span>
+          <span class="prog-name">Plugins</span>
+          <span class="prog-status">✓</span>
+        </div>
+      </div>
+    </div>
+    <div class="dash-total">
+      <span class="dash-count">7</span>
+      <span class="dash-label2">modules complétés</span>
+      <span class="dash-version">v—</span>
+    </div>
+  </div>
+</section>
+
+<section id="fresco" class="reveal">
+  <div class="fresco-title">// PIPELINE INTERACTIF — SURVOLE UN NOEUD, CLIQUE POUR NAVIGUER</div>
+  <div class="fresco-wrap">
+    <svg id="pipeline-svg" viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" aria-label="Pipeline NetDevOps interactif">
+      <defs>
+        <filter id="glow-accent"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glow-node"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="rgba(0,212,255,0.4)"/>
+        </marker>
+        <!-- particle motion paths -->
+        <path id="p01" d="M148,110 L202,110"/>
+        <path id="p12" d="M298,110 L352,110"/>
+        <path id="p23" d="M448,110 L502,110"/>
+        <path id="p34" d="M598,110 L652,110"/>
+        <path id="p45" d="M748,110 L802,110"/>
+      </defs>
+      <!-- connector lines -->
+      <line x1="148" y1="110" x2="205" y2="110" stroke="rgba(0,212,255,0.25)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="298" y1="110" x2="355" y2="110" stroke="rgba(0,212,255,0.25)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="448" y1="110" x2="505" y2="110" stroke="rgba(0,212,255,0.25)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="598" y1="110" x2="655" y2="110" stroke="rgba(0,212,255,0.25)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <line x1="748" y1="110" x2="805" y2="110" stroke="rgba(0,212,255,0.25)" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <!-- particles on paths -->
+      <circle class="particle" r="4" fill="#00d4ff" opacity="0.9" filter="url(#glow-accent)"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0s"><mpath href="#p01"/></animateMotion></circle>
+      <circle class="particle" r="4" fill="#7c3aed" opacity="0.9" filter="url(#glow-accent)"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s"><mpath href="#p12"/></animateMotion></circle>
+      <circle class="particle" r="4" fill="#10b981" opacity="0.9" filter="url(#glow-accent)"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.6s"><mpath href="#p23"/></animateMotion></circle>
+      <circle class="particle" r="4" fill="#f59e0b" opacity="0.9" filter="url(#glow-accent)"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s"><mpath href="#p34"/></animateMotion></circle>
+      <circle class="particle" r="4" fill="#ef4444" opacity="0.9" filter="url(#glow-accent)"><animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s"><mpath href="#p45"/></animateMotion></circle>
+      <!-- Node 0: Claude.ai -->
+      <g class="fresco-node" data-href="#m2" data-tip="Cerveau · Rédige les prompts" style="animation:fadeUp .5s ease 0s both;cursor:pointer" tabindex="0" role="link" aria-label="Claude.ai — Module 02">
+        <polygon points="75,80 111,60 147,80 147,120 111,140 75,120" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="111" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#00d4ff">Claude.ai</text>
+      </g>
+      <!-- Node 1: Claude Code -->
+      <g class="fresco-node" data-href="#m2" data-tip="Génère &amp; exécute le code" style="animation:fadeUp .5s ease .15s both;cursor:pointer" tabindex="0" role="link" aria-label="Claude Code — Module 02">
+        <polygon points="225,80 261,60 297,80 297,120 261,140 225,120" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="261" y="103" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#7c3aed">Claude</text>
+        <text x="261" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#7c3aed">Code</text>
+      </g>
+      <!-- Node 2: GitHub -->
+      <g class="fresco-node" data-href="#m3" data-tip="Versioning &amp; stockage" style="animation:fadeUp .5s ease .3s both;cursor:pointer" tabindex="0" role="link" aria-label="GitHub — Module 03">
+        <polygon points="375,80 411,60 447,80 447,120 411,140 375,120" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="411" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#10b981">GitHub</text>
+      </g>
+      <!-- Node 3: GitHub Actions -->
+      <g class="fresco-node" data-href="#m3" data-tip="CI/CD · Validation · Auto-merge" style="animation:fadeUp .5s ease .45s both;cursor:pointer" tabindex="0" role="link" aria-label="GitHub Actions — Module 03">
+        <polygon points="525,80 561,60 597,80 597,120 561,140 525,120" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="561" y="103" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#f59e0b">GitHub</text>
+        <text x="561" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#f59e0b">Actions</text>
+      </g>
+      <!-- Node 4: Netmiko -->
+      <g class="fresco-node" data-href="#m4" data-tip="Connexion SSH équipements" style="animation:fadeUp .5s ease .6s both;cursor:pointer" tabindex="0" role="link" aria-label="Netmiko — Module 04">
+        <polygon points="675,80 711,60 747,80 747,120 711,140 675,120" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="711" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#ef4444">Netmiko</text>
+      </g>
+      <!-- Node 5: Équipements -->
+      <g class="fresco-node" data-href="#m4" data-tip="Cisco · FortiGate · MikroTik" style="animation:fadeUp .5s ease .75s both;cursor:pointer" tabindex="0" role="link" aria-label="Équipements — Module 04">
+        <polygon points="825,80 861,60 897,80 897,120 861,140 825,120" fill="rgba(0,212,255,0.05)" stroke="rgba(0,212,255,0.5)" stroke-width="1.5" filter="url(#glow-node)"/>
+        <text x="861" y="103" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#94a3b8">Équipe-</text>
+        <text x="861" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#94a3b8">ments</text>
+      </g>
+    </svg>
+    <div id="fresco-tooltip" class="fresco-tooltip"></div>
+  </div>
+  <div class="fresco-badges">
+    <a href="#m1" class="fresco-badge"><span class="bn">01</span> Fondations</a>
+    <a href="#m2" class="fresco-badge"><span class="bn">02</span> Outils IA</a>
+    <a href="#m3" class="fresco-badge"><span class="bn">03</span> GitHub</a>
+    <a href="#m4" class="fresco-badge"><span class="bn">04</span> Déploiement</a>
+    <a href="#m5" class="fresco-badge"><span class="bn">05</span> Projets</a>
+    <a href="#m6" class="fresco-badge"><span class="bn">06</span> Pratique</a>
+  </div>
+  <div class="progress-global">
+    <div class="progress-label">Progression de la formation<span id="prog-count">0 / 6 modules complétés</span></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+</section>
+
+<section class="modules-section reveal" id="modules">
+  <div class="section-label">// PLAN DE FORMATION</div>
+  <div class="modules-grid">
+    <div class="module-card" style="--card-color:#00d4ff" onclick="location.href='#m1'">
+      <div class="module-num">MODULE 01</div>
+      <div class="module-title">Les fondations</div>
+      <div class="module-desc">DevOps, NetDevOps, pipeline — comprendre les concepts avant les outils.</div>
+      <div class="module-tags"><span class="tag">DevOps</span><span class="tag">NetDevOps</span><span class="tag">Pipeline</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#7c3aed" onclick="location.href='#m2'">
+      <div class="module-num">MODULE 02</div>
+      <div class="module-title">Les outils IA</div>
+      <div class="module-desc">Claude.ai vs Claude Code, plugins et skills — qui fait quoi ?</div>
+      <div class="module-tags"><span class="tag">Claude.ai</span><span class="tag">Claude Code</span><span class="tag">Skills</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#10b981" onclick="location.href='#m3'">
+      <div class="module-num">MODULE 03</div>
+      <div class="module-title">GitHub & versioning</div>
+      <div class="module-desc">Repo, branches, commits, GitHub Actions — la mémoire de ton code.</div>
+      <div class="module-tags"><span class="tag">GitHub</span><span class="tag">Branches</span><span class="tag">CI/CD</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#f59e0b" onclick="location.href='#m4'">
+      <div class="module-num">MODULE 04</div>
+      <div class="module-title">Déploiement réseau</div>
+      <div class="module-desc">Python, Netmiko, WSL — comment le code parle aux équipements.</div>
+      <div class="module-tags"><span class="tag">Python</span><span class="tag">Netmiko</span><span class="tag">WSL</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#ef4444" onclick="location.href='#m5'">
+      <div class="module-num">MODULE 05</div>
+      <div class="module-title">Tes 3 projets concrets</div>
+      <div class="module-desc">configs-reseau, scc-coordinator, telecom-ops-toolkit — anatomie de chaque repo.</div>
+      <div class="module-tags"><span class="tag">configs-reseau</span><span class="tag">scc-coordinator</span><span class="tag">telecom-ops</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#00d4ff" onclick="location.href='#m6'">
+      <div class="module-num">MODULE 06</div>
+      <div class="module-title">Mise en pratique</div>
+      <div class="module-desc">Lire un prompt, interpréter un CI, décider du nombre de sessions.</div>
+      <div class="module-tags"><span class="tag">Prompts</span><span class="tag">Sessions</span><span class="tag">Règles</span></div>
+    </div>
+    <div class="module-card" style="--card-color:#7c3aed" onclick="location.href='#m7'">
+      <div class="module-num">MODULE 07</div>
+      <div class="module-title">Plugins & skills avancés</div>
+      <div class="module-desc">batch, simplify, code-review — les plugins qui transforment Claude Code en équipe d'ingénieurs.</div>
+      <div class="module-tags"><span class="tag">/batch</span><span class="tag">/simplify</span><span class="tag">/code-review</span><span class="tag">Composio</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 1 -->
+<section class="content-section reveal" id="m1">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 01</div>
+      <div class="section-title">Les fondations</div>
+      <div class="section-sub">Avant de toucher un outil, comprendre pourquoi tout ça existe.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
     <ul>
-      <li>Comprendre l'approche NetDevOps et son positionnement par rapport au NetOps traditionnel</li>
-      <li>Construire un pipeline CI/CD complet pour la gestion de configurations réseau multi-constructeurs</li>
-      <li>Automatiser le déploiement via Python / Netmiko sur équipements physiques</li>
-      <li>Intégrer Claude AI comme moteur de génération et de validation de configurations</li>
-      <li>Appliquer les bonnes pratiques Git (branching, PR, review) dans un contexte réseau</li>
+      <li>Comprendre la différence entre DevOps et NetDevOps</li>
+      <li>Identifier les 5 étapes du pipeline Claude.ai → Netmiko</li>
+      <li>Savoir quand utiliser Claude.ai vs Claude Code</li>
     </ul>
-  </section>
-
-  <section>
-    <h2>Pipeline couvert</h2>
-    <div class="pipeline">Claude AI  ──►  Claude Code  ──►  GitHub Actions  ──►  Netmiko  ──►  Équipements
-(stratégie)    (génère+push)      (validation CI)      (Python)       (déploiement)</div>
-  </section>
-
-  <section>
-    <h2>Modules</h2>
-
-    <div class="module">
-      <h3>Module 1 — Introduction NetDevOps</h3>
-      <p>Concepts, différences avec NetOps/DevOps classique, cas d'usage réels, retour d'expérience terrain.</p>
+  </div>
+  <div class="before-after"><div class="ba-col before"><div class="ba-label">✗ AVANT — Sans NetDevOps</div><div class="ba-content">Tu reçois un ticket : <strong>ajouter VLAN 100 sur 12 switches</strong>. Tu ouvres Putty sur chaque équipement, tu tapes les commandes à la main à 2h du matin. Un switch mal configuré → coupure de production.</div></div><div class="ba-col after"><div class="ba-label">✓ APRÈS — Avec NetDevOps</div><div class="ba-content">Tu donnes l'instruction à Claude Code. Un script Netmiko se connecte aux <strong>12 switches en parallèle</strong>, applique la même config vérifiée, génère un rapport. Zéro faute de frappe. Zéro oubli.</div></div></div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~8 min</span>
+    <span class="meta-badge">Fondamental</span>
+    <span class="meta-badge">Pipeline</span>
+    <span class="meta-badge">CI/CD</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name">DevOps</div>
+      <div class="concept-def">Philosophie qui unit développeurs et opérationnels. L'objectif : <strong>automatiser</strong> tout ce qui est répétitif pour livrer plus vite et sans erreurs humaines.</div>
     </div>
-
-    <div class="module">
-      <h3>Module 2 — Git &amp; GitHub pour les réseaux</h3>
-      <p>Branching strategy, gestion de fichiers de configuration, PRs, révision de configs en code review.</p>
+    <div class="concept-card">
+      <div class="concept-name">NetDevOps</div>
+      <div class="concept-def">DevOps appliqué aux <strong>réseaux</strong>. Au lieu de configurer manuellement chaque Cisco ou FortiGate, tu écris du code qui le fait, de façon reproductible.</div>
     </div>
-
-    <div class="module">
-      <h3>Module 3 — Python &amp; Netmiko</h3>
-      <p>Connexion SSH multi-constructeurs (Cisco, Fortinet, HP/Aruba), envoi de commandes, récupération de sorties, gestion des erreurs.</p>
+    <div class="concept-card">
+      <div class="concept-name">CI/CD</div>
+      <div class="concept-def"><strong>Continuous Integration / Delivery.</strong> À chaque modification du code, des vérifications automatiques s'exécutent. Si tout passe → livraison automatique.</div>
     </div>
-
-    <div class="module">
-      <h3>Module 4 — GitHub Actions CI/CD</h3>
-      <p>Validation de syntaxe, lint de configurations, tests de connectivité, auto-merge sur validation.</p>
+    <div class="concept-card">
+      <div class="concept-name">Pipeline</div>
+      <div class="concept-def">La <strong>chaîne de montage</strong> complète. Chaque outil fait son travail et passe le résultat au suivant, sans intervention manuelle entre les étapes.</div>
     </div>
-
-    <div class="module">
-      <h3>Module 5 — Claude AI comme co-pilote réseau</h3>
-      <p>Génération de configurations depuis des prompts, validation sémantique, stratégie de prompts pour les équipements réseau.</p>
+  </div>
+  <div class="analogy">
+    <p>Imagine une <strong>cuisine de restaurant</strong>. Sans DevOps : chaque cuisinier improvise sa recette. Avec DevOps : recettes standardisées, étapes dans l'ordre, qualité identique à chaque service. Le NetDevOps, c'est la même chose pour configurer un switch Cisco à 2h du matin sans faire d'erreur.</p>
+  </div>
+  <div class="terrain-story">
+    <p>Nuit de maintenance chez un opérateur télécom : 3 switches Cisco à reconfigurer avant 6h00. Sans NetDevOps, un technicien passe 2h en SSH manuel, risque de faute de frappe à 3h du matin. Avec le pipeline : Claude.ai rédige la logique, Claude Code génère le script, Netmiko configure les 3 switches en <strong>47 secondes</strong>. Le technicien supervise depuis son bureau — zéro erreur de frappe.</p>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// TON PIPELINE COMPLET</div>
+  <div class="pipeline-flow">
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-dot" style="--step-color:#00d4ff"></div><div class="flow-line"></div></div>
+      <div class="flow-content">
+        <div class="flow-tool" style="--step-color:#00d4ff">CLAUDE.AI</div>
+        <div class="flow-action">Conseil & rédaction des prompts</div>
+        <div class="flow-detail">Tu réfléchis ici. Tu décides ce que tu veux faire, Claude t'aide à formuler l'instruction précise pour Claude Code.</div>
+      </div>
     </div>
-
-    <div class="module">
-      <h3>Module 6 — Déploiement bout en bout</h3>
-      <p>Pipeline complet de A à Z : prompt → génération → commit → CI → déploiement physique sur lab.</p>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-dot" style="--step-color:#f59e0b"></div><div class="flow-line"></div></div>
+      <div class="flow-content">
+        <div class="flow-tool" style="--step-color:#f59e0b">CLAUDE CODE</div>
+        <div class="flow-action">Génère, exécute, push</div>
+        <div class="flow-detail">Il lit le prompt, crée ou modifie les fichiers, lance les commandes, et pousse le résultat sur GitHub dans une branche dédiée.</div>
+      </div>
     </div>
-  </section>
-
-  <section>
-    <h2>Stack technique</h2>
-    <div class="tags">
-      <span>Python</span>
-      <span>Netmiko</span>
-      <span>GitHub Actions</span>
-      <span>Claude AI</span>
-      <span>Claude Code</span>
-      <span>Cisco IOS/IOS-XE</span>
-      <span>Fortinet FortiGate</span>
-      <span>HP/Aruba</span>
-      <span>WSL</span>
-      <span>Git</span>
-      <span>YAML</span>
-      <span>Jinja2</span>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-dot" style="--step-color:#10b981"></div><div class="flow-line"></div></div>
+      <div class="flow-content">
+        <div class="flow-tool" style="--step-color:#10b981">GITHUB</div>
+        <div class="flow-action">Versioning & stockage</div>
+        <div class="flow-detail">Chaque modification est tracée. Rien ne se perd. Tu peux revenir en arrière à tout moment sur n'importe quel état passé.</div>
+      </div>
     </div>
-  </section>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-dot" style="--step-color:#7c3aed"></div><div class="flow-line"></div></div>
+      <div class="flow-content">
+        <div class="flow-tool" style="--step-color:#7c3aed">GITHUB ACTIONS</div>
+        <div class="flow-action">Validation automatique + auto-merge</div>
+        <div class="flow-detail">Le robot de contrôle qualité. Si les tests passent, il fusionne automatiquement la branche dans main via l'API GitHub.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-dot" style="--step-color:#ef4444"></div><div class="flow-line"></div></div>
+      <div class="flow-content">
+        <div class="flow-tool" style="--step-color:#ef4444">PYTHON / NETMIKO</div>
+        <div class="flow-action">Déploiement sur équipements</div>
+        <div class="flow-detail">Le code se connecte directement aux routeurs, switches, firewalls et applique les configurations validées.</div>
+      </div>
+    </div>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// SIMULATEUR DE PIPELINE — EXÉCUTION PAS À PAS</div>
+  <div class="sim-pipeline">
+    <div class="sim-steps" id="sim-steps">
+      <div class="sim-step" data-step="0"><div class="sim-dot"></div>Claude.ai</div>
+      <div class="sim-step" data-step="1"><div class="sim-dot"></div>Claude Code</div>
+      <div class="sim-step" data-step="2"><div class="sim-dot"></div>GitHub</div>
+      <div class="sim-step" data-step="3"><div class="sim-dot"></div>Actions</div>
+      <div class="sim-step" data-step="4"><div class="sim-dot"></div>Netmiko</div>
+    </div>
+    <div class="sim-log" id="sim-log"><span style="color:var(--text2);font-size:11px">▸ Clique sur "Étape suivante" pour démarrer la simulation…</span></div>
+    <div class="sim-controls">
+      <button class="sim-btn" id="sim-next-btn" onclick="simNext()">▶ Étape suivante</button>
+      <button class="sim-btn reset" onclick="simReset()">↺ Reset</button>
+    </div>
+  </div>
+  <div class="quiz-section">
+    <div class="quiz-q">🧠 Question — Qu'est-ce qui différencie NetDevOps de DevOps classique ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'Non — DevOps peut aussi utiliser Python.')">DevOps n'utilise pas Python</button>
+      <button class="quiz-opt" onclick="answer(this,true,'Exact. NetDevOps applique les principes DevOps spécifiquement à l\'infrastructure réseau : switches, routeurs, firewalls.')">NetDevOps cible l'infrastructure réseau</button>
+      <button class="quiz-opt" onclick="answer(this,false,'Non — GitHub Actions est utilisé dans les deux cas.')">NetDevOps n'utilise pas GitHub Actions</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="trap-box"><strong>⚠️ PIÈGE — CONFONDRE LES DEUX OUTILS</strong>Claude.ai ne peut pas écrire de fichiers ni faire de commits. Si tu copies-colles du code depuis Claude.ai vers ton terminal manuellement, tu as raté l'étape Claude Code. Le pipeline existe précisément pour éviter ça.</div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 01 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>DevOps</td><td>Philosophie : automatiser le cycle dev → prod pour livrer sans erreur humaine</td></tr>
+      <tr><td>NetDevOps</td><td>DevOps appliqué aux équipements réseau : switches, routeurs, firewalls</td></tr>
+      <tr><td>Pipeline</td><td>Claude.ai → Claude Code → GitHub → GitHub Actions → Netmiko</td></tr>
+      <tr><td>CI/CD</td><td>Validation automatique à chaque commit, livraison si tous les tests passent</td></tr>
+      <tr><td>claude/&lt;tâche&gt;-&lt;id&gt;</td><td>Convention de branche : une tâche = une branche = une PR</td></tr>
+    </tbody></table>
+  </div>
+</section>
 
-  <section>
-    <h2>Public visé</h2>
+<!-- MODULE 2 -->
+<section class="content-section reveal" id="m2">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 02</div>
+      <div class="section-title">Les outils IA</div>
+      <div class="section-sub">Claude.ai et Claude Code sont deux outils distincts avec des rôles précis.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
     <ul>
-      <li>Administrateurs réseau souhaitant monter en compétences sur l'automatisation</li>
-      <li>Ingénieurs souhaitant intégrer l'IA dans leurs workflows réseau</li>
-      <li>Équipes Ops cherchant à structurer un pipeline NetDevOps from scratch</li>
+      <li>Distinguer les rôles de Claude.ai et Claude Code</li>
+      <li>Connaître les 4 plugins prioritaires à installer</li>
+      <li>Formuler un prompt Claude Code conforme aux conventions</li>
     </ul>
-  </section>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~10 min</span>
+    <span class="meta-badge">Outils</span>
+    <span class="meta-badge">Plugins</span>
+    <span class="meta-badge">Prompts</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name">Claude.ai (ici)</div>
+      <div class="concept-def"><strong>Le cerveau.</strong> Tu réfléchis, tu poses des questions, tu rédiges les prompts. Il ne touche pas à tes fichiers — il conseille uniquement.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Claude Code</div>
+      <div class="concept-def"><strong>Le bras armé.</strong> Il exécute concrètement : crée des fichiers, lance des commandes bash, fait des commits, push sur GitHub. Tourne dans WSL.</div>
+    </div>
+  </div>
+  <div class="analogy">
+    <p>Claude.ai c'est <strong>l'architecte</strong> qui dessine les plans. Claude Code c'est <strong>l'entrepreneur</strong> qui construit. Tu ne demandes pas à l'architecte de poser les briques — et tu ne demandes pas à l'entrepreneur de concevoir la structure.</p>
+  </div>
+  <div class="terrain-story">
+    <p>Architecture réseau pour un nouveau site : Claude.ai analyse les besoins (bande passante, VLAN, redondance), rédige le prompt précis. Claude Code génère les fichiers de config Cisco IOS, crée la branche <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">claude/add-site-lyon-a2f1</code>, commit et push. Zéro aller-retour entre les outils — chacun fait son travail, dans l'ordre, sans ambiguïté.</p>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// PLUGINS CLAUDE CODE</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name">Context7</div>
+      <div class="concept-def">Injecte la <strong>documentation officielle à jour</strong> des librairies dans le contexte. Il ne se base pas sur sa mémoire d'entraînement — il lit la vraie doc.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Claude Memory MCP</div>
+      <div class="concept-def">Mémoire <strong>persistante entre sessions</strong>. Sans lui, Claude Code repart de zéro à chaque nouvelle session.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Code Review</div>
+      <div class="concept-def">Audit automatique des Pull Requests avant merge. Détecte les erreurs, mauvaises pratiques et secrets exposés.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Creator</div>
+      <div class="concept-def">Génération de <strong>composants structurés</strong> : fichiers, templates, modules — selon les conventions du repo.</div>
+    </div>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// SKILLS PAR REPO</div>
+  <table class="skills-table">
+    <thead>
+      <tr><th>SKILL</th><th>RÔLE</th><th>configs-reseau</th><th>scc-coordinator</th><th>telecom-ops</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="skill-name">changelog-generator</td><td style="color:var(--text2);font-size:12px">Génère changelogs depuis commits</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">subagent-driven-dev</td><td style="color:var(--text2);font-size:12px">Dispatch sous-agents + checkpoints</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">mcp-builder</td><td style="color:var(--text2);font-size:12px">Création de serveurs MCP</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">sanitize</td><td style="color:var(--text2);font-size:12px">Détection secrets / PII</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
+      <tr><td class="skill-name">internal-comms</td><td style="color:var(--text2);font-size:12px">PV, rapports, communications</td><td class="dash">—</td><td class="check">✓</td><td class="dash">—</td></tr>
+      <tr><td class="skill-name">software-architecture</td><td style="color:var(--text2);font-size:12px">Clean Architecture télécom</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">github-automation</td><td style="color:var(--text2);font-size:12px">Issues, PRs, branches, Actions via API</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">datadog-automation</td><td style="color:var(--text2);font-size:12px">Monitors, dashboards, alertes réseau</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td></tr>
+      <tr><td class="skill-name">pagerduty-automation</td><td style="color:var(--text2);font-size:12px">Incidents, escalades, on-call télécom</td><td class="check">✓</td><td class="dash">—</td><td class="check">✓</td></tr>
+    </tbody>
+  </table>
+  <div class="section-label2" style="margin:2rem 0 1rem">// SKILLS COMMUNAUTAIRES — PRIORITÉ HAUTE</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">github-automation</div>
+      <div class="concept-def">Automatise GitHub directement depuis Claude Code : créer des <strong>issues</strong>, ouvrir des <strong>PRs</strong>, gérer les <strong>branches</strong> et déclencher des <strong>GitHub Actions</strong> via API — sans quitter le terminal WSL.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">subagent-driven-development</div>
+      <div class="concept-def">Dispatche des <strong>sous-agents indépendants</strong> sur chaque tâche avec des checkpoints de code review entre chaque itération. Idéal pour les modifications simultanées sur tes 3 repos.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">datadog-automation</div>
+      <div class="concept-def">Crée et gère les <strong>monitors réseau</strong>, tableaux de bord et alertes depuis Claude Code. Pertinent pour la supervision de tes équipements Cisco, FortiGate et MikroTik.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">pagerduty-automation</div>
+      <div class="concept-def">Gère les <strong>incidents</strong>, <strong>escalades</strong> et plannings on-call. Pertinent pour les opérations télécom où une coupure 2h du matin déclenche une chaîne d'alertes.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">changelog-generator ✓</div>
+      <div class="concept-def">Déjà déployé dans tes 3 repos. Génère automatiquement un <strong>changelog lisible</strong> depuis l'historique git — transforme les commits techniques en notes de version claires.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">mcp-builder ✓</div>
+      <div class="concept-def">Déjà déployé dans tes 3 repos. Guide la création de <strong>serveurs MCP custom</strong> pour connecter des équipements ou APIs propriétaires à Claude Code.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">software-architecture ✓</div>
+      <div class="concept-def">Déjà déployé dans telecom-ops-toolkit. Implémente <strong>Clean Architecture</strong> et principes SOLID pour structurer les scripts Python de déploiement réseau.</div>
+    </div>
+  </div>
+  <div class="rule-box" style="border-color:var(--accent2)">
+    <strong style="color:var(--accent2)">📦 SOURCE</strong>
+    Ces skills sont issues du repo public <strong>ComposioHQ/awesome-claude-skills</strong> (32k ★).<br>
+    Installation : <code style="font-family:var(--mono);color:var(--accent);font-size:12px">cp -r &lt;skill-name&gt; ~/.config/claude-code/skills/</code>
+  </div>
+  <div class="rule-box">
+    <strong>⚠️ RÈGLE FONDAMENTALE</strong>
+    Tout prompt destiné à Claude Code commence TOUJOURS par :<br><br>
+    <code style="font-family:var(--mono);color:var(--accent);font-size:12px">⚠️ File and folder names in English only, no translation.</code>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// SÉLECTEUR DE RÔLE — CLIQUE POUR EXPLORER</div>
+  <div class="trap-box"><strong>⚠️ PIÈGE — MCP SERVER TROP LOURD</strong>Un MCP server avec 93 outils charge ~55 000 tokens au démarrage. Une skill équivalente charge 30 à 50 tokens. Résultat identique — coût radicalement différent. Toujours préférer skill + CLI quand les deux existent.</div>
+  <div class="role-selector">
+    <div class="role-cards">
+      <div class="role-card" id="role-claudeai" onclick="selectRole('claudeai')">
+        <h3 style="color:var(--accent)">Claude.ai</h3>
+        <p>L'architecte — réflexion &amp; prompts</p>
+      </div>
+      <div class="role-card" id="role-claudecode" onclick="selectRole('claudecode')">
+        <h3 style="color:var(--accent2)">Claude Code</h3>
+        <p>L'entrepreneur — exécution &amp; push</p>
+      </div>
+    </div>
+    <div class="role-panel" id="role-panel">
+      <div class="role-panel-title">← Sélectionne un outil pour voir ses actions</div>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p>© 2026 Hakim Oumeziane ·
-      <a href="https://github.com/oumeziane69-prog" style="color: var(--accent);">GitHub</a> ·
-      <a href="https://www.linkedin.com/in/oumeziane69/" style="color: var(--accent);">LinkedIn</a>
-    </p>
-  </footer>
+<!-- MODULE 3 -->
+<section class="content-section reveal" id="m3">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 03</div>
+      <div class="section-title">GitHub & versioning</div>
+      <div class="section-sub">La mémoire infaillible de tout ton travail.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
+    <ul>
+      <li>Maîtriser le modèle branch → PR → merge</li>
+      <li>Appliquer la convention de nommage claude/&lt;tâche&gt;-&lt;id&gt;</li>
+      <li>Comprendre pourquoi main est protégé</li>
+    </ul>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~8 min</span>
+    <span class="meta-badge">Git</span>
+    <span class="meta-badge">Branches</span>
+    <span class="meta-badge">Versioning</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name">Repository (repo)</div>
+      <div class="concept-def">Un <strong>dossier versionné</strong> sur GitHub. Chaque modification est enregistrée avec son auteur, sa date et son message.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Branche</div>
+      <div class="concept-def">Une <strong>copie isolée</strong> du code. Claude Code crée toujours une branche <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">claude/&lt;tâche&gt;-&lt;id&gt;</code> par tâche.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Commit</div>
+      <div class="concept-def">Un <strong>instantané</strong> du code à un moment donné. Chaque commit a un identifiant unique (ex: 4753287).</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Pull Request (PR)</div>
+      <div class="concept-def">Une <strong>demande de fusion</strong> de branche vers main. GitHub Actions valide puis fusionne automatiquement si tout passe.</div>
+    </div>
+  </div>
+  <div class="analogy">
+    <p>Imagine un <strong>classeur de chantier</strong>. Main = le classeur officiel. Chaque branche = une feuille de brouillon numérotée. Tu travailles sur le brouillon, tu le fais valider, et seulement ensuite tu l'intègres au classeur officiel.</p>
+  </div>
+  <div class="terrain-story">
+    <p>Migration VLAN sur un switch de distribution : la branche <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">claude/migrate-vlan-200-a3f1</code> contient 3 fichiers modifiés. GitHub Actions vérifie la syntaxe IOS avant le merge. Un collègue détecte une erreur dans la PR → tu corriges sur la branche sans toucher main. Si la migration pose problème en prod : <strong>git revert annule en 30 secondes</strong>, l'historique complet est conservé.</p>
+  </div>
+  <div class="rule-box">
+    <strong>📐 RÈGLES BRANCHES</strong>
+    Nom : <code style="font-family:var(--mono);color:var(--accent);font-size:12px">claude/&lt;tâche&gt;-&lt;id&gt;</code><br>
+    — Jamais réutiliser une branche déjà mergée<br>
+    — Jamais pusher directement sur main<br>
+    — Une tâche = une branche = une PR
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// SIMULATEUR DE BRANCHES GIT</div>
+  <div class="branch-sim">
+    <svg id="branch-svg" viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" aria-label="Graphe de branches Git">
+      <defs>
+        <marker id="arr-green" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#10b981"/></marker>
+        <marker id="arr-purple" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#7c3aed"/></marker>
+        <marker id="arr-amber" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,6 2.5,0 5" fill="#f59e0b"/></marker>
+      </defs>
+      <!-- main line -->
+      <line x1="40" y1="50" x2="720" y2="50" stroke="#10b981" stroke-width="2.5" stroke-dasharray="none"/>
+      <text x="20" y="54" font-family="JetBrains Mono,monospace" font-size="10" fill="#10b981">main</text>
+      <!-- commits on main -->
+      <circle cx="80" cy="50" r="6" fill="#10b981"/>
+      <circle cx="200" cy="50" r="6" fill="#10b981"/>
+      <!-- branch 1: merged -->
+      <path d="M200,50 Q220,50 230,80 L380,80 Q390,80 400,50" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#arr-green)" id="b1-path"/>
+      <circle cx="280" cy="80" r="5" fill="#7c3aed"/>
+      <circle cx="340" cy="80" r="5" fill="#7c3aed"/>
+      <text x="230" y="98" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#7c3aed" id="b1-label">claude/add-vlan-100-abc1</text>
+      <circle cx="400" cy="50" r="6" fill="#10b981"/>
+      <!-- merged badge -->
+      <rect x="360" y="62" width="50" height="14" rx="2" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="0.5"/>
+      <text x="385" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#10b981">merged</text>
+      <!-- branch 2: in progress -->
+      <path d="M400,50 Q420,50 430,130 L580,130" stroke="#f59e0b" stroke-width="2" fill="none" id="b2-path"/>
+      <circle cx="490" cy="130" r="5" fill="#f59e0b"/>
+      <circle cx="580" cy="130" r="5" fill="#f59e0b"/>
+      <text x="435" y="148" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#f59e0b" id="b2-label">claude/update-firewall-def2</text>
+      <!-- in progress badge -->
+      <rect x="540" y="116" width="60" height="14" rx="2" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-width="0.5"/>
+      <text x="570" y="126" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#f59e0b">en cours</text>
+      <!-- new branch group (hidden initially) -->
+      <g id="new-branch-g" opacity="0">
+        <path d="M400,50 Q420,50 430,160 L560,160" stroke="#00d4ff" stroke-width="2" fill="none"/>
+        <circle cx="480" cy="160" r="5" fill="#00d4ff"/>
+        <text x="435" y="175" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#00d4ff" id="new-b-label">claude/new-task-…</text>
+      </g>
+      <!-- merge animation target -->
+      <path id="merge-anim-path" d="M580,130 Q600,130 610,50" stroke="#f59e0b" stroke-width="2" fill="none" stroke-dasharray="5,3" opacity="0" marker-end="url(#arr-green)"/>
+      <circle cx="620" cy="50" r="6" fill="#10b981" id="merge-dot" opacity="0"/>
+    </svg>
+    <div class="branch-controls">
+      <button class="branch-btn" id="new-branch-btn" onclick="branchCreate()">+ Créer une branche</button>
+      <button class="branch-btn merge-btn" id="merge-btn" onclick="branchMerge()">⤴ Merger vers main</button>
+    </div>
+  </div>
+  <div class="quiz-section">
+    <div class="quiz-q">🧠 Question — Pourquoi ne jamais pousser directement sur main ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'Non — GitHub ne bloque pas techniquement, c\'est une règle de discipline.')">GitHub le bloque techniquement</button>
+      <button class="quiz-opt" onclick="answer(this,true,'Exact. Main est la version de production. Une erreur directe sur main peut casser tout le pipeline sans filet de sécurité.')">Pour protéger la version de production</button>
+      <button class="quiz-opt" onclick="answer(this,false,'Non — Netmiko n\'est pas déclenché par le nom de branche.')">Netmiko ne fonctionne que sur les branches</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="trap-box"><strong>⚠️ PIÈGE — LA BRANCHE RECYCLÉE</strong>Réutiliser une branche déjà mergée pour une nouvelle tâche mélange l'historique git, rend les PR illisibles et peut déclencher la CI sur le mauvais contexte. Une tâche = une branche fraîche, toujours.</div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 03 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>git checkout -b</td><td>Créer une branche : git checkout -b claude/&lt;tâche&gt;-&lt;id&gt;</td></tr>
+      <tr><td>git push -u origin</td><td>Pousser et lier la branche distante : git push -u origin &lt;branche&gt;</td></tr>
+      <tr><td>Pull Request (PR)</td><td>Demande de fusion branche → main, validée par GitHub Actions</td></tr>
+      <tr><td>main</td><td>Version de référence, jamais modifiée directement</td></tr>
+      <tr><td>git revert &lt;commit&gt;</td><td>Annuler un commit sans réécrire l'historique</td></tr>
+    </tbody></table>
+  </div>
+</section>
 
-</div>
+<!-- MODULE 4 -->
+<section class="content-section reveal" id="m4">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 04</div>
+      <div class="section-title">Déploiement réseau</div>
+      <div class="section-sub">Comment le code généré par l'IA finit par arriver sur un switch Cisco.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
+    <ul>
+      <li>Configurer un équipement réseau avec Python + Netmiko</li>
+      <li>Comprendre le rôle de WSL dans le pipeline</li>
+      <li>Utiliser correctement les placeholders &lt;IP-HERE&gt; et &lt;PASSWORD-HERE&gt;</li>
+    </ul>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~10 min</span>
+    <span class="meta-badge">Python</span>
+    <span class="meta-badge">Netmiko</span>
+    <span class="meta-badge">WSL</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name">WSL</div>
+      <div class="concept-def"><strong>Windows Subsystem for Linux.</strong> Fait tourner un vrai Linux à l'intérieur de Windows. Claude Code s'exécute dedans — pas dans PowerShell, pas dans VS Code.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Python</div>
+      <div class="concept-def">Le langage qui orchestre tout. Il appelle Netmiko, gère les erreurs, génère les rapports. Simple à lire, puissant pour l'automatisation réseau.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Netmiko</div>
+      <div class="concept-def">Librairie Python qui <strong>simule un technicien SSH</strong> sur un équipement réseau. Supporte Cisco, Fortinet, MikroTik, Juniper, Aruba...</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name">Placeholders</div>
+      <div class="concept-def">Les secrets ne sont jamais écrits en clair dans le code : <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">&lt;PASSWORD-HERE&gt;</code> <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">&lt;IP-HERE&gt;</code></div>
+    </div>
+  </div>
+  <div class="analogy">
+    <p>Netmiko c'est un <strong>technicien virtuel</strong> qui se connecte au switch en SSH, tape les commandes que tu lui donnes, et te rapporte ce qui s'est passé. Sauf qu'il ne fait jamais de fautes de frappe et peut configurer 50 équipements en même temps.</p>
+  </div>
+  <div class="terrain-story">
+    <p>30 FortiGate à mettre à jour simultanément après une vulnérabilité CVE : un script Python Netmiko itère sur la liste des IPs, se connecte en SSH, applique le patch et génère un rapport succès/échec. Durée : <strong>4 minutes pour les 30 firewalls</strong>. Version manuelle estimée : 6 heures, avec risque d'erreur humaine à chaque étape.</p>
+  </div>
+  <div class="terminal-wrap">
+    <div class="terminal-header">
+      <div class="term-btn red"></div>
+      <div class="term-btn yellow"></div>
+      <div class="term-btn green"></div>
+      <div class="term-title">WSL — Ubuntu 22.04</div>
+      <button class="term-copy" onclick="termCopy()">⎘ Copier</button>
+    </div>
+    <div class="terminal-body">
+      <code id="netmiko-code"><span class="k">from</span> netmiko <span class="k">import</span> ConnectHandler
+
+device = {
+    <span class="s">'device_type'</span>: <span class="s">'cisco_ios'</span>,
+    <span class="s">'host'</span>:        <span class="s">'&lt;IP-HERE&gt;'</span>,
+    <span class="s">'username'</span>:    <span class="s">'admin'</span>,
+    <span class="s">'password'</span>:    <span class="s">'&lt;PASSWORD-HERE&gt;'</span>,
+}
+
+<span class="k">with</span> ConnectHandler(**device) <span class="k">as</span> conn:
+    output = conn.send_command(<span class="s">'show version'</span>)
+    print(output)</code>
+    </div>
+    <div class="term-controls">
+      <button class="run-btn" id="run-btn" onclick="termRun()">▶ Exécuter</button>
+    </div>
+    <div class="term-output" id="term-output"></div>
+  </div>
+
+    <div class="quiz-section">
+      <div class="quiz-q">🧠 Question — Tu veux configurer 50 switches Cisco en même temps. Quel outil utilises-tu ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,false,'SSH manuel sur 50 équipements = 50 fois le risque d\'erreur humaine. C\'est exactement ce que NetDevOps élimine.')">SSH manuel sur chaque switch</button>
+        <button class="quiz-opt" onclick="answer(this,true,'Exact. Netmiko se connecte en SSH à tous les équipements en parallèle et applique les mêmes commandes sans erreur de frappe.')">Un script Python + Netmiko</button>
+        <button class="quiz-opt" onclick="answer(this,false,'GitHub Actions orchestre le pipeline CI/CD mais ne se connecte pas directement aux équipements réseau.')">GitHub Actions directement</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-section" style="margin-top:1rem">
+      <div class="quiz-q">🧠 Question — Où doit tourner Claude Code dans ton pipeline ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,false,'PowerShell est exclu de ton pipeline — Claude Code tourne uniquement dans WSL.')">Dans PowerShell</button>
+        <button class="quiz-opt" onclick="answer(this,false,'VS Code est un éditeur — Claude Code est un outil CLI qui tourne dans le terminal WSL.')">Dans VS Code</button>
+        <button class="quiz-opt" onclick="answer(this,true,'Exact. WSL (Windows Subsystem for Linux) est le moteur d\'exécution de Claude Code dans ton pipeline.')">Dans WSL</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+  <div class="trap-box"><strong>⚠️ PIÈGE — SECRETS EN CLAIR DANS GIT</strong>Un mot de passe commité dans git reste dans l'historique même après suppression. Même dans un repo privé. Toujours utiliser &lt;PASSWORD-HERE&gt; et &lt;IP-HERE&gt; dans le code. Les vraies valeurs viennent d'un fichier .env jamais commité.</div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 04 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>ConnectHandler(**device)</td><td>Ouvrir une connexion SSH Netmiko vers un équipement</td></tr>
+      <tr><td>send_command()</td><td>Envoyer une commande lecture seule (ex : show version)</td></tr>
+      <tr><td>send_config_set([])</td><td>Appliquer une liste de commandes de configuration</td></tr>
+      <tr><td>device_type</td><td>'cisco_ios' | 'fortinet' | 'mikrotik_routeros' | 'juniper'</td></tr>
+      <tr><td>&lt;IP-HERE&gt;</td><td>Placeholder obligatoire — jamais d'IP ou mot de passe en clair dans le code</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<!-- MODULE 5 -->
+<section class="content-section reveal" id="m5">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 05</div>
+      <div class="section-title">Tes 3 projets concrets</div>
+      <div class="section-sub">Chaque repo a un rôle précis dans ton workflow professionnel.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
+    <ul>
+      <li>Identifier le bon repo pour chaque type de tâche</li>
+      <li>Maîtriser la structure .claude/ de chaque repo</li>
+      <li>Savoir quelle skill activer selon le contexte</li>
+    </ul>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~8 min</span>
+    <span class="meta-badge">Repos</span>
+    <span class="meta-badge">Structure</span>
+    <span class="meta-badge">Skills</span>
+  </div>
+  <div class="concept-grid">
+    <div class="concept-card" style="border-color:rgba(0,212,255,0.3)">
+      <div class="concept-name" style="color:var(--accent)">configs-reseau</div>
+      <div class="concept-def">Configurations réseau <strong>multi-constructeurs</strong>.<br><br>Cisco · FortiGate · MikroTik · Stormshield · Aruba · UniFi · VoIP<br><br>Skills spécifique : <strong>sanitize</strong> (détection secrets)</div>
+    </div>
+    <div class="concept-card" style="border-color:rgba(16,185,129,0.3)">
+      <div class="concept-name" style="color:var(--accent3)">scc-coordinator</div>
+      <div class="concept-def">Kit de coordination <strong>câblage SCC Lyon</strong>.<br><br>CCTP · Devis · PV réception · PV réunion · Rapports<br><br>Skills spécifique : <strong>internal-comms</strong> (PV, rapports)</div>
+    </div>
+    <div class="concept-card" style="border-color:rgba(245,158,11,0.3)">
+      <div class="concept-name" style="color:var(--accent4)">telecom-ops-toolkit</div>
+      <div class="concept-def">Scripts et playbooks <strong>télécom opérateur</strong>.<br><br>SIP trunks · RNIS · Fibre OTDR/SOR · RAN 4G/5G NSA/SA<br><br>Skills spécifique : <strong>software-architecture</strong></div>
+    </div>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// EXPLORATEUR DE REPOS — CLIQUE POUR VOIR L'ARBORESCENCE</div>
+  <div class="repo-explorer">
+    <div class="repo-cards">
+      <div class="repo-card" id="repo-configs" onclick="repoOpen('configs')">
+        <h4>configs-reseau</h4>
+        <p>Configs multi-constructeurs</p>
+      </div>
+      <div class="repo-card" id="repo-scc" onclick="repoOpen('scc')">
+        <h4>scc-coordinator</h4>
+        <p>Coordination câblage SCC</p>
+      </div>
+      <div class="repo-card" id="repo-telecom" onclick="repoOpen('telecom')">
+        <h4>telecom-ops-toolkit</h4>
+        <p>Scripts télécom opérateur</p>
+      </div>
+    </div>
+    <div class="repo-tree" id="repo-tree"><span style="color:var(--text2);font-size:11px">← Sélectionne un repo pour voir son arborescence .claude/</span></div>
+  </div>
+  <div class="rule-box">
+    <strong>📂 STRUCTURE .claude/ DANS CHAQUE REPO</strong>
+    <code style="font-family:var(--mono);font-size:12px;color:var(--text2);display:block;margin-top:8px;line-height:1.8">
+.claude/<br>
+├── skills/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← guides spécialisés pour Claude Code<br>
+│&nbsp;&nbsp;&nbsp;├── changelog-generator/<br>
+│&nbsp;&nbsp;&nbsp;├── mcp-builder/<br>
+│&nbsp;&nbsp;&nbsp;└── ...<br>
+├── prompts/&nbsp;&nbsp;&nbsp;← prompts réutilisables sauvegardés<br>
+│&nbsp;&nbsp;&nbsp;└── pdf-to-md.md<br>
+└── CLAUDE.md&nbsp;&nbsp;← conventions du repo pour Claude Code
+    </code>
+  </div>
+
+    <div class="quiz-section">
+      <div class="quiz-q">🧠 Question — Tu reçois un fichier PDF de config FortiGate à intégrer dans ton repo. Quel repo utilises-tu ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,true,'Exact. configs-reseau centralise toutes les configurations multi-constructeurs : Cisco, FortiGate, MikroTik, Stormshield...')">configs-reseau</button>
+        <button class="quiz-opt" onclick="answer(this,false,'scc-coordinator est dédié au projet de câblage SCC Lyon — PV, devis, rapports. Pas pour les configs réseau.')">scc-coordinator</button>
+        <button class="quiz-opt" onclick="answer(this,false,'telecom-ops-toolkit est pour les scripts et playbooks télécom opérateur — SIP, RNIS, OTDR, RAN 4G/5G.')">telecom-ops-toolkit</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-section" style="margin-top:1rem">
+      <div class="quiz-q">🧠 Question — Quelle skill utilises-tu pour détecter un mot de passe écrit en clair dans un fichier de config ?</div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,false,'changelog-generator lit l\'historique git pour générer des notes de version — il ne scanne pas les secrets.')">changelog-generator</button>
+        <button class="quiz-opt" onclick="answer(this,false,'mcp-builder crée des serveurs MCP pour connecter des APIs — il ne détecte pas les secrets.')">mcp-builder</button>
+        <button class="quiz-opt" onclick="answer(this,true,'Exact. La skill sanitize est dédiée à la détection de secrets et données personnelles (PII) dans le code — active uniquement dans configs-reseau.')">sanitize</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 05 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>configs-reseau</td><td>Configs multi-constructeurs (Cisco, FortiGate, MikroTik…) + skill sanitize</td></tr>
+      <tr><td>scc-coordinator</td><td>Coordination câblage SCC Lyon (CCTP, PV, devis) + skill internal-comms</td></tr>
+      <tr><td>telecom-ops-toolkit</td><td>Scripts télécom opérateur (SIP, RNIS, OTDR, 4G/5G) + skill software-architecture</td></tr>
+      <tr><td>.claude/CLAUDE.md</td><td>Conventions du repo lues automatiquement par Claude Code à chaque session</td></tr>
+      <tr><td>.claude/skills/</td><td>Dossier des skills activées pour ce repo uniquement</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<!-- MODULE 6 -->
+<section class="content-section reveal" id="m6">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 06</div>
+      <div class="section-title">Mise en pratique</div>
+      <div class="section-sub">Les décisions du quotidien — combien de sessions, comment lire les résultats.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
+    <ul>
+      <li>Choisir le bon nombre de sessions selon la tâche</li>
+      <li>Construire un prompt Claude Code structuré et conforme</li>
+      <li>Distinguer un prompt exécutable d'une information</li>
+    </ul>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~7 min</span>
+    <span class="meta-badge">Pratique</span>
+    <span class="meta-badge">Prompts</span>
+    <span class="meta-badge">Sessions</span>
+  </div>
+  <div class="section-label2" style="margin-bottom:1rem">// RÈGLE DES SESSIONS CLAUDE CODE</div>
+  <table class="session-table">
+    <thead>
+      <tr><th>CAS</th><th>SESSION</th><th>REPOS SÉLECTIONNÉS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Tâche différente par repo</td><td style="color:var(--accent)">Une session par repo</td><td style="color:var(--text2);font-size:12px">1 repo à la fois</td></tr>
+      <tr><td>Tâche identique sur tous les repos</td><td style="color:var(--accent3)">Une seule session</td><td style="color:var(--text2);font-size:12px">3 repos sélectionnés</td></tr>
+      <tr><td>Audit / lecture seule / check</td><td style="color:var(--accent3)">Une seule session</td><td style="color:var(--text2);font-size:12px">3 repos sélectionnés</td></tr>
+    </tbody>
+  </table>
+  <div class="section-label2" style="margin:2rem 0 1rem">// ANATOMIE D'UN PROMPT CLAUDE CODE</div>
+  <div class="code-block">
+    <span class="code-label">// STRUCTURE TYPE</span>
+    <code>
+<span class="accent">⚠️ File and folder names in English only, no translation.</span>
+<span class="c">← Règle obligatoire TOUJOURS en premier</span>
+
+Dans le repo ~/scc-coordinator, [ACTION] :
+- [DÉTAIL 1]
+- [DÉTAIL 2]
+
+<span class="c">← Branche UNIQUE par tâche</span>
+Nouvelle branche : claude/&lt;tâche&gt;-&lt;id&gt;
+Ne modifie rien d'autre.
+    </code>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// PROMPT VS INFORMATION</div>
+  <div class="concept-grid">
+    <div class="concept-card" style="border-color:rgba(16,185,129,0.4)">
+      <div class="concept-name" style="color:var(--accent3)">⚠️ = Prompt à exécuter</div>
+      <div class="concept-def">Si le message commence par <strong>⚠️</strong>, c'est une instruction à copier-coller dans Claude Code et à exécuter.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--text2)">Pas de ⚠️ = Information</div>
+      <div class="concept-def">Explication, contexte ou résultat affiché dans Claude.ai. Tu lis — tu n'exécutes rien.</div>
+    </div>
+  </div>
+  <div class="quiz-section">
+    <div class="quiz-q">🧠 Cas pratique — Tu dois ajouter une skill identique dans les 3 repos. Combien de sessions Claude Code ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'Non — 3 sessions séparées c\'est pour des tâches différentes par repo.')">3 sessions — une par repo</button>
+      <button class="quiz-opt" onclick="answer(this,true,'Exact. Tâche identique sur tous les repos = une seule session avec les 3 repos sélectionnés.')">1 session — avec les 3 repos sélectionnés</button>
+      <button class="quiz-opt" onclick="answer(this,false,'Non — il faut quand même ouvrir une session Claude Code.')">Pas de session — Claude.ai suffit</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 06 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>⚠️ en début de prompt</td><td>Ligne obligatoire : File and folder names in English only, no translation.</td></tr>
+      <tr><td>1 tâche ≠ par repo</td><td>1 session par repo, chaque repo sélectionné séparément</td></tr>
+      <tr><td>Même tâche / tous repos</td><td>1 seule session avec les 3 repos sélectionnés</td></tr>
+      <tr><td>Branche unique</td><td>claude/&lt;tâche&gt;-&lt;id&gt; — jamais réutiliser une branche mergée</td></tr>
+      <tr><td>Ne modifie rien d'autre</td><td>Délimite le périmètre d'action de Claude Code dans le prompt</td></tr>
+    </tbody></table>
+  </div>
+  <div class="section-label2" style="margin:2rem 0 1rem">// PROMPT BUILDER — GÉNÉRATEUR DE PROMPTS FORMATÉS</div>
+  <div class="prompt-builder">
+    <div class="pb-title">// CONSTRUIS TON PROMPT EN 3 SÉLECTIONS</div>
+    <div class="pb-selects">
+      <select class="pb-select" id="pb-repo" onchange="buildPrompt()">
+        <option value="">Repo cible…</option>
+        <option value="configs-reseau">configs-reseau</option>
+        <option value="scc-coordinator">scc-coordinator</option>
+        <option value="telecom-ops-toolkit">telecom-ops-toolkit</option>
+      </select>
+      <select class="pb-select" id="pb-action" onchange="buildPrompt()">
+        <option value="">Type d'action…</option>
+        <option value="Créer">Créer</option>
+        <option value="Mettre à jour">Mettre à jour</option>
+        <option value="Supprimer">Supprimer</option>
+        <option value="Auditer">Auditer (lecture seule)</option>
+      </select>
+      <select class="pb-select" id="pb-scope" onchange="buildPrompt()">
+        <option value="">Scope…</option>
+        <option value="skill changelog-generator">skill changelog-generator</option>
+        <option value="skill mcp-builder">skill mcp-builder</option>
+        <option value="skill sanitize">skill sanitize</option>
+        <option value="skill internal-comms">skill internal-comms</option>
+        <option value="skill software-architecture">skill software-architecture</option>
+        <option value="le fichier CLAUDE.md">le fichier CLAUDE.md</option>
+      </select>
+    </div>
+    <div class="pb-output" id="pb-output">Sélectionne les 3 options pour générer le prompt…</div>
+    <div class="pb-actions">
+      <button class="sim-btn" onclick="pbCopy()">⎘ Copier le prompt</button>
+      <span class="pb-indicator" id="pb-indicator"></span>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 7 -->
+<section class="content-section reveal" id="m7">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div class="section-titles">
+      <div class="section-label2">// MODULE 07</div>
+      <div class="section-title">Plugins & skills avancés</div>
+      <div class="section-sub">Les plugins qui transforment une session Claude Code en équipe d'ingénieurs complète.</div>
+    </div>
+  </div>
+  <div class="module-objectives">
+    <div class="obj-title">// OBJECTIFS DU MODULE</div>
+    <ul>
+      <li>Différencier /batch, /simplify et /code-review</li>
+      <li>Savoir quand utiliser une skill vs un MCP server</li>
+      <li>Installer et activer une skill communautaire</li>
+    </ul>
+  </div>
+  <div class="module-meta">
+    <span class="meta-badge time">⏱ ~9 min</span>
+    <span class="meta-badge">Plugins</span>
+    <span class="meta-badge">Skills</span>
+    <span class="meta-badge">Optimisation</span>
+  </div>
+
+  <div class="section-label2" style="margin:0 0 1rem">// PLUGINS OFFICIELS ANTHROPIC</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">/batch</div>
+      <div class="concept-def">Décompose une tâche en <strong>5 à 30 unités indépendantes</strong>, crée un worktree git isolé pour chacune, les exécute en parallèle et ouvre les PRs automatiquement. Idéal pour appliquer une modification sur plusieurs fichiers ou repos simultanément.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">/simplify</div>
+      <div class="concept-def">Lance <strong>3 agents de review en parallèle</strong> sur tes fichiers modifiés. Chaque agent analyse sous un angle différent et détecte en moyenne 3 à 5 vrais problèmes par branche — avant le commit.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">/code-review</div>
+      <div class="concept-def"><strong>4 agents indépendants</strong> : 2 vérifient la conformité au CLAUDE.md, 1 scanne les bugs, 1 audite la sécurité. La porte finale avant chaque merge — gratuit et disponible sans restriction de plan.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent)">skill-creator</div>
+      <div class="concept-def">Crée des <strong>skills personnalisées</strong> depuis zéro. Tu décris ce que tu veux automatiser, il génère le SKILL.md complet prêt à déposer dans <code style="font-family:var(--mono);font-size:11px;color:var(--accent)">~/.config/claude-code/skills/</code></div>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <p><strong>/batch</strong> c'est embaucher une équipe de développeurs junior qui travaillent en parallèle sur des tâches indépendantes. <strong>/simplify</strong> c'est le tech lead qui relit avant de pousser. <strong>/code-review</strong> c'est l'audit final avant la mise en production.</p>
+  </div>
+  <div class="terrain-story">
+    <p>Refactoring de 12 scripts Netmiko suite à un changement d'API Cisco : <strong>/batch</strong> découpe le travail en 12 sous-tâches parallèles, un worktree git isolé par fichier. <strong>/simplify</strong> relit chaque modification avant commit. <strong>/code-review</strong> audite la sécurité globale avant le merge. Résultat : 12 fichiers mis à jour en une session, sans régression, sans toucher main.</p>
+  </div>
+
+  <div class="section-label2" style="margin:2rem 0 1rem">// SKILLS COMMUNAUTAIRES AVANCÉES</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">root-cause-tracing</div>
+      <div class="concept-def">Trace les erreurs <strong>profondes dans les scripts Python/Netmiko</strong>. Remonte la chaîne d'exécution jusqu'au déclencheur original — indispensable pour débugger un déploiement réseau qui échoue silencieusement.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">using-git-worktrees</div>
+      <div class="concept-def">Crée des <strong>worktrees git isolés</strong> avec vérification de sécurité. Permet de travailler sur plusieurs branches simultanément sans risque de pollution de contexte entre les tâches.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">test-driven-development</div>
+      <div class="concept-def">Impose d'écrire les <strong>tests avant le code</strong>. À utiliser systématiquement avant de coder les scripts de déploiement Netmiko — garantit que chaque commande réseau est vérifiable.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-name" style="color:var(--accent3)">kaizen</div>
+      <div class="concept-def">Méthodologie d'<strong>amélioration continue</strong> inspirée du Lean japonais. Applique des cycles courts d'analyse et d'optimisation — cohérent avec l'approche NetDevOps itérative.</div>
+    </div>
+  </div>
+
+  <div class="section-label2" style="margin:2rem 0 1rem">// INSTALLATION D'UNE SKILL</div>
+  <div class="code-block">
+    <span class="code-label">// INSTALLER UNE SKILL DEPUIS awesome-claude-skills</span>
+    <code>
+<span class="c"># 1. Cloner le repo des skills communautaires</span>
+git clone https://github.com/ComposioHQ/awesome-claude-skills
+
+<span class="c"># 2. Copier la skill voulue dans Claude Code</span>
+cp -r awesome-claude-skills/<span class="accent">nom-de-la-skill</span> \
+  ~/.config/claude-code/skills/
+
+<span class="c"># 3. Vérifier que la skill est bien chargée</span>
+head ~/.config/claude-code/skills/<span class="accent">nom-de-la-skill</span>/SKILL.md
+
+<span class="c"># 4. Relancer Claude Code — la skill s'active automatiquement</span>
+claude
+    </code>
+  </div>
+
+  <div class="rule-box">
+    <strong>⚡ RÈGLE D'OR PLUGINS</strong>
+    Préférer une <strong>skill + CLI</strong> plutôt qu'un MCP server quand les deux existent.
+    Un MCP server avec 93 outils charge ~55 000 tokens avant même la première question.
+    Une skill charge 30 à 50 tokens. Le résultat est identique — le coût ne l'est pas.
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-q">🧠 Question — Tu viens de modifier 3 fichiers Python dans configs-reseau. Quel plugin lances-tu AVANT de committer ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this,false,'/batch sert à paralléliser des tâches indépendantes, pas à reviewer du code existant.')">/batch</button>
+      <button class="quiz-opt" onclick="answer(this,true,'Exact. /simplify lance 3 agents de review en parallèle sur tes fichiers modifiés et détecte les vrais problèmes avant le commit.')">/simplify</button>
+      <button class="quiz-opt" onclick="answer(this,false,'/code-review est la porte finale avant le merge, pas avant le commit.')">/code-review</button>
+    </div>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="cheatsheet">
+    <div class="cs-title">// CHEATSHEET — MODULE 07 <button class="cheatsheet-copy" onclick="copyCS(this)">⎘ Copier</button></div>
+    <table><tbody>
+      <tr><td>/batch</td><td>Paralléliser 5 à 30 tâches indépendantes, chacune dans un worktree isolé</td></tr>
+      <tr><td>/simplify</td><td>Review automatique avant commit — 3 agents en parallèle, ~3-5 problèmes détectés</td></tr>
+      <tr><td>/code-review</td><td>Audit final avant merge — 4 agents : CLAUDE.md + bugs + sécurité + conformité</td></tr>
+      <tr><td>skill vs MCP</td><td>Skill (~50 tokens) toujours préférable à un MCP server (~55 000 tokens)</td></tr>
+      <tr><td>cp -r &lt;skill&gt;/ ~/.config/…</td><td>Installer une skill : cp -r awesome-claude-skills/&lt;nom&gt; ~/.config/claude-code/skills/</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button>
+
+<footer>
+  <div>⬡ Formation NetDevOps · v1.4 · 4 avril 2026 · Hakim</div>
+  <div style="margin-top:6px;opacity:0.5">Claude.ai → Claude Code → GitHub → GitHub Actions → Netmiko → Équipements</div>
+</footer>
+
+<script>
+fetch('../../../VERSION')
+  .then(r => r.text())
+  .then(v => {
+    const el = document.querySelector('.dash-version');
+    if (el) el.textContent = 'v' + v.trim();
+  })
+  .catch(() => {});
+
+/* ── SCROLL PROGRESS BAR + BACK TO TOP ── */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = Math.round((h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  const label = document.getElementById('progress-label');
+  label.textContent = pct + '%';
+  label.classList.toggle('show', pct > 2);
+  const btt = document.getElementById('back-to-top');
+  if (btt) btt.classList.toggle('show', h.scrollTop > 400);
+});
+
+/* ── NAV ACTIVE + FORMATION PROGRESS ── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const moduleSections = ['m1','m2','m3','m4','m5','m6','m7'];
+const seenModules = new Set();
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const match = document.querySelector('.nav-links a[href="#'+e.target.id+'"]');
+      if (match) match.classList.add('active');
+      if (moduleSections.includes(e.target.id)) {
+        seenModules.add(e.target.id);
+        const n = seenModules.size;
+        document.getElementById('prog-count').textContent = n + ' / 7 modules complétés';
+        document.getElementById('prog-fill').style.width = (n/7*100) + '%';
+      }
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => obs.observe(s));
+
+/* ── REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+reveals.forEach(r => revObs.observe(r));
+
+/* ── QUIZ ── */
+function answer(btn, correct, feedback) {
+  const section = btn.closest('.quiz-section');
+  section.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  const fb = section.querySelector('.quiz-feedback');
+  fb.textContent = (correct ? '✓ ' : '✗ ') + feedback;
+  fb.classList.add('show');
+}
+
+/* ── FRESCO TOOLTIP + CLICK ── */
+const tooltip = document.getElementById('fresco-tooltip');
+document.querySelectorAll('.fresco-node').forEach(node => {
+  node.addEventListener('mouseenter', e => {
+    tooltip.textContent = node.dataset.tip;
+    tooltip.style.opacity = '1';
+  });
+  node.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top = (e.clientY - 30) + 'px';
+  });
+  node.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+  node.addEventListener('click', () => {
+    const target = document.querySelector(node.dataset.href);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const target = document.querySelector(node.dataset.href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+/* ── MODULE 01 — PIPELINE SIMULATOR ── */
+let simStep = -1;
+const simLogs = [
+  '[10:42:01] Claude.ai — prompt rédigé : "Ajouter VLAN 100 sur configs-reseau"',
+  '[10:42:03] Claude Code — branch created: claude/add-vlan-100-abc1',
+  '[10:42:05] GitHub — PR #47 opened · 2 fichiers modifiés',
+  '[10:42:08] Actions — ✓ lint passed · ✓ tests passed · auto-merge completed',
+  '[10:42:10] Netmiko — [OK] VLAN 100 configuré sur 3 équipements en 1.3s'
+];
+function simNext() {
+  if (simStep >= 4) return;
+  simStep++;
+  const steps = document.querySelectorAll('.sim-step');
+  steps[simStep].classList.add('active');
+  const log = document.getElementById('sim-log');
+  if (simStep === 0) log.innerHTML = '';
+  const line = document.createElement('span');
+  line.className = 'log-line';
+  line.style.color = ['#00d4ff','#7c3aed','#10b981','#f59e0b','#ef4444'][simStep];
+  line.textContent = simLogs[simStep];
+  log.appendChild(line);
+  log.appendChild(document.createElement('br'));
+  log.scrollTop = log.scrollHeight;
+  if (simStep >= 4) document.getElementById('sim-next-btn').disabled = true;
+}
+function simReset() {
+  simStep = -1;
+  document.querySelectorAll('.sim-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('sim-log').innerHTML = '<span style="color:var(--text2);font-size:11px">▸ Clique sur "Étape suivante" pour démarrer la simulation…</span>';
+  document.getElementById('sim-next-btn').disabled = false;
+}
+
+/* ── MODULE 02 — ROLE SELECTOR ── */
+const roleData = {
+  claudeai: {
+    title: '// CLAUDE.AI — CE QU\'IL FAIT / NE FAIT PAS',
+    actions: [
+      { ok: true,  text: 'Répond à tes questions sur le code ou l\'architecture' },
+      { ok: true,  text: 'Aide à rédiger et affiner les prompts pour Claude Code' },
+      { ok: true,  text: 'Explique les erreurs et propose des solutions' },
+      { ok: false, text: 'Ne modifie pas tes fichiers locaux' },
+      { ok: false, text: 'Ne crée pas de commits ni de branches GitHub' }
+    ]
+  },
+  claudecode: {
+    title: '// CLAUDE CODE — CE QU\'IL FAIT / NE FAIT PAS',
+    actions: [
+      { ok: true,  text: 'Crée, édite et supprime des fichiers dans le repo' },
+      { ok: true,  text: 'Lance des commandes bash, git, python…' },
+      { ok: true,  text: 'Crée une branche, fait un commit, push sur GitHub' },
+      { ok: false, text: 'Ne "réfléchit" pas — il exécute ce que tu lui demandes' },
+      { ok: false, text: 'Ne fera jamais de push direct sur main' }
+    ]
+  }
+};
+function selectRole(role) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('role-' + role).classList.add('active');
+  const d = roleData[role];
+  const panel = document.getElementById('role-panel');
+  panel.style.opacity = '0';
+  setTimeout(() => {
+    panel.innerHTML = '<div class="role-panel-title">' + d.title + '</div>' +
+      d.actions.map(a => '<div class="role-action"><span class="ri">' + (a.ok ? '✓' : '✗') + '</span><span style="color:' + (a.ok ? 'var(--text)' : 'var(--text2)') + '">' + a.text + '</span></div>').join('');
+    panel.style.opacity = '1';
+  }, 150);
+}
+
+/* ── MODULE 03 — BRANCH GRAPH SIMULATOR ── */
+let branchCount = 0;
+let merged = false;
+function branchCreate() {
+  if (branchCount >= 1) return;
+  branchCount++;
+  const g = document.getElementById('new-branch-g');
+  const lbl = document.getElementById('new-b-label');
+  const id = Math.random().toString(36).slice(2,6);
+  lbl.textContent = 'claude/new-task-' + id;
+  g.style.transition = 'opacity .5s';
+  g.style.opacity = '1';
+}
+function branchMerge() {
+  if (merged) return;
+  merged = true;
+  const mp = document.getElementById('merge-anim-path');
+  const md = document.getElementById('merge-dot');
+  mp.style.transition = 'opacity .3s';
+  mp.style.opacity = '1';
+  md.style.transition = 'opacity .3s .4s';
+  md.style.opacity = '1';
+  const lbl = document.getElementById('b2-label');
+  lbl.style.opacity = '0.4';
+  document.getElementById('merge-btn').disabled = true;
+  document.getElementById('merge-btn').textContent = '✓ Mergé';
+}
+
+/* ── MODULE 04 — TERMINAL ── */
+const termLines = [
+  { text: 'Connecting to <IP-HERE>...', color: '#94a3b8' },
+  { text: 'SSH authentication successful', color: '#10b981' },
+  { text: 'Cisco IOS Software, Version 15.2(4)M5', color: '#79c0ff' },
+  { text: 'Hardware: Cisco 2901', color: '#79c0ff' },
+  { text: '[OK] Command completed in 1.3s', color: '#10b981' }
+];
+function termRun() {
+  const out = document.getElementById('term-output');
+  const btn = document.getElementById('run-btn');
+  out.innerHTML = '';
+  btn.disabled = true;
+  termLines.forEach((l, i) => {
+    setTimeout(() => {
+      const span = document.createElement('span');
+      span.className = 'to-line';
+      span.style.color = l.color;
+      span.textContent = '$ ' + l.text;
+      out.appendChild(span);
+      if (i === termLines.length - 1) btn.disabled = false;
+    }, i * 400);
+  });
+}
+function termCopy() {
+  const code = document.getElementById('netmiko-code').innerText;
+  navigator.clipboard.writeText(code).catch(() => {});
+  const btn = document.querySelector('.term-copy');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copié';
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+}
+
+/* ── MODULE 05 — REPO EXPLORER ── */
+const repoTrees = {
+  configs: {
+    items: [
+      { indent: 0, icon: '📁', text: '.claude/', cls: 'tree-dir', tip: '' },
+      { indent: 1, icon: '📁', text: 'skills/', cls: 'tree-dir', tip: '' },
+      { indent: 2, icon: '📄', text: 'changelog-generator/', cls: 'tree-sk', tip: 'Génère un CHANGELOG depuis les commits git' },
+      { indent: 2, icon: '📄', text: 'mcp-builder/', cls: 'tree-sk', tip: 'Crée des serveurs MCP personnalisés' },
+      { indent: 2, icon: '📄', text: 'sanitize/', cls: 'tree-sk', tip: 'Détecte secrets et PII dans le code' },
+      { indent: 1, icon: '📁', text: 'prompts/', cls: 'tree-dir', tip: '' },
+      { indent: 2, icon: '📄', text: 'pdf-to-md.md', cls: 'tree-f', tip: 'Prompt de conversion PDF → Markdown' },
+      { indent: 1, icon: '📄', text: 'CLAUDE.md', cls: 'tree-f', tip: 'Conventions du repo pour Claude Code' }
+    ]
+  },
+  scc: {
+    items: [
+      { indent: 0, icon: '📁', text: '.claude/', cls: 'tree-dir', tip: '' },
+      { indent: 1, icon: '📁', text: 'skills/', cls: 'tree-dir', tip: '' },
+      { indent: 2, icon: '📄', text: 'changelog-generator/', cls: 'tree-sk', tip: 'Génère un CHANGELOG depuis les commits git' },
+      { indent: 2, icon: '📄', text: 'internal-comms/', cls: 'tree-sk', tip: 'Génère PV, rapports et communications SCC' },
+      { indent: 2, icon: '📄', text: 'mcp-builder/', cls: 'tree-sk', tip: 'Crée des serveurs MCP personnalisés' },
+      { indent: 1, icon: '📁', text: 'prompts/', cls: 'tree-dir', tip: '' },
+      { indent: 1, icon: '📄', text: 'CLAUDE.md', cls: 'tree-f', tip: 'Conventions du repo pour Claude Code' }
+    ]
+  },
+  telecom: {
+    items: [
+      { indent: 0, icon: '📁', text: '.claude/', cls: 'tree-dir', tip: '' },
+      { indent: 1, icon: '📁', text: 'skills/', cls: 'tree-dir', tip: '' },
+      { indent: 2, icon: '📄', text: 'changelog-generator/', cls: 'tree-sk', tip: 'Génère un CHANGELOG depuis les commits git' },
+      { indent: 2, icon: '📄', text: 'software-architecture/', cls: 'tree-sk', tip: 'Clean Architecture pour projets télécom' },
+      { indent: 2, icon: '📄', text: 'mcp-builder/', cls: 'tree-sk', tip: 'Crée des serveurs MCP personnalisés' },
+      { indent: 1, icon: '📁', text: 'prompts/', cls: 'tree-dir', tip: '' },
+      { indent: 1, icon: '📄', text: 'CLAUDE.md', cls: 'tree-f', tip: 'Conventions du repo pour Claude Code' }
+    ]
+  }
+};
+function repoOpen(key) {
+  document.querySelectorAll('.repo-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('repo-' + key).classList.add('active');
+  const tree = document.getElementById('repo-tree');
+  tree.innerHTML = '';
+  const items = repoTrees[key].items;
+  items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'tree-item animate-in tree-file';
+    div.style.paddingLeft = (item.indent * 20) + 'px';
+    div.style.animationDelay = (i * 60) + 'ms';
+    div.innerHTML = '<span>' + item.icon + '</span><span class="' + item.cls + '">' + item.text + '</span>'
+      + (item.tip ? '<span class="tree-tip">' + item.tip + '</span>' : '');
+    tree.appendChild(div);
+  });
+}
+
+/* ── MODULE 06 — PROMPT BUILDER ── */
+function buildPrompt() {
+  const repo = document.getElementById('pb-repo').value;
+  const action = document.getElementById('pb-action').value;
+  const scope = document.getElementById('pb-scope').value;
+  const out = document.getElementById('pb-output');
+  const ind = document.getElementById('pb-indicator');
+  if (!repo || !action || !scope) {
+    out.textContent = 'Sélectionne les 3 options pour générer le prompt…';
+    ind.textContent = '';
+    return;
+  }
+  const isExec = !action.startsWith('Auditer');
+  const branchId = Math.random().toString(36).slice(2,6);
+  const branchTask = scope.replace('skill ','').replace(' ','') + '-' + branchId;
+  let prompt = '';
+  if (isExec) {
+    prompt = '⚠️ File and folder names in English only, no translation.\n\n';
+  }
+  prompt += 'Dans le repo ~/' + repo + ', ' + action.toLowerCase() + ' ' + scope + '.\n\n';
+  if (isExec) {
+    prompt += 'Nouvelle branche : claude/' + branchTask + '\nNe modifie rien d\'autre dans le repo.';
+  } else {
+    prompt += '(lecture seule — ne modifie rien)';
+  }
+  out.textContent = prompt;
+  ind.className = 'pb-indicator ' + (isExec ? 'exec' : 'info');
+  ind.textContent = isExec ? '⚠️ À exécuter dans Claude Code' : 'ℹ️ Information — lire seulement';
+}
+function copyCS(btn) {
+  const cs = btn.closest('.cheatsheet');
+  const rows = cs.querySelectorAll('tbody tr');
+  const text = Array.from(rows).map(r => {
+    const cells = r.querySelectorAll('td');
+    return cells[0].textContent.trim() + '  →  ' + cells[1].textContent.trim();
+  }).join('\n');
+  navigator.clipboard.writeText(text).catch(() => {});
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copié';
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+}
+
+function pbCopy() {
+  const text = document.getElementById('pb-output').textContent;
+  if (text.startsWith('Sélectionne')) return;
+  navigator.clipboard.writeText(text).catch(() => {});
+  const btn = document.querySelector('.pb-actions .sim-btn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copié !';
+  setTimeout(() => { btn.textContent = orig; }, 1500);
+}
+</script>
+
+<script id="autoscroll-recording">
+(function () {
+  'use strict';
+
+  var TOTAL_DURATION = 629; // seconds (10:29)
+  var NAV_HEIGHT = 56;      // fixed nav bar height in px
+  var TITLE_PAUSE = 3;      // seconds to hold on each section title
+
+  var SECTIONS = [
+    { id: 'accueil', label: 'Accueil'     },
+    { id: 'fresco',  label: 'Pipeline'    },
+    { id: 'm1',      label: 'Module 01'   },
+    { id: 'm2',      label: 'Module 02'   },
+    { id: 'm3',      label: 'Module 03'   },
+    { id: 'm4',      label: 'Module 04'   },
+    { id: 'm5',      label: 'Module 05'   },
+    { id: 'm6',      label: 'Module 06'   }
+  ];
+
+  var PER_SECTION      = TOTAL_DURATION / SECTIONS.length; // ≈ 78.625 s
+  var SCROLL_DURATION  = PER_SECTION - TITLE_PAUSE;        // ≈ 75.625 s
+
+  /* ── State ─────────────────────────────────────────── */
+  var running          = false;
+  var globalStart      = null;
+  var sectionStart     = null;
+  var phaseStart       = null;
+  var phase            = 'idle';   // 'pause' | 'scroll'
+  var currentIdx       = 0;
+  var scrollFrom       = 0;
+  var scrollTo_        = 0;
+  var rafId            = null;
+
+  /* ── Helpers ───────────────────────────────────────── */
+  function getScrollTop(el) {
+    return Math.max(0, el.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT);
+  }
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function fmtTime(secs) {
+    var s = Math.floor(secs);
+    var m = Math.floor(s / 60);
+    s = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  /* ── DOM creation ──────────────────────────────────── */
+  /* Launch button */
+  var launchBtn = document.createElement('button');
+  launchBtn.id = 'rec-launch-btn';
+  launchBtn.textContent = '▶ Lancer l\'enregistrement';
+  Object.assign(launchBtn.style, {
+    display:        'block',
+    position:       'fixed',
+    bottom:         '24px',
+    left:           '50%',
+    transform:      'translateX(-50%)',
+    zIndex:         '9999',
+    background:     'linear-gradient(135deg,#00d4ff,#7c3aed)',
+    color:          '#fff',
+    border:         'none',
+    borderRadius:   '999px',
+    padding:        '12px 28px',
+    fontSize:       '14px',
+    fontFamily:     '\'JetBrains Mono\',monospace',
+    fontWeight:     '700',
+    letterSpacing:  '0.05em',
+    cursor:         'pointer',
+    boxShadow:      '0 4px 24px rgba(0,212,255,0.35)',
+    transition:     'opacity 0.3s'
+  });
+  document.body.appendChild(launchBtn);
+
+  /* Indicator */
+  var indicator = document.createElement('div');
+  indicator.id = 'rec-indicator';
+  Object.assign(indicator.style, {
+    position:       'fixed',
+    bottom:         '16px',
+    right:          '16px',
+    zIndex:         '9999',
+    background:     'rgba(10,14,26,0.88)',
+    border:         '1px solid rgba(0,212,255,0.25)',
+    borderRadius:   '8px',
+    padding:        '8px 12px',
+    fontFamily:     '\'JetBrains Mono\',monospace',
+    fontSize:       '11px',
+    color:          '#94a3b8',
+    display:        'none',
+    minWidth:       '140px',
+    backdropFilter: 'blur(8px)',
+    lineHeight:     '1.6'
+  });
+  document.body.appendChild(indicator);
+
+  /* Stop button */
+  var stopBtn = document.createElement('button');
+  stopBtn.id = 'rec-stop-btn';
+  stopBtn.textContent = '⏹ Arrêter';
+  Object.assign(stopBtn.style, {
+    position:       'fixed',
+    bottom:         '24px',
+    left:           '50%',
+    transform:      'translateX(-50%)',
+    zIndex:         '9999',
+    background:     'linear-gradient(135deg,#ef4444,#7c3aed)',
+    color:          '#fff',
+    border:         'none',
+    borderRadius:   '999px',
+    padding:        '12px 28px',
+    fontSize:       '14px',
+    fontFamily:     '\'JetBrains Mono\',monospace',
+    fontWeight:     '700',
+    letterSpacing:  '0.05em',
+    cursor:         'pointer',
+    boxShadow:      '0 4px 24px rgba(239,68,68,0.35)',
+    transition:     'opacity 0.3s',
+    display:        'none'
+  });
+  document.body.appendChild(stopBtn);
+
+  function updateIndicator(totalElapsed, label, progress) {
+    var pct = Math.round(Math.min(progress, 1) * 100);
+    indicator.innerHTML =
+      '<div style="color:#00d4ff;font-weight:700;margin-bottom:2px">⏺ REC</div>' +
+      '<div style="font-size:12px;color:#e2e8f0">' + label + '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#00d4ff;margin:2px 0">' +
+        fmtTime(totalElapsed) + ' / ' + fmtTime(TOTAL_DURATION) +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.1);border-radius:4px;height:3px;overflow:hidden">' +
+        '<div style="background:#00d4ff;height:100%;width:' + pct + '%;transition:width 0.5s"></div>' +
+      '</div>';
+  }
+
+  /* ── Section management ────────────────────────────── */
+  function enterSection(idx) {
+    currentIdx = idx;
+    var sec = document.getElementById(SECTIONS[idx].id);
+    if (!sec) { nextSection(); return; }
+
+    // Disable CSS smooth-scroll for instant jump
+    document.documentElement.style.scrollBehavior = 'auto';
+    scrollFrom = getScrollTop(sec);
+    window.scrollTo(0, scrollFrom);
+
+    // End position = top of next section (or page bottom)
+    var nextEl = SECTIONS[idx + 1] ? document.getElementById(SECTIONS[idx + 1].id) : null;
+    if (nextEl) {
+      scrollTo_ = Math.max(scrollFrom, getScrollTop(nextEl) - 20);
+    } else {
+      scrollTo_ = Math.max(scrollFrom, document.documentElement.scrollHeight - window.innerHeight);
+    }
+
+    sectionStart = performance.now();
+    phase = 'pause';
+  }
+
+  function nextSection() {
+    if (currentIdx + 1 < SECTIONS.length) {
+      enterSection(currentIdx + 1);
+    } else {
+      finish();
+    }
+  }
+
+  function hideStopBtn() {
+    stopBtn.style.opacity = '0';
+    stopBtn.style.pointerEvents = 'none';
+    setTimeout(function () { stopBtn.style.display = 'none'; }, 300);
+  }
+
+  function finish() {
+    running = false;
+    cancelAnimationFrame(rafId);
+    hideStopBtn();
+    indicator.innerHTML =
+      '<div style="color:#10b981;font-weight:700">✓ Enregistrement terminé</div>' +
+      '<div style="color:#94a3b8;font-size:10px;margin-top:2px">' + fmtTime(TOTAL_DURATION) + ' — 8 sections</div>';
+    setTimeout(function () { indicator.style.display = 'none'; }, 6000);
+  }
+
+  function stop() {
+    running = false;
+    cancelAnimationFrame(rafId);
+    hideStopBtn();
+    indicator.style.display = 'none';
+  }
+
+  stopBtn.addEventListener('click', stop);
+
+  /* ── Main animation loop ───────────────────────────── */
+  function tick(now) {
+    if (!running) return;
+
+    var totalElapsed   = (now - globalStart)  / 1000;
+    var secElapsed     = (now - sectionStart) / 1000;
+    var overallProgress = totalElapsed / TOTAL_DURATION;
+    var label = SECTIONS[currentIdx].label;
+
+    updateIndicator(totalElapsed, label, overallProgress);
+
+    if (phase === 'pause') {
+      if (secElapsed >= TITLE_PAUSE) {
+        phase     = 'scroll';
+        phaseStart = now;
+      }
+    } else if (phase === 'scroll') {
+      var scrollElapsed = (now - phaseStart) / 1000;
+      var progress      = Math.min(scrollElapsed / SCROLL_DURATION, 1);
+      var eased         = easeInOut(progress);
+      var y             = scrollFrom + (scrollTo_ - scrollFrom) * eased;
+
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, y);
+
+      if (progress >= 1) {
+        nextSection();
+      }
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  /* ── Entry point ───────────────────────────────────── */
+  launchBtn.addEventListener('click', function () {
+    launchBtn.style.opacity = '0';
+    launchBtn.style.pointerEvents = 'none';
+    setTimeout(function () { launchBtn.style.display = 'none'; }, 300);
+
+    indicator.style.display = 'block';
+    stopBtn.style.display = 'block';
+    stopBtn.style.opacity = '1';
+    stopBtn.style.pointerEvents = 'auto';
+    running     = true;
+    globalStart = performance.now();
+
+    enterSection(0);
+    rafId = requestAnimationFrame(tick);
+  });
+
+})();
+</script>
 </body>
 </html>
