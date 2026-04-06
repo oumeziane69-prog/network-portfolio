@@ -2094,238 +2094,52 @@ function pbCopy() {
 </script>
 
 <script id="autoscroll-recording">
-(function () {
-  'use strict';
+(function(){
+  var SPEED = 1.8;
+  var PAUSE = 2500;
+  var btn = document.getElementById('start-btn');
+  var stop = document.getElementById('stop-btn');
+  var rafId = null;
+  var pausing = false;
 
-  var TOTAL_DURATION = 629; // seconds (estimate for display only)
-  var NAV_HEIGHT    = 56;   // fixed nav bar height in px
-  var TITLE_PAUSE   = 2.5;  // seconds to hold on each h2 / section title
-  var SCROLL_SPEED  = 1.8;  // px per animation frame
-
-  var SECTIONS = [
-    { id: 'accueil', label: 'Accueil'     },
-    { id: 'fresco',  label: 'Pipeline'    },
-    { id: 'm1',      label: 'Module 01'   },
-    { id: 'm2',      label: 'Module 02'   },
-    { id: 'm3',      label: 'Module 03'   },
-    { id: 'm4',      label: 'Module 04'   },
-    { id: 'm5',      label: 'Module 05'   },
-    { id: 'm6',      label: 'Module 06'   }
-  ];
-
-  /* ── State ─────────────────────────────────────────── */
-  var running          = false;
-  var globalStart      = null;
-  var sectionStart     = null;
-  var phase            = 'idle';   // 'pause' | 'scroll'
-  var currentIdx       = 0;
-  var scrollFrom       = 0;
-  var scrollTo_        = 0;
-  var rafId            = null;
-
-  /* ── Helpers ───────────────────────────────────────── */
-  function getScrollTop(el) {
-    return Math.max(0, el.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT);
+  function getH2s(){
+    return Array.from(document.querySelectorAll('h2'));
   }
 
-  function fmtTime(secs) {
-    var s = Math.floor(secs);
-    var m = Math.floor(s / 60);
-    s = s % 60;
-    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  function tick(){
+    if(pausing) return;
+    var atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+    if(atBottom){ cancelAnimationFrame(rafId); return; }
+
+    var h2s = getH2s();
+    var triggered = false;
+    for(var i=0;i<h2s.length;i++){
+      var rect = h2s[i].getBoundingClientRect();
+      if(rect.top >= 0 && rect.top <= 5 && !h2s[i].dataset.paused){
+        h2s[i].dataset.paused = '1';
+        pausing = true;
+        setTimeout(function(){ pausing = false; rafId = requestAnimationFrame(tick); }, PAUSE);
+        triggered = true;
+        break;
+      }
+    }
+    if(!triggered){
+      window.scrollBy(0, SPEED);
+      rafId = requestAnimationFrame(tick);
+    }
   }
 
-  /* ── DOM creation ──────────────────────────────────── */
-  /* Launch button */
-  var launchBtn = document.createElement('button');
-  launchBtn.id = 'rec-launch-btn';
-  launchBtn.textContent = '▶ Lancer l\'enregistrement';
-  Object.assign(launchBtn.style, {
-    display:        'block',
-    position:       'fixed',
-    bottom:         '24px',
-    left:           '50%',
-    transform:      'translateX(-50%)',
-    zIndex:         '9999',
-    background:     'linear-gradient(135deg,#00d4ff,#7c3aed)',
-    color:          '#fff',
-    border:         'none',
-    borderRadius:   '999px',
-    padding:        '12px 28px',
-    fontSize:       '14px',
-    fontFamily:     '\'JetBrains Mono\',monospace',
-    fontWeight:     '700',
-    letterSpacing:  '0.05em',
-    cursor:         'pointer',
-    boxShadow:      '0 4px 24px rgba(0,212,255,0.35)',
-    transition:     'opacity 0.3s'
-  });
-  document.body.appendChild(launchBtn);
-
-  /* Indicator */
-  var indicator = document.createElement('div');
-  indicator.id = 'rec-indicator';
-  Object.assign(indicator.style, {
-    position:       'fixed',
-    bottom:         '16px',
-    right:          '16px',
-    zIndex:         '9999',
-    background:     'rgba(10,14,26,0.88)',
-    border:         '1px solid rgba(0,212,255,0.25)',
-    borderRadius:   '8px',
-    padding:        '8px 12px',
-    fontFamily:     '\'JetBrains Mono\',monospace',
-    fontSize:       '11px',
-    color:          '#94a3b8',
-    display:        'none',
-    minWidth:       '140px',
-    backdropFilter: 'blur(8px)',
-    lineHeight:     '1.6'
-  });
-  document.body.appendChild(indicator);
-
-  /* Stop button */
-  var stopBtn = document.createElement('button');
-  stopBtn.id = 'rec-stop-btn';
-  stopBtn.textContent = '⏹ Arrêter';
-  Object.assign(stopBtn.style, {
-    position:       'fixed',
-    bottom:         '24px',
-    left:           '50%',
-    transform:      'translateX(-50%)',
-    zIndex:         '9999',
-    background:     'linear-gradient(135deg,#ef4444,#7c3aed)',
-    color:          '#fff',
-    border:         'none',
-    borderRadius:   '999px',
-    padding:        '12px 28px',
-    fontSize:       '14px',
-    fontFamily:     '\'JetBrains Mono\',monospace',
-    fontWeight:     '700',
-    letterSpacing:  '0.05em',
-    cursor:         'pointer',
-    boxShadow:      '0 4px 24px rgba(239,68,68,0.35)',
-    transition:     'opacity 0.3s',
-    display:        'none'
-  });
-  document.body.appendChild(stopBtn);
-
-  function updateIndicator(totalElapsed, label, progress) {
-    var pct = Math.round(Math.min(progress, 1) * 100);
-    indicator.innerHTML =
-      '<div style="color:#00d4ff;font-weight:700;margin-bottom:2px">⏺ REC</div>' +
-      '<div style="font-size:12px;color:#e2e8f0">' + label + '</div>' +
-      '<div style="font-size:13px;font-weight:700;color:#00d4ff;margin:2px 0">' +
-        fmtTime(totalElapsed) + ' / ' + fmtTime(TOTAL_DURATION) +
-      '</div>' +
-      '<div style="background:rgba(255,255,255,0.1);border-radius:4px;height:3px;overflow:hidden">' +
-        '<div style="background:#00d4ff;height:100%;width:' + pct + '%;transition:width 0.5s"></div>' +
-      '</div>';
-  }
-
-  /* ── Section management ────────────────────────────── */
-  function enterSection(idx) {
-    currentIdx = idx;
-    var sec = document.getElementById(SECTIONS[idx].id);
-    if (!sec) { nextSection(); return; }
-
-    // Disable CSS smooth-scroll for instant jump
+  if(btn) btn.addEventListener('click', function(){
     document.documentElement.style.scrollBehavior = 'auto';
-    scrollFrom = getScrollTop(sec);
-    window.scrollTo(0, scrollFrom);
-
-    // End position = top of next section (or page bottom)
-    var nextEl = SECTIONS[idx + 1] ? document.getElementById(SECTIONS[idx + 1].id) : null;
-    if (nextEl) {
-      scrollTo_ = Math.max(scrollFrom, getScrollTop(nextEl) - 20);
-    } else {
-      scrollTo_ = Math.max(scrollFrom, document.documentElement.scrollHeight - window.innerHeight);
-    }
-
-    sectionStart = performance.now();
-    phase = 'pause';
-  }
-
-  function nextSection() {
-    if (currentIdx + 1 < SECTIONS.length) {
-      enterSection(currentIdx + 1);
-    } else {
-      finish();
-    }
-  }
-
-  function hideStopBtn() {
-    stopBtn.style.opacity = '0';
-    stopBtn.style.pointerEvents = 'none';
-    setTimeout(function () { stopBtn.style.display = 'none'; }, 300);
-  }
-
-  function finish() {
-    running = false;
-    cancelAnimationFrame(rafId);
-    hideStopBtn();
-    indicator.innerHTML =
-      '<div style="color:#10b981;font-weight:700">✓ Enregistrement terminé</div>' +
-      '<div style="color:#94a3b8;font-size:10px;margin-top:2px">' + fmtTime(TOTAL_DURATION) + ' — 8 sections</div>';
-    setTimeout(function () { indicator.style.display = 'none'; }, 6000);
-  }
-
-  function stop() {
-    running = false;
-    cancelAnimationFrame(rafId);
-    hideStopBtn();
-    indicator.style.display = 'none';
-  }
-
-  stopBtn.addEventListener('click', stop);
-
-  /* ── Main animation loop (1.8 px/frame) ───────────── */
-  function tick(now) {
-    if (!running) return;
-
-    var totalElapsed    = (now - globalStart)  / 1000;
-    var secElapsed      = (now - sectionStart) / 1000;
-    var scrollMax       = document.documentElement.scrollHeight - window.innerHeight;
-    var overallProgress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
-    var label           = SECTIONS[currentIdx].label;
-
-    updateIndicator(totalElapsed, label, overallProgress);
-
-    if (phase === 'pause') {
-      if (secElapsed >= TITLE_PAUSE) {
-        phase = 'scroll';
-      }
-    } else if (phase === 'scroll') {
-      document.documentElement.style.scrollBehavior = 'auto';
-      window.scrollBy(0, SCROLL_SPEED);
-
-      var curY = window.scrollY;
-      if (curY >= scrollTo_ || curY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
-        nextSection();
-        return;
-      }
-    }
-
-    rafId = requestAnimationFrame(tick);
-  }
-
-  /* ── Entry point ───────────────────────────────────── */
-  launchBtn.addEventListener('click', function () {
-    launchBtn.style.opacity = '0';
-    launchBtn.style.pointerEvents = 'none';
-    setTimeout(function () { launchBtn.style.display = 'none'; }, 300);
-
-    indicator.style.display = 'block';
-    stopBtn.style.display = 'block';
-    stopBtn.style.opacity = '1';
-    stopBtn.style.pointerEvents = 'auto';
-    running     = true;
-    globalStart = performance.now();
-
-    enterSection(0);
+    document.querySelectorAll('h2').forEach(function(h){ delete h.dataset.paused; });
+    pausing = false;
     rafId = requestAnimationFrame(tick);
   });
 
+  if(stop) stop.addEventListener('click', function(){
+    pausing = true;
+    if(rafId) cancelAnimationFrame(rafId);
+  });
 })();
 </script>
 </body>
