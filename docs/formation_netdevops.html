@@ -2093,6 +2093,10 @@ function pbCopy() {
 }
 </script>
 
+<div id="scroll-controls" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:12px;">
+  <button id="start-btn" style="background:#6c63ff;color:white;border:none;padding:12px 24px;border-radius:30px;font-size:15px;cursor:pointer;font-weight:bold;">▶ Lancer l'enregistrement</button>
+  <button id="stop-btn" style="background:#444;color:white;border:none;padding:12px 24px;border-radius:30px;font-size:15px;cursor:pointer;font-weight:bold;">⏹ Arrêter</button>
+</div>
 <script id="autoscroll-recording">
 (function(){
   var SPEED = 1.8;
@@ -2142,9 +2146,5 @@ function pbCopy() {
   });
 })();
 </script>
-<div id="scroll-controls" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;gap:12px;">
-  <button id="start-btn" style="background:#6c63ff;color:white;border:none;padding:12px 24px;border-radius:30px;font-size:15px;cursor:pointer;font-weight:bold;">▶ Lancer l'enregistrement</button>
-  <button id="stop-btn" style="background:#444;color:white;border:none;padding:12px 24px;border-radius:30px;font-size:15px;cursor:pointer;font-weight:bold;">⏹ Arrêter</button>
-</div>
 </body>
 </html>
