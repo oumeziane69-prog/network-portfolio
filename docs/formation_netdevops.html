@@ -30,6 +30,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
+  font-size: 118%;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -174,7 +175,7 @@ nav {
 .modules-section {
   position: relative; z-index: 1;
   padding: 0 2rem 4rem;
-  max-width: 1100px;
+  max-width: 860px;
   margin: 0 auto;
 }
 .section-label {
@@ -356,7 +357,7 @@ footer { position: relative; z-index: 1; border-top: 1px solid var(--border); pa
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ── FRESCO ── */
-#fresco { position:relative; z-index:1; padding:3rem 2rem 2rem; max-width:1100px; margin:0 auto; }
+#fresco { position:relative; z-index:1; padding:3rem 2rem 2rem; max-width:860px; margin:0 auto; }
 .fresco-title { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.15em; margin-bottom:1.5rem; }
 .fresco-wrap { position:relative; width:100%; max-width:900px; margin:0 auto; overflow:visible; }
 #pipeline-svg { width:100%; height:auto; display:block; }
@@ -2096,9 +2097,10 @@ function pbCopy() {
 (function () {
   'use strict';
 
-  var TOTAL_DURATION = 629; // seconds (10:29)
-  var NAV_HEIGHT = 56;      // fixed nav bar height in px
-  var TITLE_PAUSE = 3;      // seconds to hold on each section title
+  var TOTAL_DURATION = 629; // seconds (estimate for display only)
+  var NAV_HEIGHT    = 56;   // fixed nav bar height in px
+  var TITLE_PAUSE   = 2.5;  // seconds to hold on each h2 / section title
+  var SCROLL_SPEED  = 1.8;  // px per animation frame
 
   var SECTIONS = [
     { id: 'accueil', label: 'Accueil'     },
@@ -2111,14 +2113,10 @@ function pbCopy() {
     { id: 'm6',      label: 'Module 06'   }
   ];
 
-  var PER_SECTION      = TOTAL_DURATION / SECTIONS.length; // ≈ 78.625 s
-  var SCROLL_DURATION  = PER_SECTION - TITLE_PAUSE;        // ≈ 75.625 s
-
   /* ── State ─────────────────────────────────────────── */
   var running          = false;
   var globalStart      = null;
   var sectionStart     = null;
-  var phaseStart       = null;
   var phase            = 'idle';   // 'pause' | 'scroll'
   var currentIdx       = 0;
   var scrollFrom       = 0;
@@ -2128,10 +2126,6 @@ function pbCopy() {
   /* ── Helpers ───────────────────────────────────────── */
   function getScrollTop(el) {
     return Math.max(0, el.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT);
-  }
-
-  function easeInOut(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
   }
 
   function fmtTime(secs) {
@@ -2285,33 +2279,30 @@ function pbCopy() {
 
   stopBtn.addEventListener('click', stop);
 
-  /* ── Main animation loop ───────────────────────────── */
+  /* ── Main animation loop (1.8 px/frame) ───────────── */
   function tick(now) {
     if (!running) return;
 
-    var totalElapsed   = (now - globalStart)  / 1000;
-    var secElapsed     = (now - sectionStart) / 1000;
-    var overallProgress = totalElapsed / TOTAL_DURATION;
-    var label = SECTIONS[currentIdx].label;
+    var totalElapsed    = (now - globalStart)  / 1000;
+    var secElapsed      = (now - sectionStart) / 1000;
+    var scrollMax       = document.documentElement.scrollHeight - window.innerHeight;
+    var overallProgress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
+    var label           = SECTIONS[currentIdx].label;
 
     updateIndicator(totalElapsed, label, overallProgress);
 
     if (phase === 'pause') {
       if (secElapsed >= TITLE_PAUSE) {
-        phase     = 'scroll';
-        phaseStart = now;
+        phase = 'scroll';
       }
     } else if (phase === 'scroll') {
-      var scrollElapsed = (now - phaseStart) / 1000;
-      var progress      = Math.min(scrollElapsed / SCROLL_DURATION, 1);
-      var eased         = easeInOut(progress);
-      var y             = scrollFrom + (scrollTo_ - scrollFrom) * eased;
-
       document.documentElement.style.scrollBehavior = 'auto';
-      window.scrollTo(0, y);
+      window.scrollBy(0, SCROLL_SPEED);
 
-      if (progress >= 1) {
+      var curY = window.scrollY;
+      if (curY >= scrollTo_ || curY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
         nextSection();
+        return;
       }
     }
 
