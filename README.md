@@ -107,7 +107,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 📄 [Voir la formation](docs/formation_netdevops.html)
 
-![Vidéo en production](https://img.shields.io/badge/🎬_Vidéo-en_production-orange?style=flat-square)
+[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red)](https://youtu.be/QA3Cmepyteo)
 
 ---
 
