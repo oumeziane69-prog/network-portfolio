@@ -6,7 +6,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
-[![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/zT3Kx0nyq1Y)
+[![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
 
 </div>
 
@@ -108,7 +108,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 📄 [Voir la formation](docs/formation_netdevops.html)
 
-[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red)](https://youtu.be/zT3Kx0nyq1Y)
+[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red)](https://youtu.be/vfQ1HxVoSHo)
 
 ---
 
