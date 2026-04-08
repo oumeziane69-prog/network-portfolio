@@ -23,13 +23,25 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
+            if (pr.state === 'closed') {
+              console.log(`PR #${pr.number} is already closed — skipping merge.`);
+              return;
+            }
             console.log(`Merging PR #${pr.number}: ${pr.title}`);
-            await github.rest.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              merge_method: 'squash',
-              commit_title: pr.title,
-              commit_message: `Auto-merged by GitHub Actions\n\nPR: #${pr.number}`
-            });
-            console.log('Merged successfully.');
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                merge_method: 'squash',
+                commit_title: pr.title,
+                commit_message: `Auto-merged by GitHub Actions\n\nPR: #${pr.number}`
+              });
+              console.log('Merged successfully.');
+            } catch (err) {
+              if (err.status === 405 || err.status === 409) {
+                console.log(`Merge skipped (${err.status}): ${err.message}`);
+              } else {
+                throw err;
+              }
+            }
