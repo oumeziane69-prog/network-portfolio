@@ -89,16 +89,16 @@ Claude AI  ──►  Claude Code  ──►  GitHub Actions  ──►  Netmiko
 
 ## 📊 Compétences clés / Key Skills
 
-\`\`\`
-✅ Administration réseau multi-constructeurs   ✅ Multi-vendor network administration
-✅ Sécurité & segmentation (VLAN, ACL, VPN)   ✅ Security & segmentation (VLAN, ACL, VPN)
-✅ Automatisation Python / Netmiko             ✅ Python / Netmiko automation
-✅ Pipelines CI/CD GitHub Actions              ✅ GitHub Actions CI/CD pipelines
-✅ Infrastructure as Code (IaC)               ✅ Infrastructure as Code (IaC)
-✅ VoIP & Téléphonie IP                        ✅ VoIP & IP Telephony
-✅ Fibre optique & mesures OTDR                ✅ Fiber optics & OTDR measurements
-✅ 5G NR NSA/SA                               ✅ 5G NR NSA/SA
-\`\`\`
+| 🇫🇷 Compétence | 🇬🇧 Skill |
+|---|---|
+| ✅ Administration réseau multi-constructeurs | ✅ Multi-vendor network administration |
+| ✅ Sécurité & segmentation (VLAN, ACL, VPN) | ✅ Security & segmentation (VLAN, ACL, VPN) |
+| ✅ Automatisation Python / Netmiko | ✅ Python / Netmiko automation |
+| ✅ Pipelines CI/CD GitHub Actions | ✅ GitHub Actions CI/CD pipelines |
+| ✅ Infrastructure as Code (IaC) | ✅ Infrastructure as Code (IaC) |
+| ✅ VoIP & Téléphonie IP | ✅ VoIP & IP Telephony |
+| ✅ Fibre optique & mesures OTDR | ✅ Fiber optics & OTDR measurements |
+| ✅ 5G NR NSA/SA | ✅ 5G NR NSA/SA |
 
 ---
 
@@ -120,7 +120,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=oumeziane69-prog&layout=compact&theme=dark&hide_border=true)
 
-![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
+![GitHub Streak](https://streak-stats.demolab.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
 
 </div>
 
