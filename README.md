@@ -112,6 +112,20 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 ---
 
+## 📊 GitHub Stats
+
+<div align="center">
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=oumeziane69-prog&show_icons=true&theme=dark&hide_border=true&count_private=true)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=oumeziane69-prog&layout=compact&theme=dark&hide_border=true)
+
+![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
+
+</div>
+
+---
+
 ## 📬 Contact
 
 Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
