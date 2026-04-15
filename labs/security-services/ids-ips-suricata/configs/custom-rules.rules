@@ -1,0 +1,221 @@
+# ==============================================================
+# Suricata Custom Rules — OT / Industrial Security
+# Platform  : Suricata 7.x
+# Scope     : 10 custom rules targeting OT protocol threats
+#             (Modbus, OPC-UA, DNP3, S7Comm, EtherNet/IP)
+#             + IT threats relevant to IT/OT boundary
+#
+# Rule format:
+#   action proto src_ip src_port direction dst_ip dst_port (options)
+#
+# Actions:
+#   alert  → generate EVE JSON + fast.log entry (IDS/IPS)
+#   drop   → block packet + alert (IPS inline only)
+#   pass   → whitelist (bypass further inspection)
+#
+# SID range: 9000001–9000099 (local custom rules)
+# classtype references: policy-violation, attempted-admin,
+#                       denial-of-service, trojan-activity
+# ==============================================================
+
+# ──────────────────────────────────────────────────────────────
+# RULE 1 — Modbus: Unauthorized Write to Coils (FC 1, 5, 15)
+# Any device outside OT_NET writing to Modbus coils is suspicious.
+# Legitimate control should originate from SCADA only (172.16.30.10).
+# ──────────────────────────────────────────────────────────────
+drop tcp !$OT_NET any -> $OT_NET $MODBUS_PORTS (
+    msg:"OT-MODBUS Unauthorized Write Coils from non-OT source";
+    flow:to_server,established;
+    content:"|00 00|";               # Modbus MBAP header: transaction ID
+    depth:2;
+    content:"|00 01|";               # Protocol ID = 0x0001
+    distance:2; within:2;
+    byte_test:1,&,0x0F,7;            # Function code 05 (write single coil) or 0F (write multiple coils)
+    threshold:type both, track by_src, count 1, seconds 60;
+    classtype:policy-violation;
+    sid:9000001; rev:2;
+    metadata:affected_product Modbus_TCP, created_at 2026-04-15, deployment IDMZ;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 2 — Modbus: Function Code Scan (> 10 different FC in 5s)
+# Rapid cycling through Modbus function codes indicates automated
+# scanning/fuzzing of PLC capabilities.
+# ──────────────────────────────────────────────────────────────
+alert tcp any any -> $OT_NET $MODBUS_PORTS (
+    msg:"OT-MODBUS Function Code Scanning Detected";
+    flow:to_server,established;
+    content:"|00 00 00 00 00|";      # Modbus MBAP transaction + protocol ID
+    depth:5;
+    threshold:type both, track by_src, count 10, seconds 5;
+    classtype:attempted-recon;
+    sid:9000002; rev:1;
+    metadata:affected_product Modbus_TCP, created_at 2026-04-15;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 3 — Modbus: Read Holding Registers from IT network
+# IT hosts (LAN-IT/DMZ-IT) should NOT directly read Modbus registers.
+# Legitimate data access must go through OT Historian in DMZ-OT.
+# FC 03 = Read Holding Registers, FC 04 = Read Input Registers
+# ──────────────────────────────────────────────────────────────
+alert tcp $IT_NET any -> $OT_NET $MODBUS_PORTS (
+    msg:"OT-MODBUS Read Registers from IT network - policy violation";
+    flow:to_server,established;
+    content:"|00 00 00 00|";
+    depth:4;
+    byte_test:1,&,0x0F,7;            # FC <= 0x0F (read/write basics)
+    byte_test:1,>,0x02,7;            # FC > 0x02 (not read coils/discrete inputs)
+    threshold:type limit, track by_src, count 3, seconds 60;
+    classtype:policy-violation;
+    sid:9000003; rev:1;
+    metadata:affected_product Modbus_TCP, created_at 2026-04-15;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 4 — DNP3: Unsolicited Response from PLC (potential spoofing)
+# DNP3 unsolicited responses (0x82) originating from unexpected sources
+# may indicate a rogue device or replay attack.
+# ──────────────────────────────────────────────────────────────
+alert tcp any $DNP3_PORTS -> $OT_NET any (
+    msg:"OT-DNP3 Unsolicited Response - possible rogue DNP3 device";
+    flow:to_client,established;
+    content:"|05 64|";               # DNP3 start bytes
+    depth:2;
+    byte_test:1,=,0x82,3;           # Function code 0x82 = Unsolicited Response
+    threshold:type both, track by_src, count 5, seconds 30;
+    classtype:policy-violation;
+    sid:9000004; rev:2;
+    metadata:affected_product DNP3, created_at 2026-04-15, deployment LAN-OT;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 5 — DNP3: Broadcast Command to All Stations (Address 0xFFFF)
+# DNP3 broadcasts to address 0xFFFF can affect all PLCs simultaneously.
+# Legitimate SCADA operations target specific station addresses.
+# ──────────────────────────────────────────────────────────────
+drop tcp any any -> $OT_NET $DNP3_PORTS (
+    msg:"OT-DNP3 Broadcast to ALL stations (0xFFFF) - DROP";
+    flow:to_server,established;
+    content:"|05 64|";               # DNP3 start bytes
+    depth:2;
+    content:"|FF FF|";               # Destination address = 0xFFFF (broadcast)
+    distance:2; within:4;
+    classtype:attempted-admin;
+    sid:9000005; rev:1;
+    metadata:affected_product DNP3, created_at 2026-04-15;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 6 — S7Comm: Stop CPU Command (Siemens S7 protocol)
+# S7Comm function code 0x29 (Stop CPU) on ISO-TSAP port 102.
+# Any attempt to stop a Siemens PLC CPU from a non-engineering host.
+# ──────────────────────────────────────────────────────────────
+drop tcp !172.16.30.30/32 any -> $OT_NET $S7COMM_PORTS (
+    msg:"OT-S7COMM Stop CPU command from unauthorized host - DROP";
+    flow:to_server,established;
+    content:"|03 00|";               # TPKT version 3
+    depth:2;
+    content:"|32 01 00 00|";         # S7Comm: PDU type = JOB (0x01)
+    distance:5; within:10;
+    content:"|00 29|";               # S7 function code 0x29 = Stop CPU
+    distance:0;
+    classtype:attempted-admin;
+    sid:9000006; rev:2;
+    metadata:affected_product S7Comm, created_at 2026-04-15,
+             deployment LAN-OT, attack_target Siemens_PLC;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 7 — OPC-UA: Session Creation Flood (DoS / brute-force)
+# OPC-UA CreateSession service ID = 0x01D (461 decimal).
+# Flooding session creation can exhaust server resources.
+# ──────────────────────────────────────────────────────────────
+alert tcp any any -> $OT_NET $OPCUA_PORTS (
+    msg:"OT-OPCUA Session Creation Flood - possible DoS";
+    flow:to_server,established;
+    content:"|48 45 4C|";            # OPC-UA "HEL" message (Hello)
+    depth:3;
+    threshold:type both, track by_src, count 20, seconds 10;
+    classtype:denial-of-service;
+    sid:9000007; rev:1;
+    metadata:affected_product OPC_UA, created_at 2026-04-15;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 8 — EtherNet/IP: CIP Service Code Scan
+# EtherNet/IP (CIP) on port 44818. Rapid cycling through CIP
+# service codes (0x01–0xFF) indicates automated vulnerability scanning.
+# Common in Shodan-style IoT scanners reaching OT networks.
+# ──────────────────────────────────────────────────────────────
+alert tcp any any -> $OT_NET $ENIP_PORTS (
+    msg:"OT-ENIP CIP Service Code Scanning Detected";
+    flow:to_server,established;
+    content:"|65 00|";               # EtherNet/IP Register Session command (0x0065)
+    depth:2;
+    threshold:type both, track by_src, count 15, seconds 10;
+    classtype:attempted-recon;
+    sid:9000008; rev:1;
+    metadata:affected_product EtherNet_IP, created_at 2026-04-15;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 9 — LAN-OT → Internet: Outbound Connection Attempt
+# Any TCP/UDP connection from LAN-OT to external IPs must be blocked.
+# This rule detects and alerts on policy violation attempts
+# (actual blocking is handled by FGT-INTERNAL policy 80).
+# Belt-and-suspenders detection for OT exfiltration.
+# ──────────────────────────────────────────────────────────────
+drop tcp $OT_NET any -> $EXTERNAL_NET any (
+    msg:"OT-POLICY LAN-OT outbound TCP to Internet - HARD DROP";
+    flow:to_server;
+    threshold:type both, track by_src, count 1, seconds 60;
+    classtype:policy-violation;
+    sid:9000009; rev:1;
+    metadata:affected_product General, created_at 2026-04-15,
+             deployment LAN-OT, severity critical;
+)
+
+drop udp $OT_NET any -> $EXTERNAL_NET any (
+    msg:"OT-POLICY LAN-OT outbound UDP to Internet - HARD DROP";
+    threshold:type both, track by_src, count 1, seconds 60;
+    classtype:policy-violation;
+    sid:9000010; rev:1;
+    metadata:affected_product General, created_at 2026-04-15,
+             deployment LAN-OT, severity critical;
+)
+
+# ──────────────────────────────────────────────────────────────
+# RULE 10 — IT → OT Direct Lateral Movement (bypass IDMZ)
+# Any direct TCP connection from LAN-IT (10.0.10.0/24) to LAN-OT
+# (172.16.30.0/24) should be impossible — enforced by FGT-INTERNAL
+# routing. If detected, indicates routing misconfiguration or
+# active adversary bypassing the IDMZ architecture.
+# ──────────────────────────────────────────────────────────────
+drop ip 10.0.10.0/24 any -> 172.16.30.0/24 any (
+    msg:"OT-POLICY Direct IT-to-OT lateral movement - IDMZ bypass detected";
+    threshold:type both, track by_src, count 1, seconds 60;
+    classtype:trojan-activity;
+    sid:9000011; rev:1;
+    metadata:affected_product General, created_at 2026-04-15,
+             severity critical, attack_target OT_Network;
+)
+
+# ==============================================================
+# ADDITIONAL WHITELIST RULES (pass — bypass inspection)
+# ==============================================================
+
+# Legitimate SCADA polling: SCADA-Server → OT-Historian via OPC-UA
+# (authorized flow — pass to avoid false positives from rule 7)
+pass tcp 172.16.30.10 any -> 172.16.20.10 $OPCUA_PORTS (
+    msg:"WHITELIST SCADA → OT-Historian OPC-UA polling (authorized)";
+    flow:to_server,established;
+    sid:9000020; rev:1;
+)
+
+# Legitimate OT patching: OT-Patch-Server → HMI/Eng-WS
+pass tcp 172.16.20.20 any -> [172.16.30.20,172.16.30.30] [80,443,445] (
+    msg:"WHITELIST OT-Patch-Server → HMI/EngWS patch delivery (authorized)";
+    flow:to_server,established;
+    sid:9000021; rev:1;
+)

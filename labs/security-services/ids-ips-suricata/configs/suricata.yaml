@@ -1,0 +1,442 @@
+%YAML 1.1
+---
+# ==============================================================
+# Suricata 7.x — Main Configuration
+# Platform  : Ubuntu 22.04 LTS / Suricata 7.0.x
+# Role      : IDS (passive AF_PACKET) + IPS (inline NFQUEUE)
+#
+# Usage:
+#   IDS mode : suricata -c /etc/suricata/suricata.yaml -i ens4
+#   IPS mode : suricata -c /etc/suricata/suricata.yaml -q 0
+#
+# SECURITY NOTE:
+#   <ELASTIC-PASSWORD-HERE>  : Elasticsearch output password
+#   <HOME-NET-HERE>          : Adjust to your actual network ranges
+# ==============================================================
+
+# ==============================================================
+# SECTION 1 — NETWORK VARIABLES
+# ==============================================================
+
+vars:
+  address-groups:
+    # Define internal networks — adjust to lab topology
+    HOME_NET: "[10.0.10.0/24,172.16.10.0/24,172.16.20.0/24,172.16.30.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
+
+    # OT-specific network segments
+    OT_NET: "[172.16.20.0/24,172.16.30.0/24]"
+    IT_NET: "[10.0.10.0/24,172.16.10.0/24]"
+    DMZ_NET: "[172.16.10.0/24]"
+
+    # Specific hosts
+    DNS_SERVERS: "[10.0.10.101,10.0.10.102]"
+    HTTP_SERVERS: "[172.16.10.10]"
+    SMTP_SERVERS: "[172.16.50.20]"
+    SQL_SERVERS: "$HOME_NET"
+
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: "22"
+    DNP3_PORTS: 20000
+    MODBUS_PORTS: 502
+    ENIP_PORTS: 44818
+    OPCUA_PORTS: "[4840,4843]"
+    S7COMM_PORTS: 102
+    IEC104_PORTS: 2404
+
+# ==============================================================
+# SECTION 2 — CAPTURE MODES
+# ==============================================================
+
+# ── AF_PACKET (IDS passive mode — SPAN port) ─────────────────
+af-packet:
+  - interface: ens4          # SPAN capture interface (no IP)
+    threads: auto            # auto = one thread per CPU core
+    cluster-id: 99
+    cluster-type: cluster_flow  # Hash by 5-tuple for flow consistency
+    defrag: yes
+    use-mmap: yes            # Zero-copy mmap ring buffer
+    mmap-locked: yes
+    tpacket-v3: yes          # Use TPACKET_V3 for better performance
+    ring-size: 2048
+    block-size: 32768
+    block-timeout: 10
+    buffer-size: 32768
+    checksum-checks: no      # Disable on SPAN (checksums may be wrong)
+    copy-mode: none          # IDS = none; IPS bridge = ips (see below)
+    # For inline IPS bridge:
+    # copy-interface: ens5
+    # copy-mode: ips
+
+# ── NFQUEUE (IPS inline mode — netfilter) ────────────────────
+# Activated when running: suricata -q 0
+nfqueue:
+  mode: accept               # Default verdict: ACCEPT (pass non-matching)
+  # mode: repeat             # Re-inject packet after DROP
+  repeat-mark: 1
+  repeat-mask: 1
+  bypass-mark: 0x1
+  bypass-mask: 0x1
+  route-queue: 2             # Secondary queue for routing
+  batchcount: 20
+  fail-open: yes             # If Suricata fails, pass traffic (availability)
+
+# ── PCAP (offline analysis / replay) ─────────────────────────
+pcap:
+  - interface: eth0
+
+# ==============================================================
+# SECTION 3 — DETECTION ENGINE
+# ==============================================================
+
+detect:
+  profile: high              # high = best detection, more CPU
+  # profile: medium          # Balanced
+  custom-values:
+    toclient-groups: 3
+    toserver-groups: 25
+  sgh-mpm-context: auto
+  inspection-recursion-limit: 3000
+  prefilter:
+    default: mpm             # Multi-pattern matching pre-filter
+
+# Pattern matching
+mpm-algo: auto               # Auto-select best algo (hs = Hyperscan if available)
+spm-algo: auto
+
+# Stream tracking (TCP reassembly)
+stream:
+  memcap: 256mb
+  checksum-validation: yes
+  inline: auto               # yes in IPS mode, no in IDS mode
+  reassembly:
+    memcap: 256mb
+    depth: 1mb               # Reassemble up to 1MB per stream
+    toserver-chunk-size: 2560
+    toclient-chunk-size: 2560
+    randomize-chunk-size: yes
+
+# ==============================================================
+# SECTION 4 — APP LAYER PROTOCOLS
+# ==============================================================
+
+app-layer:
+  protocols:
+    # HTTP
+    http:
+      enabled: yes
+      memcap: 64mb
+      libhtp:
+        default-config:
+          personality: IDS
+          request-body-limit: 100kb
+          response-body-limit: 100kb
+          double-decode-path: no
+          double-decode-query: no
+
+    # TLS/SSL
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: "[443,8443,465,993,995]"
+      ja3-fingerprints: yes  # JA3 fingerprinting for TLS client identification
+
+    # DNS
+    dns:
+      tcp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+      udp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+
+    # SSH
+    ssh:
+      enabled: yes
+
+    # SMTP
+    smtp:
+      enabled: yes
+      mime:
+        decode-mime: yes
+        decode-base64: yes
+        decode-quoted-printable: yes
+        header-value-depth: 2000
+        extract-urls: yes
+
+    # FTP
+    ftp:
+      enabled: yes
+
+    # SMB
+    smb:
+      enabled: yes
+      detection-ports:
+        dp: "[139,445]"
+
+    # ICS/OT Protocols
+    modbus:
+      enabled: yes
+      detection-ports:
+        dp: 502
+      request-flood: 500       # Alert after 500 requests/flow
+
+    dnp3:
+      enabled: yes
+      detection-ports:
+        dp: 20000
+
+    enip:
+      enabled: yes             # EtherNet/IP (CIP)
+      detection-ports:
+        dp: 44818
+
+    # RDP
+    rdp:
+      enabled: yes
+
+    # Kerberos
+    krb5:
+      enabled: yes
+
+    # DCERPC
+    dcerpc:
+      enabled: yes
+
+# ==============================================================
+# SECTION 5 — LOGGING
+# ==============================================================
+
+outputs:
+  # ── EVE JSON (primary output — all events) ─────────────────
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /var/log/suricata/eve.json
+      community-id: yes        # Standard flow ID for cross-tool correlation
+      community-id-seed: 0
+      xff:
+        enabled: no
+      types:
+        - alert:
+            payload: yes       # Include base64 payload in alerts
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            metadata: yes
+            http-body: yes
+            http-body-printable: yes
+            tagged-packets: yes
+        - anomaly:
+            enabled: yes
+            types:
+              decode: yes
+              stream: yes
+              applayer: yes
+        - http:
+            extended: yes
+        - dns:
+            query: yes
+            answer: yes
+        - tls:
+            extended: yes
+        - files:
+            force-magic: yes
+        - smtp
+        - flow
+        - netflow
+        - ssh
+        - stats:
+            totals: yes
+            threads: no
+            deltas: yes
+        - modbus
+        - dnp3
+        - enip
+
+  # ── Fast log (human-readable, for quick review) ────────────
+  - fast:
+      enabled: yes
+      filename: /var/log/suricata/fast.log
+      append: yes
+
+  # ── Stats log (performance metrics) ────────────────────────
+  - stats:
+      enabled: yes
+      filename: /var/log/suricata/stats.log
+      append: yes
+      totals: yes
+      threads: no
+
+  # ── PCAP log (full packet capture on alert) ─────────────────
+  - pcap-log:
+      enabled: no              # Enable for forensic capture on alert
+      filename: /var/log/suricata/log.pcap
+      limit: 1000mb
+      max-files: 2000
+      compression: lz4
+      mode: normal
+      use-stream-depth: no
+
+  # ── Unified2 (Snort-compatible — legacy SIEM) ───────────────
+  - unified2-alert:
+      enabled: no
+
+# ==============================================================
+# SECTION 6 — RULES
+# ==============================================================
+
+default-rule-path: /etc/suricata/rules
+
+rule-files:
+  # Emerging Threats Open ruleset (auto-updated via suricata-update)
+  - suricata.rules
+
+  # Custom OT rules (this lab)
+  - custom-rules.rules
+
+  # Suppress noisy rules from ET
+  # - suppress.rules
+
+# Rule actions priority (for conflicting rules)
+action-order:
+  - pass
+  - drop
+  - reject
+  - alert
+
+# ==============================================================
+# SECTION 7 — THRESHOLD / RATE LIMITING
+# ==============================================================
+
+threshold-file: /etc/suricata/threshold.conf
+
+# Global threshold config
+# Suppress repeated alerts for same src/dst within time window
+# (fine-tune in threshold.conf to reduce noise)
+
+# ==============================================================
+# SECTION 8 — MEMORY AND PERFORMANCE
+# ==============================================================
+
+# Host table (for per-host tracking)
+host:
+  hash-size: 4096
+  prealloc: 1000
+  memcap: 32mb
+
+# IP defrag (reassembly of fragmented IP packets)
+defrag:
+  memcap: 32mb
+  hash-size: 65536
+  trackers: 65535
+  max-frags: 65535
+  prealloc: yes
+  timeout: 60
+
+# Flow table
+flow:
+  memcap: 128mb
+  hash-size: 65536
+  prealloc: 10000
+  emergency-recovery: 30
+  prune-flows: 5
+
+# Flow timeouts (seconds)
+flow-timeouts:
+  default:
+    new: 30
+    established: 300
+    closed: 0
+    bypassed: 100
+    emergency-new: 10
+    emergency-established: 100
+    emergency-closed: 0
+    emergency-bypassed: 50
+  tcp:
+    new: 60
+    established: 600
+    closed: 60
+    bypassed: 100
+    emergency-new: 5
+    emergency-established: 100
+    emergency-closed: 10
+    emergency-bypassed: 50
+  udp:
+    new: 30
+    established: 300
+    bypassed: 100
+    emergency-new: 10
+    emergency-established: 100
+    emergency-bypassed: 50
+  icmp:
+    new: 30
+    established: 300
+    bypassed: 100
+
+# Thread configuration
+threading:
+  set-cpu-affinity: no
+  cpu-affinity:
+    - management-cpu-set:
+        cpu: [0]
+    - receive-cpu-set:
+        cpu: [0]
+    - worker-cpu-set:
+        cpu: ["all"]
+        mode: "exclusive"
+        prio:
+          default: "normal"
+  detect-thread-ratio: 1.0
+
+# ==============================================================
+# SECTION 9 — MISC
+# ==============================================================
+
+# Unix socket (for suricatasc control)
+unix-command:
+  enabled: yes
+  filename: /var/run/suricata/suricata-command.socket
+
+# Coredump
+coredump:
+  max-dump: unlimited
+
+# PID file
+pid-file: /var/run/suricata/suricata.pid
+
+# Daemon mode
+daemon: no                   # Use systemd service instead
+
+# Run as user/group
+run-as:
+  user: suricata
+  group: suricata
+
+# Default packet size (MTU)
+default-packet-size: 1514
+
+# Checksum offloading
+checksum-validation: auto
+
+# Max pending packets
+max-pending-packets: 1024
+
+# File extraction
+file-store:
+  version: 2
+  enabled: no                # Enable to extract files from HTTP/SMTP
+  dir: /var/log/suricata/files
+  write-meta: yes
+  max-open-files: 0
+  force-magic: no
+
+# Host OS policy (for TCP reassembly)
+host-os-policy:
+  windows: [0.0.0.0/0]
+  linux: [10.0.10.0/24, 172.16.0.0/16]
