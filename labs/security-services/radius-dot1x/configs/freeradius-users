@@ -1,0 +1,146 @@
+## ============================================================
+## FreeRADIUS 3.x — users (authorize file)
+## Platform  : FreeRADIUS 3.2.x on Ubuntu 22.04
+##
+## File location: /etc/freeradius/3.0/mods-config/files/authorize
+## (Also referenced as: /etc/freeradius/3.0/users in older layouts)
+##
+## SECURITY NOTE: All passwords are placeholders.
+##   <USER-PASSWORD-HERE>  : cleartext password placeholder
+##   <HASH-HERE>           : NT password hash placeholder
+##   In production: use LDAP module (ldap) for AD integration
+##                 or PAP/MS-CHAPv2 with NT hashes from AD
+##
+## FORMAT:
+##   username   Attribute-Check op value, ...
+##              Reply-Attribute := value, ...
+## ============================================================
+
+## ── DEFAULT POLICY ────────────────────────────────────────────
+## Apply to ALL users unless overridden below
+DEFAULT
+    Fall-Through = Yes
+
+## ============================================================
+## SECTION 1 — Local test users (lab/testing only)
+## In production, these entries are replaced by LDAP module
+## ============================================================
+
+## ── Test user: EAP-TLS certificate authentication ─────────────
+## For EAP-TLS, the username = CN of the client certificate
+## Password check is bypassed (certificate IS the auth factor)
+## The unlang policy checks the client cert CN against this entry
+"eap-tls-testuser"  Auth-Type := EAP
+    Tunnel-Type = 13,           ## VLAN
+    Tunnel-Medium-Type = 6,     ## 802
+    Tunnel-Private-Group-Id = "10",   ## VLAN 10 — Corp
+    Reply-Message = "EAP-TLS auth OK — VLAN 10 assigned"
+
+## ── Test user: PEAP-MSCHAPv2 (WiFi / Windows domain client) ──
+"corp-user1"  Cleartext-Password := "<USER-PASSWORD-HERE>"
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "10",   ## VLAN 10 — Corp LAN
+    Reply-Message = "PEAP-MSCHAPv2 auth OK — VLAN 10"
+
+## ── Test user: IT admin — VLAN 20 ─────────────────────────────
+"it-admin1"  Cleartext-Password := "<USER-PASSWORD-HERE>"
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "20",   ## VLAN 20 — IT Servers
+    Reply-Message = "IT admin auth OK — VLAN 20"
+
+## ── Contractor account — Guest VLAN 99 ────────────────────────
+"contractor1"  Cleartext-Password := "<USER-PASSWORD-HERE>"
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "99",   ## VLAN 99 — Guest/Quarantine
+    Reply-Message = "Contractor auth OK — VLAN 99 (guest)"
+
+## ============================================================
+## SECTION 2 — MAB (MAC Authentication Bypass) entries
+## MAB: username = MAC address (lowercase, no colons)
+## Cisco IOS sends MAC as lowercase hex without separators
+## e.g., MAC aa:bb:cc:dd:ee:ff → username "aabbccddeeff"
+## ============================================================
+
+## ── IP Phone — VLAN 30 (Voice) ────────────────────────────────
+"aabbcc001101"  Auth-Type := Accept
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "30",   ## VLAN 30 — Voice
+    Cisco-AVPair = "device-traffic-class=voice",
+    Reply-Message = "MAB: IP Phone authorized — VLAN 30"
+
+## ── Network printer — VLAN 10 (Corp) ─────────────────────────
+"aabbcc002201"  Auth-Type := Accept
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "10",
+    Reply-Message = "MAB: Printer authorized — VLAN 10"
+
+## ── IoT sensor — VLAN 40 (IoT segment) ───────────────────────
+"aabbcc003301"  Auth-Type := Accept
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "40",
+    Reply-Message = "MAB: IoT device authorized — VLAN 40"
+
+## ── Unknown/unauthorized MAC — quarantine VLAN 99 ─────────────
+## Fallback for unrecognized MACs (applied via DEFAULT entry below)
+## Actual MAB DEFAULT handling is done in inner-tunnel and policy
+
+## ============================================================
+## SECTION 3 — DEFAULT MAB fallback
+## Any MAC not explicitly listed above → Guest VLAN 99
+## ============================================================
+DEFAULT  Auth-Type := Accept, Huntgroups-Name == "mab-fallback"
+    Tunnel-Type = 13,
+    Tunnel-Medium-Type = 6,
+    Tunnel-Private-Group-Id = "99",
+    Reply-Message = "MAB fallback: unknown device — VLAN 99 (quarantine)"
+
+## ============================================================
+## SECTION 4 — NT Hash passwords (for PEAP-MSCHAPv2 offline)
+## NT-Password is the NTLM hash of the password
+## Generate: echo -n "<password>" | iconv -t UTF-16LE | openssl md4
+## In production this is sourced from AD via LDAP ntlmAuth
+## ============================================================
+
+## "domain-user2"  NT-Password := "<HASH-HERE>"
+##     Tunnel-Type = 13,
+##     Tunnel-Medium-Type = 6,
+##     Tunnel-Private-Group-Id = "10"
+
+## ============================================================
+## SECTION 5 — RADIUS test account (radtest utility)
+## Used for health checks: radtest testing password 127.0.0.1 0 <secret>
+## ============================================================
+"testing"  Cleartext-Password := "<USER-PASSWORD-HERE>"
+    Reply-Message = "RADIUS test account OK"
+
+## ============================================================
+## NOTES
+## ============================================================
+## Tunnel-Type = 13       → VLAN (RFC 2868)
+## Tunnel-Medium-Type = 6 → IEEE 802 (Ethernet/WiFi)
+## Tunnel-Private-Group-Id → VLAN number (string)
+##
+## In production environments:
+##   - Replace local user entries with LDAP module
+##   - AD group membership → VLAN mapping via unlang policy
+##   - Example (in sites-enabled/default, authorize section):
+##
+##   ldap
+##   if (LDAP-Group == "Corp-Users") {
+##       update reply {
+##           Tunnel-Type := 13
+##           Tunnel-Medium-Type := 6
+##           Tunnel-Private-Group-Id := "10"
+##       }
+##   }
+##   elsif (LDAP-Group == "IT-Admins") {
+##       update reply {
+##           Tunnel-Private-Group-Id := "20"
+##       }
+##   }
