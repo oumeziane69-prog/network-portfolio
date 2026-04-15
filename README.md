@@ -152,6 +152,28 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 
 ---
 
+## 🗺️ Roadmap & Certifications
+
+**FR** — Plan de montée en compétences sur les technologies réseau et sécurité, orienté expertises opérateur et sécurité industrielle.
+
+**EN** — Skills development roadmap focused on carrier-grade networking and industrial security expertise.
+
+| Étape | Certification / Compétence | Domaine | Statut |
+|-------|---------------------------|---------|--------|
+| 1 | **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🔄 En cours |
+| 2 | **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 🗓️ Planifié |
+| 3 | **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 🗓️ Planifié |
+| 4 | **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 🗓️ Planifié |
+
+```
+NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
+ (NGFW)  (Archi)  (Opérateur)   (OT/FR)
+```
+
+> Les labs pratiques associés à cette roadmap sont disponibles dans le dossier [`labs/`](labs/).
+
+---
+
 ## 📚 Formation NetDevOps
 
 Pipeline CI/CD complet pour automatiser le déploiement de configurations réseau multi-constructeurs, de la génération IA au déploiement physique via Netmiko.
