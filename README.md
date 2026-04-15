@@ -154,23 +154,87 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 
 ## 🗺️ Roadmap & Certifications
 
-**FR** — Plan de montée en compétences sur les technologies réseau et sécurité, orienté expertises opérateur et sécurité industrielle.
-
-**EN** — Skills development roadmap focused on carrier-grade networking and industrial security expertise.
-
-| Étape | Certification / Compétence | Domaine | Statut |
-|-------|---------------------------|---------|--------|
-| 1 | **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🔄 En cours |
-| 2 | **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 🗓️ Planifié |
-| 3 | **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 🗓️ Planifié |
-| 4 | **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 🗓️ Planifié |
-
 ```
 NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
  (NGFW)  (Archi)  (Opérateur)   (OT/FR)
 ```
 
-> Les labs pratiques associés à cette roadmap sont disponibles dans le dossier [`labs/`](labs/).
+| Certification / Compétence | Domaine | Statut |
+|---------------------------|---------|--------|
+| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🚧 En cours |
+| **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 📅 Planifié |
+| **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 📅 Planifié |
+| **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 📅 Planifié |
+
+---
+
+## 🎯 Compétences techniques / Technical Skills Matrix
+
+> ✅ Maîtrisé — 🚧 En cours — 📅 Planifié
+
+### Routage & Protocoles / Routing & Protocols
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| OSPF multi-area | OSPFv2/v3, ABR, ASBR, stub/NSSA, LSA types | ✅ Maîtrisé |
+| BGP iBGP / eBGP | Route Reflector, attributs MED/LP/Communities, filtrage | ✅ Maîtrisé |
+| MPLS / L3VPN | LDP, VRF, MP-BGP VPNv4, PE/P/CE | 🚧 En cours |
+| Juniper JunOS | Interfaces, politiques de routage, sessions BGP | 🚧 En cours |
+| VLAN / Spanning Tree | 802.1Q, RSTP, VTP, agrégation LACP | ✅ Maîtrisé |
+| QoS réseau | Classification, marquage DSCP, policing/shaping | ✅ Maîtrisé |
+
+### Sécurité firewall / Firewall Security
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| Fortinet FortiGate | NGFW, IPS, SSL-VPN, IPSec, FortiOS 7.x, NSE4 | 🚧 En cours |
+| Check Point | R81.x, SmartConsole, Security Gateway, VPN | 🚧 En cours |
+| Stormshield SNS | SNS OS, politiques, IPS ASQ, VPN SSL/IPSec | 📅 Planifié |
+| pfSense / OPNsense | Firewall open-source, règles NAT, HAProxy | ✅ Maîtrisé |
+| Cisco ASA / FTD | ACL, NAT, AnyConnect VPN, FTD avec FMC | ✅ Maîtrisé |
+| Palo Alto NGFW | Security policies, App-ID, URL filtering | 🚧 En cours |
+
+### Architecture sécurité / Security Architecture
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| DMZ multi-niveau | Architecture IT/OT, IDMZ, segmentation Purdue | ✅ Maîtrisé |
+| VPN IPSec site-à-site | IKEv2, AES-256-GCM, PFS, certificats X.509 | ✅ Maîtrisé |
+| IDS/IPS (Suricata) | Règles, EVE JSON, intégration ELK, tuning | 🚧 En cours |
+| RADIUS / 802.1X | FreeRADIUS, EAP-TLS, PEAP, MAB fallback, VLAN dynamique | ✅ Maîtrisé |
+| Matrice de flux IT/OT | Modèle Purdue, default deny, protocoles OT | ✅ Maîtrisé |
+| Zero Trust | Principes, micro-segmentation, identity-based access | 🚧 En cours |
+
+### Sécurité industrielle OT / OT Industrial Security
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| IEC 62443 | Zones/conduits, SL 1-4, FR 1-7, gap analysis | 🚧 En cours |
+| Modèle de Purdue | Niveaux 0-4, IDMZ, segmentation SCADA/HMI/PLC | ✅ Maîtrisé |
+| Protocoles OT | Modbus TCP, DNP3, OPC-UA, S7Comm | 🚧 En cours |
+| Sécurité SCADA | Hardening, whitelisting applicatif, IDS OT | 📅 Planifié |
+| ANSSI Guide ICS | Recommandations sécurité systèmes industriels FR | 🚧 En cours |
+| NIS2 / OIV | Obligations réglementaires opérateurs critiques | 🚧 En cours |
+
+### Documentation technique / Technical Documentation
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| DAT (Dossier d'Architecture Technique) | Topologie, matrice de flux, règles firewall, risques | ✅ Maîtrisé |
+| DEX (Document d'Exploitation) | Procédure, rollback, contrôles post-intervention | ✅ Maîtrisé |
+| Schémas réseau (ASCII / draw.io) | Diagrammes logiques et physiques | ✅ Maîtrisé |
+| Audit et rapports de sécurité | Synthèse de vulnérabilités, plan de remédiation | 🚧 En cours |
+
+### Méthodes & Agilité / Methods & Agile
+
+| Compétence / Skill | Détail | Statut |
+|--------------------|--------|--------|
+| SAFe (Scaled Agile Framework) | PI Planning, Agile Release Train, backlog | 🚧 En cours |
+| Agile / Scrum | Sprints, user stories, rétrospectives | ✅ Maîtrisé |
+| ITIL (bases) | Gestion des incidents, changements, problèmes | ✅ Maîtrisé |
+| Gestion de projet | Planification, jalons, coordination équipes | ✅ Maîtrisé |
+
+> Les labs pratiques associés à ces compétences sont disponibles dans le dossier [`labs/`](labs/).
 
 ---
 
