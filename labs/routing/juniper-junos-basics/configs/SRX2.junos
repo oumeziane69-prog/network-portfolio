@@ -1,0 +1,292 @@
+## ============================================================
+## JunOS Configuration — SRX2
+## Hostname   : SRX2
+## Platform   : Juniper vSRX 21.4R1.12
+## AS         : 65002
+## Loopback   : 10.255.2.1/32
+## ge-0/0/0   : 10.0.12.2/30 — Link to SRX1 (AS 65001)
+## ge-0/0/1   : 10.0.23.1/30 — Link to R1-Cisco (AS 65003)
+##
+## SECURITY NOTE: All passwords are placeholders.
+## Replace <BGP-PASSWORD-HERE> and <ADMIN-PASSWORD-HERE>
+## with values from your secrets manager or .env file.
+## Never commit real credentials to this repository.
+## ============================================================
+
+version 21.4R1.12;
+
+## ── SYSTEM ────────────────────────────────────────────────
+system {
+    host-name SRX2;
+    root-authentication {
+        encrypted-password "<ADMIN-PASSWORD-HERE>";
+    }
+    login {
+        user admin {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "<ADMIN-PASSWORD-HERE>";
+            }
+        }
+    }
+    services {
+        ssh {
+            root-login deny;
+            protocol-version v2;
+            max-sessions-per-connection 10;
+            connection-limit 10;
+        }
+        netconf {
+            ssh;
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    ntp {
+        server 192.168.0.1;
+    }
+}
+
+## ── INTERFACES ────────────────────────────────────────────
+interfaces {
+    ge-0/0/0 {
+        description "Link to SRX1 ge-0/0/0 (AS65001) — 10.0.12.0/30";
+        unit 0 {
+            family inet {
+                filter {
+                    input PROTECT-RE;
+                }
+                address 10.0.12.2/30;
+            }
+        }
+    }
+    ge-0/0/1 {
+        description "Link to R1-Cisco Gi0/1 (AS65003) — 10.0.23.0/30";
+        unit 0 {
+            family inet {
+                filter {
+                    input PROTECT-RE;
+                }
+                address 10.0.23.1/30;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            description "SRX2 Router-ID and BGP source";
+            family inet {
+                filter {
+                    input PROTECT-RE;
+                }
+                address 10.255.2.1/32;
+            }
+        }
+    }
+}
+
+## ── FIREWALL FILTERS ──────────────────────────────────────
+firewall {
+    family inet {
+        filter PROTECT-RE {
+            term ALLOW-BGP {
+                from {
+                    protocol tcp;
+                    destination-port bgp;
+                }
+                then accept;
+            }
+            term ALLOW-SSH-FROM-MGMT {
+                from {
+                    source-address {
+                        192.168.0.0/24;
+                    }
+                    protocol tcp;
+                    destination-port ssh;
+                }
+                then accept;
+            }
+            term ALLOW-ICMP {
+                from {
+                    protocol icmp;
+                    icmp-type [
+                        echo-request
+                        echo-reply
+                        unreachable
+                        time-exceeded
+                    ];
+                }
+                then accept;
+            }
+            term DENY-ALL {
+                then {
+                    discard;
+                    count DENY-ALL-COUNT;
+                    log;
+                    syslog;
+                }
+            }
+        }
+    }
+}
+
+## ── ROUTING OPTIONS ───────────────────────────────────────
+routing-options {
+    router-id 10.255.2.1;
+    autonomous-system 65002;
+    static {
+        route 10.255.0.0/16 discard;
+    }
+}
+
+## ── PROTOCOLS ─────────────────────────────────────────────
+protocols {
+    bgp {
+        log-updown;
+        graceful-restart;
+
+        ## eBGP group toward SRX1 (AS 65001)
+        ## Note: peer-as on SRX2 side must match SRX1's AS (65001)
+        group EBGP-TO-SRX1 {
+            type external;
+            description "eBGP peering with SRX1 (AS65001)";
+            peer-as 65001;
+            authentication-key "<BGP-PASSWORD-HERE>";   ## Must match SRX1 authentication-key
+            neighbor 10.0.12.1 {
+                description "SRX1 (AS65001) — connected on ge-0/0/0";
+                import IMPORT-EBGP;
+                export EXPORT-LOOPBACK;
+            }
+        }
+
+        ## eBGP group toward R1-Cisco (AS 65003)
+        group EBGP-TO-R1 {
+            type external;
+            description "eBGP peering with R1-Cisco (AS65003)";
+            peer-as 65003;
+            authentication-key "<BGP-PASSWORD-HERE>";
+            neighbor 10.0.23.2 {
+                description "R1-Cisco (AS65003) — connected on ge-0/0/1";
+                import IMPORT-EBGP;
+                export EXPORT-LOOPBACK;
+            }
+        }
+    }
+}
+
+## ── POLICY OPTIONS ────────────────────────────────────────
+policy-options {
+
+    prefix-list LOOPBACK-RANGE {
+        10.255.0.0/16;
+    }
+
+    policy-statement EXPORT-LOOPBACK {
+        term EXPORT-OWN-LOOPBACK {
+            from {
+                protocol direct;
+                route-filter 10.255.2.1/32 exact;      ## Only export SRX2 own loopback
+            }
+            then accept;
+        }
+        term DENY-EVERYTHING-ELSE {
+            then reject;
+        }
+    }
+
+    policy-statement IMPORT-EBGP {
+        term ACCEPT-LOOPBACKS {
+            from {
+                prefix-list LOOPBACK-RANGE;
+                route-filter 10.255.0.0/16 prefix-length-range /32-/32;
+            }
+            then {
+                local-preference 100;
+                accept;
+            }
+        }
+        term DENY-ALL {
+            then reject;
+        }
+    }
+}
+
+## ── SECURITY ──────────────────────────────────────────────
+security {
+    zones {
+        security-zone UNTRUST {
+            description "External BGP peering interfaces";
+            interfaces {
+                ge-0/0/0.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            bgp;
+                            ping;
+                            traceroute;
+                        }
+                    }
+                }
+                ge-0/0/1.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            bgp;
+                            ping;
+                            traceroute;
+                        }
+                    }
+                }
+            }
+        }
+        security-zone MANAGEMENT {
+            description "Loopback — management and routing engine";
+            interfaces {
+                lo0.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            all;
+                        }
+                        protocols {
+                            all;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    policies {
+        default-policy {
+            deny-all;
+        }
+    }
+    screen {
+        ids-option UNTRUST-SCREEN {
+            icmp {
+                ping-death;
+            }
+            ip {
+                source-route-option;
+                tear-drop;
+            }
+            tcp {
+                syn-flood {
+                    alarm-threshold 1024;
+                    attack-threshold 200;
+                    source-threshold 1024;
+                    destination-threshold 2048;
+                    timeout 20;
+                }
+                land;
+            }
+        }
+    }
+}

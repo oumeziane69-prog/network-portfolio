@@ -1,0 +1,86 @@
+! ============================================================
+! Cisco IOS-XE Configuration — P (MPLS-TE Transit / Core)
+! Hostname   : P
+! Loopback   : 2.2.2.2/32
+! Gi0/0      : 10.0.12.2/30 — Link to PE1
+! Gi0/1      : 10.0.23.1/30 — Link to PE2
+!
+! Role: MPLS-TE transit P-router
+!   - Forwards labeled packets (does NOT initiate or terminate tunnels)
+!   - Participates in OSPF TE to advertise link bandwidth
+!   - Acts as RSVP transit node (PATH/RESV messages pass through)
+!   - FRR: can host a bypass tunnel protecting its own upstream link
+! ============================================================
+
+hostname P
+!
+! ── INTERFACES ─────────────────────────────────────────────
+interface Loopback0
+ description P Router-ID
+ ip address 2.2.2.2 255.255.255.255
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description Link to PE1 — 10.0.12.0/30
+ ip address 10.0.12.2 255.255.255.252
+ !
+ ! MPLS forwarding: label imposition/disposition for transit traffic
+ mpls ip
+ !
+ ! RSVP bandwidth allocation — same as PE1 side
+ ip rsvp bandwidth 750000                       ! 750 Mbps reservable
+ !
+ ! Announce link capabilities via OSPF-TE
+ mpls traffic-eng tunnels
+ !
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Link to PE2 — 10.0.23.0/30
+ ip address 10.0.23.1 255.255.255.252
+ mpls ip
+ ip rsvp bandwidth 750000
+ mpls traffic-eng tunnels
+ no shutdown
+!
+! ── IGP — OSPF WITH TE EXTENSIONS ─────────────────────────
+! The P router must participate in OSPF-TE to:
+!   1. Advertise its own links' TE capabilities (BW, affinity)
+!   2. Allow CSPF on PE1 to calculate TE paths through P
+!
+router ospf 1
+ router-id 2.2.2.2
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng area 0
+ !
+ network 2.2.2.2 0.0.0.0 area 0
+ network 10.0.12.0 0.0.0.3 area 0
+ network 10.0.23.0 0.0.0.3 area 0
+!
+! ── MPLS ──────────────────────────────────────────────────
+mpls traffic-eng tunnels
+mpls ldp router-id Loopback0 force
+!
+! ── RSVP ──────────────────────────────────────────────────
+! P does not initiate RSVP sessions — it only forwards PATH/RESV messages.
+! RSVP bandwidth is configured per-interface (see above).
+! Hellos for FRR: allows P to detect failure of its neighbors quickly.
+!
+ip rsvp signalling hello
+ip rsvp signalling hello refresh misses 4
+!
+! ── NOTE: FRR BYPASS TUNNEL ON P ──────────────────────────
+! In a more complex topology with multiple P routers, this P node
+! could also host a bypass tunnel to protect one of its links.
+! Example (not active in this lab):
+!
+! interface Tunnel10
+!  description Bypass — protect P-to-PE2 link (Gi0/1)
+!  tunnel mode mpls traffic-eng
+!  tunnel source Loopback0
+!  tunnel destination 3.3.3.3
+!  tunnel mpls traffic-eng bandwidth 100000
+!  tunnel mpls traffic-eng path-option 1 dynamic
+!  tunnel mpls traffic-eng fast-reroute protect-from 10.0.23.0/30
+!
+end

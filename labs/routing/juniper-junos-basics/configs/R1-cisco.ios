@@ -1,0 +1,124 @@
+! ============================================================
+! Cisco IOS-XE Configuration — R1
+! Hostname   : R1-Cisco
+! Platform   : Cisco IOS-XE 16.x (CSR1000v or IOSv)
+! AS         : 65003
+! Loopback   : 10.255.3.1/32
+! Gi0/0      : 10.0.13.2/30 — Link to SRX1 (AS 65001)
+! Gi0/1      : 10.0.23.2/30 — Link to SRX2 (AS 65002)
+!
+! SECURITY NOTE: All passwords are placeholders.
+! Replace <BGP-PASSWORD-HERE> and <ADMIN-PASSWORD-HERE>
+! with values from your vault / .env file.
+! Never commit real credentials to this repository.
+! ============================================================
+
+!
+service password-encryption
+no ip http server
+no ip http secure-server
+!
+hostname R1-Cisco
+!
+! ── AAA / USER ─────────────────────────────────────────────
+username admin privilege 15 secret <ADMIN-PASSWORD-HERE>
+!
+! ── INTERFACES ─────────────────────────────────────────────
+interface Loopback0
+ description R1 Router-ID and BGP source
+ ip address 10.255.3.1 255.255.255.255
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description Link to SRX1 ge-0/0/1 (AS65001) - 10.0.13.0/30
+ ip address 10.0.13.2 255.255.255.252
+ ip access-group PROTECT-RE in
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Link to SRX2 ge-0/0/1 (AS65002) - 10.0.23.0/30
+ ip address 10.0.23.2 255.255.255.252
+ ip access-group PROTECT-RE in
+ no shutdown
+!
+! ── ROUTING ────────────────────────────────────────────────
+ip route 10.255.0.0 255.255.0.0 Null0  ! Aggregate static — prevents BGP blackhole
+!
+! ── BGP ────────────────────────────────────────────────────
+! IOS equivalent of Junos hierarchical BGP config.
+! Note: IOS uses 'neighbor' commands under 'router bgp' stanza.
+! Junos equivalent: protocols { bgp { group { neighbor } } }
+!
+router bgp 65003
+ bgp router-id 10.255.3.1
+ bgp log-neighbor-changes
+ !
+ ! eBGP neighbor: SRX1 (AS 65001)
+ neighbor 10.0.13.1 remote-as 65001
+ neighbor 10.0.13.1 description SRX1-Juniper (AS65001)
+ neighbor 10.0.13.1 password <BGP-PASSWORD-HERE>
+ !   IOS: 'password' = Junos: 'authentication-key' — both use MD5
+ neighbor 10.0.13.1 route-map IMPORT-FROM-EBGP in
+ neighbor 10.0.13.1 route-map EXPORT-LOOPBACK out
+ neighbor 10.0.13.1 soft-reconfiguration inbound
+ !
+ ! eBGP neighbor: SRX2 (AS 65002)
+ neighbor 10.0.23.1 remote-as 65002
+ neighbor 10.0.23.1 description SRX2-Juniper (AS65002)
+ neighbor 10.0.23.1 password <BGP-PASSWORD-HERE>
+ neighbor 10.0.23.1 route-map IMPORT-FROM-EBGP in
+ neighbor 10.0.23.1 route-map EXPORT-LOOPBACK out
+ neighbor 10.0.23.1 soft-reconfiguration inbound
+ !
+ ! Advertise own loopback network
+ network 10.255.3.1 mask 255.255.255.255
+!
+! ── PREFIX-LISTS ───────────────────────────────────────────
+! IOS prefix-list = Junos prefix-list (same concept, different syntax)
+!
+ip prefix-list LOOPBACK-OWN seq 10 permit 10.255.3.1/32
+ip prefix-list LOOPBACK-RANGE seq 10 permit 10.255.0.0/16 le 32
+!
+! ── ROUTE-MAPS ─────────────────────────────────────────────
+! IOS route-map = Junos policy-statement
+! IOS 'match' = Junos 'from', IOS 'set' = Junos 'then'
+!
+route-map EXPORT-LOOPBACK permit 10
+ description Export only own loopback /32 to eBGP peers
+ match ip address prefix-list LOOPBACK-OWN
+!
+route-map IMPORT-FROM-EBGP permit 10
+ description Accept only /32 loopbacks from eBGP peers
+ match ip address prefix-list LOOPBACK-RANGE
+ set local-preference 100
+!
+! ── ACCESS-LISTS (PROTECT-RE) ──────────────────────────────
+! IOS ACL = Junos firewall filter PROTECT-RE
+! Applied inbound on both transit interfaces.
+!
+ip access-list extended PROTECT-RE
+ 10 permit tcp any any eq bgp                    ! Allow BGP TCP/179
+ 20 permit tcp 192.168.0.0 0.0.0.255 any eq 22  ! Allow SSH from OOB management
+ 30 permit icmp any any echo                     ! Allow ping
+ 40 permit icmp any any echo-reply
+ 50 permit icmp any any unreachable
+ 60 permit icmp any any time-exceeded            ! Allow traceroute
+ 999 deny ip any any log                         ! Deny and log everything else
+!
+! ── SSH HARDENING ──────────────────────────────────────────
+ip domain-name lab.local
+crypto key generate rsa modulus 2048             ! Required for SSHv2
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 3
+!
+line vty 0 4
+ transport input ssh                             ! SSH only — no Telnet
+ login local
+ exec-timeout 10 0
+!
+line con 0
+ login local
+ exec-timeout 15 0
+!
+end

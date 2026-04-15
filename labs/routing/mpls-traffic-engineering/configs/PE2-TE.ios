@@ -1,0 +1,82 @@
+! ============================================================
+! Cisco IOS-XE Configuration — PE2 (MPLS-TE Egress)
+! Hostname   : PE2
+! Loopback   : 3.3.3.3/32
+! Gi0/0      : 10.0.23.2/30 — Link to P (primary path)
+! Gi0/1      : 10.0.13.2/30 — Link to PE1 (bypass/FRR path)
+!
+! Role: MPLS-TE egress PE — tail-end of TE tunnels from PE1
+!   - Terminates MPLS-TE tunnels (label disposition)
+!   - Participates in OSPF TE to advertise link BW
+!   - Does NOT initiate tunnels in this lab (unidirectional)
+!   - For bidirectional TE, a symmetric Tunnel would be configured here
+! ============================================================
+
+hostname PE2
+!
+! ── INTERFACES ─────────────────────────────────────────────
+interface Loopback0
+ description PE2 Router-ID — MPLS-TE tunnel destination
+ ip address 3.3.3.3 255.255.255.255
+ no shutdown
+!
+interface GigabitEthernet0/0
+ description Link to P — 10.0.23.0/30 (primary path arrival)
+ ip address 10.0.23.2 255.255.255.252
+ mpls ip
+ ip rsvp bandwidth 750000
+ mpls traffic-eng tunnels
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description Link to PE1 direct — 10.0.13.0/30 (bypass/FRR path arrival)
+ ip address 10.0.13.2 255.255.255.252
+ mpls ip
+ ip rsvp bandwidth 750000
+ mpls traffic-eng tunnels
+ no shutdown
+!
+! ── IGP — OSPF WITH TE EXTENSIONS ─────────────────────────
+router ospf 1
+ router-id 3.3.3.3
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng area 0
+ !
+ network 3.3.3.3 0.0.0.0 area 0
+ network 10.0.23.0 0.0.0.3 area 0
+ network 10.0.13.0 0.0.0.3 area 0
+!
+! ── MPLS ──────────────────────────────────────────────────
+mpls traffic-eng tunnels
+mpls ldp router-id Loopback0 force
+!
+! ── RSVP ──────────────────────────────────────────────────
+ip rsvp signalling hello
+ip rsvp signalling hello refresh misses 4
+!
+! ── NOTE: BIDIRECTIONAL TE ────────────────────────────────
+! In production, PE2 should also have a return tunnel toward PE1.
+! This ensures symmetric path engineering for traffic in both directions.
+! Example mirror configuration for PE2 → PE1:
+!
+! ip explicit-path name PE2-TO-PE1-PRIMARY enable
+!  next-address strict 10.0.23.1               ! P's interface toward PE2
+!  next-address strict 10.0.12.1               ! PE1's interface toward P
+!
+! ip explicit-path name PE2-TO-PE1-BYPASS enable
+!  next-address strict 10.0.13.1               ! PE1's interface on direct link
+!
+! interface Tunnel10
+!  description Primary MPLS-TE tunnel from PE2 to PE1
+!  tunnel mode mpls traffic-eng
+!  tunnel source Loopback0
+!  tunnel destination 1.1.1.1
+!  tunnel mpls traffic-eng bandwidth 100000
+!  tunnel mpls traffic-eng path-option 1 explicit name PE2-TO-PE1-PRIMARY
+!  tunnel mpls traffic-eng path-option 2 dynamic
+!  tunnel mpls traffic-eng autoroute announce
+!  tunnel mpls traffic-eng fast-reroute
+!  tunnel mpls traffic-eng priority 7 0
+!  no shutdown
+!
+end

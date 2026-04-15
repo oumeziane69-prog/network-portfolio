@@ -1,0 +1,308 @@
+## ============================================================
+## JunOS Configuration — SRX1
+## Hostname   : SRX1
+## Platform   : Juniper vSRX 21.4R1.12
+## AS         : 65001
+## Loopback   : 10.255.1.1/32
+## ge-0/0/0   : 10.0.12.1/30 — Link to SRX2 (AS 65002)
+## ge-0/0/1   : 10.0.13.1/30 — Link to R1-Cisco (AS 65003)
+##
+## SECURITY NOTE: All passwords are placeholders.
+## Replace <BGP-PASSWORD-HERE> and <ADMIN-PASSWORD-HERE>
+## with values from your secrets manager or .env file.
+## Never commit real credentials to this repository.
+## ============================================================
+
+version 21.4R1.12;
+
+## ── SYSTEM ────────────────────────────────────────────────
+system {
+    host-name SRX1;
+    root-authentication {
+        encrypted-password "<ADMIN-PASSWORD-HERE>";  ## juniper-style $6$ hash — use 'set system root-authentication plain-text-password'
+    }
+    login {
+        user admin {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "<ADMIN-PASSWORD-HERE>";
+            }
+        }
+    }
+    services {
+        ssh {
+            root-login deny;                ## Never allow root SSH
+            protocol-version v2;
+            max-sessions-per-connection 10;
+            connection-limit 10;
+        }
+        netconf {
+            ssh;                            ## Enable NETCONF over SSH (port 830)
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    ntp {
+        server 192.168.0.1;                 ## OOB NTP server — adjust to your management network
+    }
+}
+
+## ── INTERFACES ────────────────────────────────────────────
+interfaces {
+    ge-0/0/0 {
+        description "Link to SRX2 ge-0/0/0 (AS65002) — 10.0.12.0/30";
+        unit 0 {
+            family inet {
+                filter {
+                    input PROTECT-RE;       ## Stateless filter on transit interface
+                }
+                address 10.0.12.1/30;
+            }
+        }
+    }
+    ge-0/0/1 {
+        description "Link to R1-Cisco Gi0/0 (AS65003) — 10.0.13.0/30";
+        unit 0 {
+            family inet {
+                filter {
+                    input PROTECT-RE;
+                }
+                address 10.0.13.1/30;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            description "SRX1 Router-ID and BGP source";
+            family inet {
+                filter {
+                    input PROTECT-RE;       ## Protect RE from unauthorized traffic
+                }
+                address 10.255.1.1/32;
+            }
+        }
+    }
+}
+
+## ── FIREWALL FILTERS (stateless ACL equivalent) ───────────
+## Applied to interfaces to protect the Routing Engine.
+## Junos firewall filters are stateless — unlike security policies.
+## IOS equivalent: extended ACL applied inbound on interfaces.
+firewall {
+    family inet {
+        filter PROTECT-RE {
+            ##
+            ## Term order matters — first match wins (same as IOS ACL)
+            ##
+            term ALLOW-BGP {
+                from {
+                    protocol tcp;
+                    destination-port bgp;   ## TCP/179
+                }
+                then accept;
+            }
+            term ALLOW-SSH-FROM-MGMT {
+                from {
+                    source-address {
+                        192.168.0.0/24;     ## OOB management network — adjust as needed
+                    }
+                    protocol tcp;
+                    destination-port ssh;   ## TCP/22
+                }
+                then accept;
+            }
+            term ALLOW-ICMP {
+                from {
+                    protocol icmp;
+                    icmp-type [
+                        echo-request        ## ping
+                        echo-reply
+                        unreachable
+                        time-exceeded       ## traceroute
+                    ];
+                }
+                then accept;
+            }
+            term DENY-ALL {
+                then {
+                    discard;                ## Drop silently (no ICMP unreachable)
+                    count DENY-ALL-COUNT;   ## Counter — visible in 'show firewall filter PROTECT-RE'
+                    log;                    ## Log to firewall log buffer
+                    syslog;                 ## Log to syslog
+                }
+            }
+        }
+    }
+}
+
+## ── ROUTING OPTIONS ───────────────────────────────────────
+routing-options {
+    router-id 10.255.1.1;
+    autonomous-system 65001;
+    static {
+        route 10.255.0.0/16 discard;       ## Aggregate for loopback space — prevents BGP blackhole
+    }
+}
+
+## ── PROTOCOLS ─────────────────────────────────────────────
+protocols {
+    bgp {
+        log-updown;                         ## Log neighbor state changes to syslog
+        graceful-restart;                   ## BGP graceful restart (RFC 4724)
+
+        ## eBGP group toward SRX2 (AS 65002)
+        group EBGP-TO-SRX2 {
+            type external;
+            description "eBGP peering with SRX2 (AS65002)";
+            peer-as 65002;
+            authentication-key "<BGP-PASSWORD-HERE>";   ## MD5 auth — IOS equivalent: neighbor x password x
+            neighbor 10.0.12.2 {
+                description "SRX2 (AS65002) — connected on ge-0/0/0";
+                import IMPORT-EBGP;         ## Inbound policy
+                export EXPORT-LOOPBACK;     ## Outbound policy
+            }
+        }
+
+        ## eBGP group toward R1-Cisco (AS 65003)
+        group EBGP-TO-R1 {
+            type external;
+            description "eBGP peering with R1-Cisco (AS65003)";
+            peer-as 65003;
+            authentication-key "<BGP-PASSWORD-HERE>";
+            neighbor 10.0.13.2 {
+                description "R1-Cisco (AS65003) — connected on ge-0/0/1";
+                import IMPORT-EBGP;
+                export EXPORT-LOOPBACK;
+            }
+        }
+    }
+}
+
+## ── POLICY OPTIONS ────────────────────────────────────────
+## Junos equivalent of IOS route-map + prefix-list.
+## Policies are applied per neighbor as import (inbound) and export (outbound).
+policy-options {
+
+    prefix-list LOOPBACK-RANGE {
+        10.255.0.0/16;
+    }
+
+    ## Export policy: announce only own loopback /32 to eBGP peers
+    policy-statement EXPORT-LOOPBACK {
+        term EXPORT-OWN-LOOPBACK {
+            from {
+                protocol direct;
+                route-filter 10.255.1.1/32 exact;
+            }
+            then accept;
+        }
+        term DENY-EVERYTHING-ELSE {
+            then reject;
+        }
+    }
+
+    ## Import policy: accept only loopback /32 prefixes from peers
+    policy-statement IMPORT-EBGP {
+        term ACCEPT-LOOPBACKS {
+            from {
+                prefix-list LOOPBACK-RANGE;
+                route-filter 10.255.0.0/16 prefix-length-range /32-/32;    ## only /32 loopbacks
+            }
+            then {
+                local-preference 100;
+                accept;
+            }
+        }
+        term DENY-ALL {
+            then reject;
+        }
+    }
+}
+
+## ── SECURITY ──────────────────────────────────────────────
+## SRX uses security zones and policies (stateful).
+## This is different from firewall filters above (stateless).
+## IOS equivalent: Zone-Based Firewall (ZBF).
+security {
+    zones {
+        ## UNTRUST zone: external BGP peer interfaces
+        security-zone UNTRUST {
+            description "External BGP peering interfaces";
+            interfaces {
+                ge-0/0/0.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            bgp;
+                            ping;
+                            traceroute;
+                        }
+                    }
+                }
+                ge-0/0/1.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            bgp;
+                            ping;
+                            traceroute;
+                        }
+                    }
+                }
+            }
+        }
+        ## MANAGEMENT zone: loopback — all management services allowed
+        security-zone MANAGEMENT {
+            description "Loopback — management and routing engine";
+            interfaces {
+                lo0.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            all;
+                        }
+                        protocols {
+                            all;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ## Default policy: deny all inter-zone traffic not explicitly permitted
+    policies {
+        default-policy {
+            deny-all;
+        }
+    }
+    ## IDS screens on UNTRUST zone — basic DoS protection
+    screen {
+        ids-option UNTRUST-SCREEN {
+            icmp {
+                ping-death;
+            }
+            ip {
+                source-route-option;
+                tear-drop;
+            }
+            tcp {
+                syn-flood {
+                    alarm-threshold 1024;
+                    attack-threshold 200;
+                    source-threshold 1024;
+                    destination-threshold 2048;
+                    timeout 20;
+                }
+                land;
+            }
+        }
+    }
+}
