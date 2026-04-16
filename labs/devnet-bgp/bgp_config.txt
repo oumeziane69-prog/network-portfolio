@@ -1,0 +1,23 @@
+! ============================================================
+! Lab : DevNet BGP — Cisco C8000V, IOS XE 17.15.04c
+! Platform : DevNet Always-On Sandbox
+! Objective : BGP AS 65001, router-id 1.1.1.1
+!             Advertise 1.1.1.1/32 + 10.100.100.0/24
+! ============================================================
+
+router bgp 65001
+ bgp router-id 1.1.1.1
+ bgp log-neighbor-changes
+ address-family ipv4
+  network 1.1.1.1 mask 255.255.255.255
+  network 10.100.100.0 mask 255.255.255.0
+ exit-address-family
+!
+
+! ============================================================
+! Verification commands:
+!   show ip bgp
+!   show ip bgp summary
+!   show ip bgp neighbors
+!   show ip route bgp
+! ============================================================
