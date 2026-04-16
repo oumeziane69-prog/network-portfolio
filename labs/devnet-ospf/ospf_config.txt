@@ -1,0 +1,25 @@
+! ============================================================
+! Lab : DevNet OSPF — Cisco C8000V, IOS XE 17.15.04c
+! Platform : DevNet Always-On Sandbox
+! Objective : OSPF Area 0 on loopback interfaces
+! ============================================================
+
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+interface Loopback100
+ ip address 10.100.100.1 255.255.255.255
+!
+router ospf 1
+ router-id 1.1.1.1
+ network 1.1.1.1 0.0.0.0 area 0
+ network 10.100.100.1 0.0.0.0 area 0
+!
+
+! ============================================================
+! Verification commands:
+!   show ip ospf
+!   show ip ospf interface brief
+!   show ip ospf neighbor
+!   show ip route ospf
+! ============================================================
