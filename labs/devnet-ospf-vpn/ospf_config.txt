@@ -1,0 +1,79 @@
+! ============================================================
+! Lab     : DevNet OSPF VPN Sandbox — Cat8kv, IOS XE 17.09.02a
+! Platform: DevNet VPN Sandbox (2 pods)
+! Access  : OpenConnect VPN → devbox SSH → telnet 2222 (pod01) / 2223 (pod02)
+! Objective: OSPF Area 0, adjacency FULL/DR, route learning between pods
+! ============================================================
+
+
+! ────────────────────────────────────────────────────────────
+! POD01  —  router-id 1.1.1.1
+! Access : telnet 127.0.0.1 2222  (via devbox)
+! ────────────────────────────────────────────────────────────
+
+hostname pod01
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ description Link to pod02
+ ip address 192.168.100.1 255.255.255.252
+ ip ospf 1 area 0
+ no shutdown
+!
+router ospf 1
+ router-id 1.1.1.1
+ network 1.1.1.1 0.0.0.0 area 0
+ network 192.168.100.0 0.0.0.3 area 0
+!
+
+
+! ────────────────────────────────────────────────────────────
+! POD02  —  router-id 2.2.2.2
+! Access : telnet 127.0.0.1 2223  (via devbox)
+! ────────────────────────────────────────────────────────────
+
+hostname pod02
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet1
+ description Link to pod01
+ ip address 192.168.100.2 255.255.255.252
+ ip ospf 1 area 0
+ no shutdown
+!
+router ospf 1
+ router-id 2.2.2.2
+ network 2.2.2.2 0.0.0.0 area 0
+ network 192.168.100.0 0.0.0.3 area 0
+!
+
+
+! ============================================================
+! VERIFICATION COMMANDS
+!
+! On pod01:
+!   show ip ospf neighbor
+!     → Expected: 2.2.2.2   1   FULL/DR   ...   192.168.100.2   GigabitEthernet1
+!
+!   show ip route ospf
+!     → Expected: O  2.2.2.2 [110/2] via 192.168.100.2, GigabitEthernet1
+!
+!   show ip ospf interface GigabitEthernet1
+!     → Network Type BROADCAST, DR/BDR election visible
+!
+!   show ip ospf database
+!     → Router LSAs for 1.1.1.1 and 2.2.2.2 in Area 0
+!
+! On pod02:
+!   show ip ospf neighbor
+!     → Expected: 1.1.1.1   1   FULL/BDR  ...   192.168.100.1   GigabitEthernet1
+!
+!   show ip route ospf
+!     → Expected: O  1.1.1.1 [110/2] via 192.168.100.1, GigabitEthernet1
+! ============================================================
