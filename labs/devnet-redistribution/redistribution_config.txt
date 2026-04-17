@@ -1,0 +1,102 @@
+! ============================================================
+! Redistribution Lab — OSPF → BGP
+! pod01 (AS65001) + pod02 (AS65002)
+! Peering link: 10.10.20.102/30 <-> 10.10.20.103/30
+! ============================================================
+
+! ============================================================
+! pod01 — AS65001 — redistribution OSPF → BGP
+! ============================================================
+
+hostname pod01
+
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.102 255.255.255.252
+ ip ospf 1 area 0
+ no shutdown
+!
+
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+!
+
+router bgp 65001
+ bgp router-id 1.1.1.1
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.103 remote-as 65002
+ neighbor 10.10.20.103 description eBGP_TO_pod02
+ !
+ address-family ipv4
+  ! Announce loopback natively (origin = i)
+  network 1.1.1.1 mask 255.255.255.255
+  ! Redistribute OSPF routes into BGP (origin = ?)
+  redistribute ospf 1
+  neighbor 10.10.20.103 activate
+ exit-address-family
+!
+
+! ============================================================
+! pod02 — AS65002 — eBGP peer, no redistribution
+! ============================================================
+
+hostname pod02
+
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.103 255.255.255.252
+ no shutdown
+!
+
+router bgp 65002
+ bgp router-id 2.2.2.2
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.102 remote-as 65001
+ neighbor 10.10.20.102 description eBGP_TO_pod01
+ !
+ address-family ipv4
+  network 2.2.2.2 mask 255.255.255.255
+  neighbor 10.10.20.102 activate
+  ! Accept redistributed routes from pod01 (origin = ?)
+  neighbor 10.10.20.102 soft-reconfiguration inbound
+ exit-address-family
+!
+
+! ============================================================
+! Verification — run on pod01
+! ============================================================
+!
+! show ip ospf neighbor
+! show ip route ospf
+! show ip bgp
+! show ip bgp 10.10.20.0/24
+!
+! ============================================================
+! Verification — run on pod02
+! ============================================================
+!
+! show ip bgp
+! show ip bgp 10.10.20.0/24
+! show ip bgp neighbors 10.10.20.102 received-routes
+!
+! Expected on pod02:
+!   10.10.20.0/24  next-hop 10.10.20.102  AS-path 65001  origin ?
+!
+! ============================================================
+! BGP soft reset (no session teardown)
+! ============================================================
+!
+! clear ip bgp * soft
+!
+! After reset: adjacency stays Established, routes re-advertised
+! ============================================================
