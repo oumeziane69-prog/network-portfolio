@@ -1,0 +1,101 @@
+! ============================================================
+! BGP Filtering Lab — prefix-list FILTER-IN on pod01
+! pod01 (AS65001) + pod02 (AS65002)
+! Peering link: 10.10.20.102/30 <-> 10.10.20.103/30
+! ============================================================
+
+! ============================================================
+! pod01 — AS65001
+! Inbound prefix-list: deny 10.10.20.0/24, permit all others
+! ============================================================
+
+hostname pod01
+
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.102 255.255.255.252
+ no shutdown
+!
+
+!
+! Prefix-list FILTER-IN:
+!   seq 5  — deny exactly 10.10.20.0/24
+!   seq 10 — permit everything else (implicit deny any at end of list)
+!
+ip prefix-list FILTER-IN seq 5  deny   10.10.20.0/24
+ip prefix-list FILTER-IN seq 10 permit 0.0.0.0/0 le 32
+
+router bgp 65001
+ bgp router-id 1.1.1.1
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.103 remote-as 65002
+ neighbor 10.10.20.103 description eBGP_TO_pod02
+ !
+ address-family ipv4
+  network 1.1.1.1 mask 255.255.255.255
+  neighbor 10.10.20.103 activate
+  ! Apply prefix-list inbound — filters 10.10.20.0/24 from pod02
+  neighbor 10.10.20.103 prefix-list FILTER-IN in
+  ! soft-reconfiguration required for received-routes verification
+  neighbor 10.10.20.103 soft-reconfiguration inbound
+ exit-address-family
+!
+
+! ============================================================
+! pod02 — AS65002
+! Announces both 2.2.2.2/32 and 10.10.20.0/24
+! pod01 will filter 10.10.20.0/24 on reception
+! ============================================================
+
+hostname pod02
+
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.103 255.255.255.252
+ no shutdown
+!
+
+router bgp 65002
+ bgp router-id 2.2.2.2
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.102 remote-as 65001
+ neighbor 10.10.20.102 description eBGP_TO_pod01
+ !
+ address-family ipv4
+  ! Announce loopback
+  network 2.2.2.2 mask 255.255.255.255
+  ! Announce peering subnet — will be filtered by pod01
+  network 10.10.20.100 mask 255.255.255.252
+  neighbor 10.10.20.102 activate
+ exit-address-family
+!
+
+! ============================================================
+! Verification — run on pod01
+! ============================================================
+!
+! show ip prefix-list FILTER-IN
+!
+! show ip bgp neighbors 10.10.20.103 received-routes
+! (shows 10.10.20.0/24 as received but not installed)
+!
+! show ip bgp neighbors 10.10.20.103 routes
+! (shows only 2.2.2.2/32 — 10.10.20.0/24 filtered out)
+!
+! show ip bgp
+! Expected: only 1.1.1.1/32 and 2.2.2.2/32 — no 10.10.20.0/24
+!
+! ============================================================
+! Apply filtering without dropping session
+! ============================================================
+!
+! clear ip bgp 10.10.20.103 soft in
+! ============================================================
