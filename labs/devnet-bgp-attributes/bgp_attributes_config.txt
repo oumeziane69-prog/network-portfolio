@@ -1,0 +1,113 @@
+! ============================================================
+! BGP Attributes Lab — Local-Preference & MED
+! pod01 (AS65001) + pod02 (AS65002)
+! Peering link: 10.10.20.102/30 <-> 10.10.20.103/30
+! ============================================================
+
+! ============================================================
+! pod01 — AS65001
+! Local-Preference 200 applied inbound from pod02
+! Route-map: SET-LOCAL-PREF
+! ============================================================
+
+hostname pod01
+
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.102 255.255.255.252
+ no shutdown
+!
+
+!
+! Route-map: set local-preference 200 on all routes received from pod02
+!
+route-map SET-LOCAL-PREF permit 10
+ set local-preference 200
+!
+
+router bgp 65001
+ bgp router-id 1.1.1.1
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.103 remote-as 65002
+ neighbor 10.10.20.103 description eBGP_TO_pod02
+ !
+ address-family ipv4
+  network 1.1.1.1 mask 255.255.255.255
+  neighbor 10.10.20.103 activate
+  ! Apply local-pref route-map inbound
+  neighbor 10.10.20.103 route-map SET-LOCAL-PREF in
+  ! Accept inbound soft-reconfig for verification
+  neighbor 10.10.20.103 soft-reconfiguration inbound
+ exit-address-family
+!
+
+! ============================================================
+! pod02 — AS65002
+! MED 100 applied outbound toward pod01
+! Route-map: SET-MED
+! ============================================================
+
+hostname pod02
+
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+
+interface GigabitEthernet0/0
+ ip address 10.10.20.103 255.255.255.252
+ no shutdown
+!
+
+!
+! Route-map: set MED (metric) 100 on all routes sent to pod01
+!
+route-map SET-MED permit 10
+ set metric 100
+!
+
+router bgp 65002
+ bgp router-id 2.2.2.2
+ bgp log-neighbor-changes
+ !
+ neighbor 10.10.20.102 remote-as 65001
+ neighbor 10.10.20.102 description eBGP_TO_pod01
+ !
+ address-family ipv4
+  network 2.2.2.2 mask 255.255.255.255
+  neighbor 10.10.20.102 activate
+  ! Apply MED route-map outbound
+  neighbor 10.10.20.102 route-map SET-MED out
+ exit-address-family
+!
+
+! ============================================================
+! Verification — run on pod01
+! ============================================================
+!
+! show ip bgp
+! Expected: 2.2.2.2/32  Metric=100  LocPrf=200  Path=65002
+!
+! show ip bgp 2.2.2.2/32
+! Expected: metric 100, localpref 200, valid, external, best
+!
+! show route-map SET-LOCAL-PREF
+! show ip bgp neighbors 10.10.20.103 received-routes
+!
+! ============================================================
+! Verification — run on pod02
+! ============================================================
+!
+! show route-map SET-MED
+! show ip bgp neighbors 10.10.20.102 advertised-routes
+!
+! ============================================================
+! BGP soft reset after route-map changes
+! ============================================================
+!
+! clear ip bgp 10.10.20.103 soft in   ! on pod01 — re-apply inbound policy
+! clear ip bgp 10.10.20.102 soft out  ! on pod02 — re-send with new MED
+! ============================================================
