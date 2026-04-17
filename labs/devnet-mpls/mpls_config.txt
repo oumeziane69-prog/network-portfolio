@@ -1,0 +1,110 @@
+! ============================================================
+! MPLS LDP Lab — pod01 (1.1.1.1) + pod02 (2.2.2.2)
+! Peering link: 10.10.20.102/30 <-> 10.10.20.103/30
+! Underlying IGP: OSPF process 1, area 0
+! ============================================================
+
+! ============================================================
+! pod01 — LDP ID 1.1.1.1:0
+! ============================================================
+
+hostname pod01
+
+!
+! Loopback — used as LDP transport address and OSPF router-id
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+!
+
+!
+! Peering link — MPLS enabled
+!
+interface GigabitEthernet0/0
+ ip address 10.10.20.102 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+ no shutdown
+!
+
+!
+! OSPF — provides reachability for LDP transport addresses
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+!
+
+!
+! MPLS LDP — transport address pinned to Loopback0
+!
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+! ============================================================
+! pod02 — LDP ID 2.2.2.2:0
+! ============================================================
+
+hostname pod02
+
+!
+! Loopback — used as LDP transport address and OSPF router-id
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+ ip ospf 1 area 0
+!
+
+!
+! Peering link — MPLS enabled
+!
+interface GigabitEthernet0/0
+ ip address 10.10.20.103 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+ no shutdown
+!
+
+!
+! OSPF — provides reachability for LDP transport addresses
+!
+router ospf 1
+ router-id 2.2.2.2
+ log-adjacency-changes
+!
+
+!
+! MPLS LDP — transport address pinned to Loopback0
+!
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+! ============================================================
+! Verification — run on pod01
+! ============================================================
+!
+! show mpls interfaces
+! show mpls ldp neighbor
+! show mpls ldp bindings
+! show mpls forwarding-table
+!
+! Expected:
+!   State: Oper; Msgs sent/rcvd: 9/9
+!   Up time: 00:01:09
+!   2.2.2.2/32 -> local label 17, remote label imp-null (PHP)
+!
+! ============================================================
+! Verification — run on pod02
+! ============================================================
+!
+! show mpls ldp neighbor
+! show mpls ldp bindings
+! show mpls ldp bindings 2.2.2.2 32
+!
+! Expected:
+!   2.2.2.2/32 local binding: label 16
+!   1.1.1.1/32 local binding: label 17
+! ============================================================
