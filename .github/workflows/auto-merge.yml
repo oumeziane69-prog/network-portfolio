@@ -17,14 +17,14 @@ jobs:
     if: startsWith(github.head_ref, 'claude/')
 
     steps:
-      - name: Merge PR via GitHub API
+      - name: Merge PR and delete branch
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
             if (pr.state === 'closed') {
-              console.log(`PR #${pr.number} is already closed — skipping merge.`);
+              console.log(`PR #${pr.number} is already closed — skipping.`);
               return;
             }
             console.log(`Merging PR #${pr.number}: ${pr.title}`);
@@ -41,7 +41,20 @@ jobs:
             } catch (err) {
               if (err.status === 405 || err.status === 409) {
                 console.log(`Merge skipped (${err.status}): ${err.message}`);
-              } else {
-                throw err;
+                return;
               }
+              throw err;
+            }
+            // Delete branch in the same step — GITHUB_TOKEN blocks downstream
+            // pull_request events so a separate delete workflow would never fire.
+            const branch = pr.head.ref;
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${branch}`
+              });
+              console.log(`Deleted branch: ${branch}`);
+            } catch (err) {
+              console.log(`Could not delete branch ${branch}: ${err.message}`);
             }

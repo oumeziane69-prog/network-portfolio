@@ -1,0 +1,36 @@
+name: Delete merged claude/* branches
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete merged claude/* branches
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch --all --prune
+          DELETED=0
+          KEPT=0
+          for branch in $(git branch -r | grep 'origin/claude/' | sed 's|  origin/||' | tr -d ' '); do
+            AHEAD=$(git log "origin/main..origin/${branch}" --oneline 2>/dev/null | wc -l | tr -d ' ')
+            if [ "$AHEAD" = "0" ]; then
+              git push origin --delete "$branch" && echo "Deleted: $branch" && DELETED=$((DELETED+1)) || echo "Failed: $branch"
+            else
+              echo "Kept ($AHEAD commits ahead): $branch"
+              KEPT=$((KEPT+1))
+            fi
+          done
+          echo ""
+          echo "Done: $DELETED deleted, $KEPT kept."
