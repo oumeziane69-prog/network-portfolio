@@ -1,6 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ]
+  "extends": ["config:base"],
+  "timezone": "Europe/Paris",
+  "schedule": ["after 8pm and before 6am every weekday", "every weekend"],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+  "automerge": true,
+  "automergeType": "pr",
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update", "requires-review"]
+    },
+    {
+      "matchPackageNames": ["node"],
+      "allowedVersions": "24.x",
+      "labels": ["node-upgrade"]
+    }
+  ],
+  "labels": ["renovate", "dependencies"],
+  "assignees": ["oumeziane69-prog"]
 }
