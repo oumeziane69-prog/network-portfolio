@@ -12,9 +12,16 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.swp
+*~
 
 # Logs
 *.log
+npm-debug.log
 
 # Node
 node_modules/
