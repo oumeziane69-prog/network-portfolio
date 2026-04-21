@@ -246,6 +246,8 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 📄 [Voir la formation](docs/formation_netdevops.html)
 
+[![▶ Pipeline CI/CD](https://img.shields.io/badge/▶%20Vidéo-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo) [![▶ NotebookLM v2](https://img.shields.io/badge/▶%20Vidéo-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
+
 ---
 
 ## 📊 GitHub Stats
