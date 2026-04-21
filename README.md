@@ -6,7 +6,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
-[![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
+[![▶ Formation Pipeline](https://img.shields.io/badge/▶%20Formation-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
+[![▶ Formation NotebookLM](https://img.shields.io/badge/▶%20Formation-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?logo=adobeacrobatreader)](https://github.com/oumeziane69-prog/network-portfolio/raw/principal/cv-hakim-oumeziane.pdf)
 
 </div>
@@ -273,7 +274,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 | NETCONF/YANG | ncclient · Jinja2 | ✅ Complété |
 | pyATS/Genie | Cat8k · OSPF | ✅ Complété |
 
-[![Trophées](https://github-profile-trophy.vercel.app/?username=oumeziane69-prog&theme=darkhub&no-frame=true&row=1&column=6)](https://github.com/ryo-ma/github-profile-trophy)
+[![Trophées](https://github-profile-trophy.vercel.app/?username=oumeziane69-prog&theme=darkhub&no-frame=true&row=1&column=6&margin-w=15)](https://github.com/ryo-ma/github-profile-trophy)
 
 ---
 
