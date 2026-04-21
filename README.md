@@ -7,6 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
 [![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
+[![CV](https://img.shields.io/badge/CV-PDF-blue?logo=adobeacrobatreader)](https://github.com/oumeziane69-prog/network-portfolio/raw/principal/cv-hakim-oumeziane.pdf)
 
 </div>
 
@@ -262,6 +263,20 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 ---
 
+## 🔬 Labs actifs / Active Labs
+
+| Lab | Stack | Statut |
+|-----|-------|--------|
+| MPLS VRF L3VPN | IOS-XE · LDP · BGP | 🟢 En cours |
+| BGP eBGP AS65001/65002 | IOS-XE · MED/Local-Pref | ✅ Complété |
+| Netmiko Pipeline | Python · GitHub Actions | ✅ Complété |
+| NETCONF/YANG | ncclient · Jinja2 | ✅ Complété |
+| pyATS/Genie | Cat8k · OSPF | ✅ Complété |
+
+[![Trophées](https://github-profile-trophy.vercel.app/?username=oumeziane69-prog&theme=darkhub&no-frame=true&row=1&column=6)](https://github.com/ryo-ma/github-profile-trophy)
+
+---
+
 ## 📬 Contact
 
 Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
@@ -272,9 +287,9 @@ Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
 
 <div align="center">
 
-*Ce profil GitHub est en consultation uniquement — les dépôts de travail sont privés.*
+*Le développement actif se fait en dépôts privés — ce portfolio présente l'architecture, les labs et la documentation.*
 
-*This GitHub profile is read-only — working repositories are private.*
+*Active development happens in private repos — this portfolio showcases architecture, labs & documentation.*
 
 </div>
 
