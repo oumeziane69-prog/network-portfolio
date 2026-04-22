@@ -175,10 +175,8 @@ jobs:
               --search "$DATE in:title" \
               --json number --jq '.[0].number' 2>/dev/null || true)
             if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
-              gh issue comment "$EXISTING" \
-                --body "**Re-run $(date --iso-8601=seconds) :**
-
-$(cat /tmp/issue_body.txt)"
+              RERUN_BODY="**Re-run $(date --iso-8601=seconds) :**"$'\n'"$(cat /tmp/issue_body.txt)"
+              gh issue comment "$EXISTING" --body "$RERUN_BODY"
             else
               gh issue create \
                 --title "$TITLE" \
