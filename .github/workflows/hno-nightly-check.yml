@@ -40,6 +40,9 @@ jobs:
           gh label create "auto-fix" \
             --color "0075ca" \
             --description "Automated fix from HNO nightly check" 2>/dev/null || true
+          gh label create "config-drift" \
+            --color "e4e669" \
+            --description "Config drift detected on critical files" 2>/dev/null || true
 
       - name: Find files modified in last 24h
         run: |
@@ -83,6 +86,23 @@ jobs:
               printf '**%s**\n```\n%s\n```\n\n' "$f" "$FOUND" >> /tmp/placeholders.txt
             fi
           done < /tmp/changed_files.txt
+
+      - name: Detect config drift
+        run: |
+          > /tmp/drift_report.txt
+          CRITICAL_FILES=(
+            "README.md"
+            "docs/cv-hakim-oumeziane.pdf"
+            "labs/devnet-mpls-l3vpn/"
+            "labs/devnet-ospf-lab/"
+          )
+          for entry in "${CRITICAL_FILES[@]}"; do
+            CHANGES=$(git log --since="24 hours ago" --name-only --pretty=format: \
+              -- "$entry" 2>/dev/null | sort -u | grep -v '^$' || true)
+            if [ -n "$CHANGES" ]; then
+              printf '**%s**\n```\n%s\n```\n\n' "$entry" "$CHANGES" >> /tmp/drift_report.txt
+            fi
+          done
 
       - name: Check repository structure — network-portfolio
         run: |
@@ -156,6 +176,10 @@ jobs:
             { echo "## ⚠️ Placeholders non résolus"; echo; cat /tmp/placeholders.txt; } \
               >> /tmp/issue_body.txt
           fi
+          if [ -s /tmp/drift_report.txt ]; then
+            { echo "## 🔀 Config drift détecté"; echo; cat /tmp/drift_report.txt; } \
+              >> /tmp/issue_body.txt
+          fi
           if [ -s /tmp/structure_errors.txt ]; then
             { echo "## 📁 Structure manquante"; echo; cat /tmp/structure_errors.txt; echo; } \
               >> /tmp/issue_body.txt
@@ -178,10 +202,12 @@ jobs:
               RERUN_BODY="**Re-run $(date --iso-8601=seconds) :**"$'\n'"$(cat /tmp/issue_body.txt)"
               gh issue comment "$EXISTING" --body "$RERUN_BODY"
             else
+              LABELS="hno-fix-needed"
+              [ -s /tmp/drift_report.txt ] && LABELS="$LABELS,config-drift"
               gh issue create \
                 --title "$TITLE" \
                 --body "$(cat /tmp/issue_body.txt)" \
-                --label "hno-fix-needed"
+                --label "$LABELS"
             fi
           fi
 
@@ -197,6 +223,14 @@ jobs:
               while IFS= read -r f; do echo "- \`$f\`"; done < /tmp/changed_files.txt
             else
               echo "_Aucun fichier modifié_"
+            fi
+            echo ""
+            echo "### 🔀 Config drift"
+            if [ -s /tmp/drift_report.txt ]; then
+              echo "❌ Fichiers critiques modifiés :"
+              cat /tmp/drift_report.txt
+            else
+              echo "✅ Aucun drift détecté"
             fi
             echo ""
             echo "### 📁 Structure du dépôt"
