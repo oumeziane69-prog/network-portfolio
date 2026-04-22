@@ -5,6 +5,7 @@
 ### Administrateur Réseaux & Télécoms | NetDevOps Engineer
 
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
+[![HNO Nightly Check](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml/badge.svg)](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
 [![▶ Formation Pipeline](https://img.shields.io/badge/▶%20Formation-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
 [![▶ Formation NotebookLM](https://img.shields.io/badge/▶%20Formation-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
