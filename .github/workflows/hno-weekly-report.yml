@@ -1,0 +1,212 @@
+name: HNO Weekly Report
+
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  OWNER: oumeziane69-prog
+
+jobs:
+  weekly-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate Weekly HNO Report
+        env:
+          GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          REPOS=("configs-reseau" "scc-coordinator" "telecom-ops-toolkit" "network-portfolio")
+          WEEK_START=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          WEEK_DATE=$(date -u -d '7 days ago' +%Y-%m-%d)
+          TODAY=$(date -u +%Y-%m-%d)
+          REPORT_FILE="/tmp/weekly_report.md"
+
+          {
+            echo "# \U0001F4CA Rapport HNO — semaine du ${WEEK_DATE}"
+            echo ""
+            echo "**Période couverte :** ${WEEK_DATE} → ${TODAY}"
+            echo ""
+            echo "---"
+            echo ""
+          } > "$REPORT_FILE"
+
+          TOTAL_RUNS=0
+          TOTAL_OK=0
+
+          for REPO in "${REPOS[@]}"; do
+            {
+              echo "## \U0001F4C1 \`${OWNER}/${REPO}\`"
+              echo ""
+            } >> "$REPORT_FILE"
+
+            # --- Nightly runs ---
+            RUNS_JSON=$(curl -sf -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/hno-nightly-check.yml/runs?per_page=100" \
+              || echo '{"workflow_runs":[]}')
+
+            RUN_OK=0
+            RUN_FAIL=0
+
+            {
+              echo "### \U0001F319 Runs HNO Nightly (7 derniers jours)"
+              echo ""
+            } >> "$REPORT_FILE"
+
+            RUN_COUNT=$(echo "$RUNS_JSON" | jq --arg since "$WEEK_START" \
+              '[.workflow_runs[] | select(.created_at >= $since and .conclusion != null)] | length')
+
+            if [ "$RUN_COUNT" -eq 0 ]; then
+              echo "  - ⚠️ Aucun run trouvé pour cette période" >> "$REPORT_FILE"
+            else
+              while IFS=$'\t' read -r CONCLUSION RUN_DATE RUN_ID; do
+                [ -z "$CONCLUSION" ] && continue
+
+                ERRORS=$(curl -sf -H "Authorization: Bearer ${GH_TOKEN}" \
+                  "https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${RUN_ID}/jobs" \
+                  | jq '[.jobs[] | select(.conclusion == "failure")] | length' 2>/dev/null || echo "0")
+
+                SHORT_DATE="${RUN_DATE:0:10}"
+
+                if [ "$CONCLUSION" = "success" ]; then
+                  RUN_OK=$((RUN_OK + 1))
+                  ICON="✅"
+                else
+                  RUN_FAIL=$((RUN_FAIL + 1))
+                  ICON="❌"
+                fi
+
+                echo "  - ${ICON} ${SHORT_DATE} — statut: \`${CONCLUSION}\`, erreurs détectées: ${ERRORS}" >> "$REPORT_FILE"
+              done < <(echo "$RUNS_JSON" | jq -r --arg since "$WEEK_START" \
+                '.workflow_runs[] | select(.created_at >= $since and .conclusion != null) | [.conclusion, .created_at, (.id | tostring)] | @tsv')
+            fi
+
+            REPO_TOTAL=$((RUN_OK + RUN_FAIL))
+            TOTAL_RUNS=$((TOTAL_RUNS + REPO_TOTAL))
+            TOTAL_OK=$((TOTAL_OK + RUN_OK))
+
+            if [ "$REPO_TOTAL" -gt 0 ]; then
+              SCORE=$(( RUN_OK * 100 / REPO_TOTAL ))
+              SCORE_DISPLAY="${SCORE}%"
+            else
+              SCORE_DISPLAY="N/A"
+            fi
+
+            {
+              echo ""
+              echo "**Score santé :** ${RUN_OK}/${REPO_TOTAL} runs OK → **${SCORE_DISPLAY}**"
+              echo ""
+            } >> "$REPORT_FILE"
+
+            # --- Open issues hno-fix-needed ---
+            ISSUES_JSON=$(curl -sf -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/issues?labels=hno-fix-needed&state=open&per_page=100" \
+              || echo '[]')
+
+            {
+              echo "### \U0001F41B Issues \`hno-fix-needed\` ouvertes cette semaine"
+              echo ""
+            } >> "$REPORT_FILE"
+
+            ISSUE_LINES=$(echo "$ISSUES_JSON" | jq -r --arg since "$WEEK_START" \
+              '.[] | select(.created_at >= $since) | "  - #\(.number) \(.title)"')
+
+            if [ -n "$ISSUE_LINES" ]; then
+              echo "$ISSUE_LINES" >> "$REPORT_FILE"
+            else
+              echo "  - ✅ Aucune issue en attente cette semaine" >> "$REPORT_FILE"
+            fi
+            echo "" >> "$REPORT_FILE"
+
+            # --- Merged PRs claude/hno-fix-* ---
+            PRS_JSON=$(curl -sf -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/pulls?state=closed&per_page=100" \
+              || echo '[]')
+
+            {
+              echo "### \U0001F527 PRs \`claude/hno-fix-*\` mergées cette semaine"
+              echo ""
+            } >> "$REPORT_FILE"
+
+            PR_LINES=$(echo "$PRS_JSON" | jq -r --arg since "$WEEK_START" \
+              '.[] | select(.merged_at != null and .merged_at >= $since and (.head.ref | startswith("claude/hno-fix-"))) | "  - #\(.number) \(.title) — mergée le \(.merged_at | split(\"T\")[0])"')
+
+            if [ -n "$PR_LINES" ]; then
+              echo "$PR_LINES" >> "$REPORT_FILE"
+            else
+              echo "  - ℹ️ Aucune correction automatique mergée cette semaine" >> "$REPORT_FILE"
+            fi
+
+            {
+              echo ""
+              echo "---"
+              echo ""
+            } >> "$REPORT_FILE"
+          done
+
+          # --- Global score ---
+          if [ "$TOTAL_RUNS" -gt 0 ]; then
+            GLOBAL_SCORE=$(( TOTAL_OK * 100 / TOTAL_RUNS ))
+            GLOBAL_SCORE_DISPLAY="${GLOBAL_SCORE}%"
+          else
+            GLOBAL_SCORE_DISPLAY="N/A"
+          fi
+
+          {
+            echo "## \U0001F3C6 Score Global de Santé"
+            echo ""
+            echo "| Métrique | Valeur |"
+            echo "|---|---|"
+            echo "| Total runs nightly | ${TOTAL_RUNS} |"
+            echo "| Runs réussis | ${TOTAL_OK} |"
+            echo "| Runs échoués | $((TOTAL_RUNS - TOTAL_OK)) |"
+            echo "| **Score global** | **${GLOBAL_SCORE_DISPLAY}** |"
+            echo ""
+            echo "*Rapport généré automatiquement le $(date -u '+%Y-%m-%d %H:%M') UTC*"
+          } >> "$REPORT_FILE"
+
+          echo "✅ Rapport généré : $(wc -l < "$REPORT_FILE") lignes"
+
+      - name: Publish report as issue on each repo
+        env:
+          GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          REPOS=("configs-reseau" "scc-coordinator" "telecom-ops-toolkit" "network-portfolio")
+          WEEK_DATE=$(date -u -d '7 days ago' +%Y-%m-%d)
+          TITLE="\U0001F4CA Rapport HNO — semaine du ${WEEK_DATE}"
+          REPORT_BODY=$(cat /tmp/weekly_report.md)
+
+          for REPO in "${REPOS[@]}"; do
+            # Create label if it does not exist
+            curl -s -X POST -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/labels" \
+              -d '{"name":"hno-weekly-report","color":"0075ca","description":"Rapport hebdomadaire HNO automatique"}' \
+              > /dev/null || true
+
+            ISSUE_JSON=$(jq -n \
+              --arg title "$TITLE" \
+              --arg body "$REPORT_BODY" \
+              '{"title": $title, "body": $body, "labels": ["hno-weekly-report"]}')
+
+            RESPONSE=$(curl -sf -X POST -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/issues" \
+              -d "$ISSUE_JSON")
+
+            ISSUE_URL=$(echo "$RESPONSE" | jq -r '.html_url // "erreur"')
+            echo "✅ Issue publiée sur ${OWNER}/${REPO} : ${ISSUE_URL}"
+          done
+
+      - name: Add report to GitHub Actions Summary
+        run: |
+          cat /tmp/weekly_report.md >> "$GITHUB_STEP_SUMMARY"
