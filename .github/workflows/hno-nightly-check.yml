@@ -1,0 +1,240 @@
+name: HNO Nightly Check
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  nightly-check:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.ADMIN_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install linting tools
+        run: pip install yamllint flake8
+
+      - name: Ensure labels exist
+        run: |
+          gh label create "hno-fix-needed" \
+            --color "d93f0b" \
+            --description "Manual fix required from HNO nightly check" 2>/dev/null || true
+          gh label create "auto-fix" \
+            --color "0075ca" \
+            --description "Automated fix from HNO nightly check" 2>/dev/null || true
+
+      - name: Find files modified in last 24h
+        run: |
+          git log --since="24 hours ago" --name-only --pretty=format: \
+            | sort -u | grep -v '^$' > /tmp/changed_files.txt || true
+          touch /tmp/changed_files.txt
+          echo "=== Changed files ==="
+          cat /tmp/changed_files.txt || echo "(none)"
+
+      - name: Lint YAML files
+        run: |
+          > /tmp/yaml_errors.txt
+          while IFS= read -r f; do
+            [[ "$f" =~ \.(yml|yaml)$ ]] || continue
+            [ -f "$f" ] || continue
+            OUT=$(yamllint -d relaxed "$f" 2>&1 || true)
+            if [ -n "$OUT" ]; then
+              printf '**%s**\n```\n%s\n```\n\n' "$f" "$OUT" >> /tmp/yaml_errors.txt
+            fi
+          done < /tmp/changed_files.txt
+
+      - name: Lint Python files
+        run: |
+          > /tmp/py_errors.txt
+          while IFS= read -r f; do
+            [[ "$f" =~ \.py$ ]] || continue
+            [ -f "$f" ] || continue
+            OUT=$(flake8 "$f" 2>&1 || true)
+            if [ -n "$OUT" ]; then
+              printf '**%s**\n```\n%s\n```\n\n' "$f" "$OUT" >> /tmp/py_errors.txt
+            fi
+          done < /tmp/changed_files.txt
+
+      - name: Detect placeholders in modified files
+        run: |
+          > /tmp/placeholders.txt
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            FOUND=$(grep -nP '<(PASSWORD-HERE|PSK-HERE|IP-HERE)>' "$f" 2>/dev/null || true)
+            if [ -n "$FOUND" ]; then
+              printf '**%s**\n```\n%s\n```\n\n' "$f" "$FOUND" >> /tmp/placeholders.txt
+            fi
+          done < /tmp/changed_files.txt
+
+      - name: Check repository structure — network-portfolio
+        run: |
+          > /tmp/structure_errors.txt
+
+          # labs/ must exist and contain at least one file
+          LAB_COUNT=$(find labs/ -type f 2>/dev/null | wc -l)
+          if [ "$LAB_COUNT" -eq 0 ]; then
+            echo "- Missing or empty: \`labs/\`" >> /tmp/structure_errors.txt
+          fi
+
+          # CV PDF must be present
+          [ -f "docs/cv-hakim-oumeziane.pdf" ] || \
+            echo "- Missing: \`docs/cv-hakim-oumeziane.pdf\`" >> /tmp/structure_errors.txt
+
+          # Check README.md badge image URLs return 2xx/3xx
+          if [ -f "README.md" ]; then
+            COUNT=0
+            while IFS= read -r url; do
+              [ -z "$url" ] && continue
+              COUNT=$((COUNT + 1))
+              [ "$COUNT" -gt 20 ] && break
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                --max-time 10 --location "$url" 2>/dev/null || echo "000")
+              if [[ "$STATUS" != 2* ]] && [[ "$STATUS" != 3* ]]; then
+                echo "- Badge cassé (HTTP $STATUS): \`$url\`" >> /tmp/structure_errors.txt
+              fi
+            done < <(grep -oP '!\[.*?\]\(\K[^)]+' README.md | grep -iE '^https?://' || true)
+          fi
+
+      - name: Auto-fix trailing whitespace
+        id: autofix
+        run: |
+          FIXED=false
+          while IFS= read -r f; do
+            [[ "$f" =~ \.(yml|yaml|py)$ ]] || continue
+            [ -f "$f" ] || continue
+            if grep -qP '\s+$' "$f" 2>/dev/null; then
+              sed -i 's/[[:space:]]*$//' "$f"
+              [ -n "$(tail -c1 "$f")" ] && printf '\n' >> "$f"
+              FIXED=true
+              echo "Fixed trailing whitespace: $f"
+            fi
+          done < /tmp/changed_files.txt
+          echo "fixed=$FIXED" >> "$GITHUB_OUTPUT"
+
+      - name: Push auto-fix branch and open PR
+        if: steps.autofix.outputs.fixed == 'true'
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BRANCH="claude/hno-fix-$DATE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "fix(hno): auto-fix trailing whitespace [$DATE]"
+          git push -u origin "$BRANCH"
+          PR_URL=$(gh pr create \
+            --title "fix(hno): auto-fix trailing whitespace [$DATE]" \
+            --body "Automated fix from HNO nightly check: trailing whitespace removed from modified YAML/Python files." \
+            --base main \
+            --head "$BRANCH" \
+            --label "auto-fix" 2>&1 | tail -1)
+          gh pr merge --auto --squash "$PR_URL" 2>/dev/null || true
+
+      - name: Create issue for non-auto-correctable errors
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          > /tmp/issue_body.txt
+          if [ -s /tmp/placeholders.txt ]; then
+            { echo "## ⚠️ Placeholders non résolus"; echo; cat /tmp/placeholders.txt; } \
+              >> /tmp/issue_body.txt
+          fi
+          if [ -s /tmp/structure_errors.txt ]; then
+            { echo "## 📁 Structure manquante"; echo; cat /tmp/structure_errors.txt; echo; } \
+              >> /tmp/issue_body.txt
+          fi
+          if [ -s /tmp/yaml_errors.txt ]; then
+            { echo "## 🔍 Erreurs YAML (non auto-corrigées)"; echo; cat /tmp/yaml_errors.txt; } \
+              >> /tmp/issue_body.txt
+          fi
+          if [ -s /tmp/py_errors.txt ]; then
+            { echo "## 🐍 Erreurs Python"; echo; cat /tmp/py_errors.txt; } \
+              >> /tmp/issue_body.txt
+          fi
+          if [ -s /tmp/issue_body.txt ]; then
+            TITLE="[HNO] Erreurs détectées — $DATE"
+            EXISTING=$(gh issue list \
+              --label "hno-fix-needed" --state open \
+              --search "$DATE in:title" \
+              --json number --jq '.[0].number' 2>/dev/null || true)
+            if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+              gh issue comment "$EXISTING" \
+                --body "**Re-run $(date --iso-8601=seconds) :**
+
+$(cat /tmp/issue_body.txt)"
+            else
+              gh issue create \
+                --title "$TITLE" \
+                --body "$(cat /tmp/issue_body.txt)" \
+                --label "hno-fix-needed"
+            fi
+          fi
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          {
+            echo "## 🌙 HNO Nightly Check — network-portfolio — $DATE"
+            echo ""
+            echo "### 📋 Fichiers modifiés (24h)"
+            if [ -s /tmp/changed_files.txt ]; then
+              while IFS= read -r f; do echo "- \`$f\`"; done < /tmp/changed_files.txt
+            else
+              echo "_Aucun fichier modifié_"
+            fi
+            echo ""
+            echo "### 📁 Structure du dépôt"
+            if [ -s /tmp/structure_errors.txt ]; then
+              echo "❌ Problèmes détectés :"
+              cat /tmp/structure_errors.txt
+            else
+              echo "✅ Structure conforme"
+            fi
+            echo ""
+            echo "### 🔐 Placeholders"
+            if [ -s /tmp/placeholders.txt ]; then
+              echo "❌ Placeholders non résolus :"
+              cat /tmp/placeholders.txt
+            else
+              echo "✅ Aucun placeholder détecté"
+            fi
+            echo ""
+            echo "### 🔍 Linting"
+            LINT_CLEAN=true
+            if [ -s /tmp/yaml_errors.txt ]; then
+              echo "#### YAML"
+              cat /tmp/yaml_errors.txt
+              LINT_CLEAN=false
+            fi
+            if [ -s /tmp/py_errors.txt ]; then
+              echo "#### Python (flake8)"
+              cat /tmp/py_errors.txt
+              LINT_CLEAN=false
+            fi
+            [ "$LINT_CLEAN" = true ] && echo "✅ Aucune erreur de lint"
+            echo ""
+            echo "### 🔧 Auto-fix"
+            if [ "${{ steps.autofix.outputs.fixed }}" = "true" ]; then
+              echo "✅ Corrections automatiques appliquées — PR créée"
+            else
+              echo "ℹ️ Aucun auto-fix nécessaire"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
