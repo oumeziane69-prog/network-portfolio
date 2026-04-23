@@ -65,3 +65,14 @@ Rules:
 Use placeholders in examples: `<IP-HERE>`, `<PASSWORD-HERE>`, `<TOKEN-HERE>`
 
 Real values must come from `.env` files that are listed in `.gitignore` and never committed.
+
+---
+## Session Log
+
+After every Claude Code session, append a summary here:
+
+Format:
+### YYYY-MM-DD — <branch-name>
+- Files modified: <list>
+- Actions: <summary>
+- Status: ✅ Done / 🔄 In progress / ⚠️ Issue
