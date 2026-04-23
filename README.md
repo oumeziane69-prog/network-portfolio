@@ -253,7 +253,7 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=oumeziane69-prog&layout=compact&theme=dark&hide_border=true)
 
-![GitHub Streak](https://streak-stats.demolab.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
+![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
 
 </div>
 

@@ -160,9 +160,11 @@ jobs:
           git add -A
           git commit -m "fix(hno): auto-fix trailing whitespace [$DATE]"
           git push -u origin "$BRANCH"
+          PR_BODY="Automated fix from HNO nightly check:"
+          PR_BODY="${PR_BODY} trailing whitespace removed from modified YAML/Python files."
           PR_URL=$(gh pr create \
             --title "fix(hno): auto-fix trailing whitespace [$DATE]" \
-            --body "Automated fix from HNO nightly check: trailing whitespace removed from modified YAML/Python files." \
+            --body "$PR_BODY" \
             --base main \
             --head "$BRANCH" \
             --label "auto-fix" 2>&1 | tail -1)
