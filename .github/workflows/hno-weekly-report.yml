@@ -48,9 +48,10 @@ jobs:
             } >> "$REPORT_FILE"
 
             # --- Nightly runs ---
+            NIGHTLY_URL="https://api.github.com/repos/${OWNER}/${REPO}"
+            NIGHTLY_URL="${NIGHTLY_URL}/actions/workflows/hno-nightly-check.yml/runs?per_page=100"
             RUNS_JSON=$(curl -sf -H "Authorization: Bearer ${GH_TOKEN}" \
-              "https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/hno-nightly-check.yml/runs?per_page=100" \
-              || echo '{"workflow_runs":[]}')
+              "$NIGHTLY_URL" || echo '{"workflow_runs":[]}')
 
             RUN_OK=0
             RUN_FAIL=0
@@ -66,6 +67,9 @@ jobs:
             if [ "$RUN_COUNT" -eq 0 ]; then
               echo "  - ⚠️ Aucun run trouvé pour cette période" >> "$REPORT_FILE"
             else
+              JQ_RUNS='.workflow_runs[] | select(.created_at >= $since'
+              JQ_RUNS="${JQ_RUNS} and .conclusion != null)"
+              JQ_RUNS="${JQ_RUNS} | [.conclusion, .created_at, (.id | tostring)] | @tsv"
               while IFS=$'\t' read -r CONCLUSION RUN_DATE RUN_ID; do
                 [ -z "$CONCLUSION" ] && continue
 
@@ -83,9 +87,10 @@ jobs:
                   ICON="❌"
                 fi
 
-                echo "  - ${ICON} ${SHORT_DATE} — statut: \`${CONCLUSION}\`, erreurs détectées: ${ERRORS}" >> "$REPORT_FILE"
-              done < <(echo "$RUNS_JSON" | jq -r --arg since "$WEEK_START" \
-                '.workflow_runs[] | select(.created_at >= $since and .conclusion != null) | [.conclusion, .created_at, (.id | tostring)] | @tsv')
+                MSG="  - ${ICON} ${SHORT_DATE} — statut: \`${CONCLUSION}\`,"
+                MSG="${MSG} erreurs détectées: ${ERRORS}"
+                echo "${MSG}" >> "$REPORT_FILE"
+              done < <(echo "$RUNS_JSON" | jq -r --arg since "$WEEK_START" "$JQ_RUNS")
             fi
 
             REPO_TOTAL=$((RUN_OK + RUN_FAIL))
@@ -135,8 +140,11 @@ jobs:
               echo ""
             } >> "$REPORT_FILE"
 
-            PR_LINES=$(echo "$PRS_JSON" | jq -r --arg since "$WEEK_START" \
-              '.[] | select(.merged_at != null and .merged_at >= $since and (.head.ref | startswith("claude/hno-fix-"))) | "  - #\(.number) \(.title) — mergée le \(.merged_at | split(\"T\")[0])"')
+            JQ_PR='.[] | select(.merged_at != null and .merged_at >= $since'
+            JQ_PR="${JQ_PR} and (.head.ref | startswith(\"claude/hno-fix-\")))"
+            JQ_PR="${JQ_PR} | \"  - #\(.number) \(.title) — mergée le"
+            JQ_PR="${JQ_PR} \(.merged_at | split(\"T\")[0])\""
+            PR_LINES=$(echo "$PRS_JSON" | jq -r --arg since "$WEEK_START" "$JQ_PR")
 
             if [ -n "$PR_LINES" ]; then
               echo "$PR_LINES" >> "$REPORT_FILE"
