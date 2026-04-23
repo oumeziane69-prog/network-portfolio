@@ -10,6 +10,7 @@
 [![▶ Formation Pipeline](https://img.shields.io/badge/▶%20Formation-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
 [![▶ Formation NotebookLM](https://img.shields.io/badge/▶%20Formation-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?logo=adobeacrobatreader)](https://github.com/oumeziane69-prog/network-portfolio/raw/main/docs/cv-hakim-oumeziane.pdf)
+[![Email](https://img.shields.io/badge/Email-oumeziane.69%40gmail.com-D14836?style=flat-square&logo=gmail)](mailto:oumeziane.69@gmail.com)
 
 </div>
 
@@ -45,6 +46,7 @@
 | 🐍 Netmiko (Python) | Déploiement sur équipements / Device deployment |
 | 🐧 WSL | Environnement d'exécution / Runtime environment |
 | 🐙 Git / GitHub | Versioning, branching strategy / Versioning & branching |
+| 🤖 Renovate Bot | Mises à jour de dépendances automatisées / Automated dependency updates |
 
 ### Pipeline NetDevOps
 
@@ -164,10 +166,12 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 | Certification / Compétence | Domaine | Statut |
 |---------------------------|---------|--------|
-| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🚧 En cours |
+| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🔄 En cours |
 | **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 📅 Planifié |
 | **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 📅 Planifié |
 | **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 📅 Planifié |
+| **Node.js 20 → 24** — Mise à jour runtime CI | JavaScript / Automation | 🔄 En cours (juin 2026) |
+| **Renovate Bot** — Automatisation des dépendances | DevOps / Maintenance | 🔄 En cours |
 
 ---
 
@@ -241,16 +245,6 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 ---
 
-## 📚 Formation NetDevOps
-
-Pipeline CI/CD complet pour automatiser le déploiement de configurations réseau multi-constructeurs, de la génération IA au déploiement physique via Netmiko.
-
-📄 [Voir la formation](docs/formation_netdevops.html)
-
-[![▶ Pipeline CI/CD](https://img.shields.io/badge/▶%20Vidéo-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo) [![▶ NotebookLM v2](https://img.shields.io/badge/▶%20Vidéo-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
-
----
-
 ## 📊 GitHub Stats
 
 <div align="center">
@@ -269,7 +263,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 | Lab | Stack | Statut |
 |-----|-------|--------|
-| MPLS VRF L3VPN | IOS-XE · LDP · BGP | 🟢 En cours |
+| MPLS VRF L3VPN | IOS-XE · LDP · BGP | ✅ Complété |
 | BGP eBGP AS65001/65002 | IOS-XE · MED/Local-Pref | ✅ Complété |
 | Netmiko Pipeline | Python · GitHub Actions | ✅ Complété |
 | NETCONF/YANG | ncclient · Jinja2 | ✅ Complété |
@@ -282,9 +276,11 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 ## 📬 Contact
 
-Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
+Tu peux me retrouver sur **LinkedIn**, par **email** ou via mon profil **GitHub** ci-dessus.
+📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)
 
-*Feel free to reach out via **LinkedIn** or my **GitHub** profile above.*
+*Feel free to reach out via **LinkedIn**, **email**, or my **GitHub** profile above.*
+*📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)*
 
 ---
 
@@ -293,6 +289,8 @@ Tu peux me retrouver sur **LinkedIn** ou via mon profil **GitHub** ci-dessus.
 *Le développement actif se fait en dépôts privés — ce portfolio présente l'architecture, les labs et la documentation.*
 
 *Active development happens in private repos — this portfolio showcases architecture, labs & documentation.*
+
+*Dernière mise à jour : Avril 2026 / Last updated: April 2026*
 
 </div>
 
