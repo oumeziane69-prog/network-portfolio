@@ -280,7 +280,7 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 **EN** — Progress tracking for NetDevOps labs, certifications, and projects. Full board available on GitHub Project.
 
-[![GitHub Project — Network Portfolio Roadmap](https://img.shields.io/badge/GitHub_Project-Network_Portfolio_Roadmap-0075ca?style=flat-square&logo=github)](<PROJECT-URL-HERE>)
+[![GitHub Project — Network Portfolio Roadmap](https://img.shields.io/badge/GitHub_Project-Network_Portfolio_Roadmap-0075ca?style=flat-square&logo=github)](https://github.com/users/oumeziane69-prog/projects/1)
 
 | Item | Type | Tech | Priority | Status |
 |------|------|------|----------|--------|
