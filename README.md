@@ -274,6 +274,27 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 ---
 
+## 🗺️ Roadmap
+
+**FR** — Suivi de progression des labs, certifications et projets NetDevOps. Tableau de bord complet disponible sur GitHub Project.
+
+**EN** — Progress tracking for NetDevOps labs, certifications, and projects. Full board available on GitHub Project.
+
+[![GitHub Project — Network Portfolio Roadmap](https://img.shields.io/badge/GitHub_Project-Network_Portfolio_Roadmap-0075ca?style=flat-square&logo=github)](https://github.com/users/oumeziane69-prog/projects)
+
+| Item | Type | Tech | Priority | Status |
+|------|------|------|----------|--------|
+| MPLS VRF L3VPN Lab | Lab | Cisco | High | ✅ Completed |
+| BGP eBGP AS65001/65002 | Lab | Cisco | High | ✅ Completed |
+| Netmiko automation pipeline | Script | Python | High | ✅ Completed |
+| NETCONF/YANG lab | Lab | Cisco | Medium | ✅ Completed |
+| pyATS lab | Lab | Cisco | Medium | ✅ Completed |
+| CI/CD NetDevOps pipeline | Documentation | Python | High | ✅ Completed |
+| NSE4 Fortinet | Certification | Fortinet | High | 🔨 In Progress |
+| DevNet Associate | Certification | Cisco | High | 🎯 Roadmap |
+
+---
+
 ## 📬 Contact
 
 Tu peux me retrouver sur **LinkedIn**, par **email** ou via mon profil **GitHub** ci-dessus.
