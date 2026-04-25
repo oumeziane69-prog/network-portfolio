@@ -272,3 +272,12 @@ jobs:
               echo "ℹ️ Aucun auto-fix nécessaire"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Files modified in last 24h
+        run: |
+          echo "## 📊 Fichiers modifiés (24h)" >> $GITHUB_STEP_SUMMARY
+          COUNT=$(git log --since="24 hours ago" --name-only --pretty=format: | sort -u | grep -v '^$' | wc -l)
+          echo "**Nombre de fichiers modifiés :** $COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Liste des fichiers" >> $GITHUB_STEP_SUMMARY
+          git log --since="24 hours ago" --name-only --pretty=format: | sort -u | grep -v '^$' | while read f; do echo "- \`$f\`" >> $GITHUB_STEP_SUMMARY; done
