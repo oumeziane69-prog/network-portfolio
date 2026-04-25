@@ -76,3 +76,10 @@ Format:
 - Files modified: <list>
 - Actions: <summary>
 - Status: ✅ Done / 🔄 In progress / ⚠️ Issue
+
+### 2026-04-25
+- HNO Nightly Check : 4/4 ✅ verts
+- Fix faux positif structure docs/scripts : telecom-ops-toolkit PR #54
+- Ajout compteur fichiers 24h HNO : 4 repos PR #103/70/55/83
+- Fix Node.js 20→24 Actions : 4 repos PR #104/71/+2
+- Test multi-agents : concluant, timeout sur configs-reseau (7 fichiers)
