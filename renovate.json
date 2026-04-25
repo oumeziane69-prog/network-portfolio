@@ -21,6 +21,11 @@
       "matchPackageNames": ["node"],
       "allowedVersions": "24.x",
       "labels": ["node-upgrade"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ],
   "labels": ["renovate", "dependencies"],
