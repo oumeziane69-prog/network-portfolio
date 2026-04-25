@@ -11,6 +11,7 @@
 [![▶ Formation NotebookLM](https://img.shields.io/badge/▶%20Formation-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?logo=adobeacrobatreader)](https://github.com/oumeziane69-prog/network-portfolio/raw/main/docs/cv-hakim-oumeziane.pdf)
 [![Email](https://img.shields.io/badge/Email-oumeziane.69%40gmail.com-D14836?style=flat-square&logo=gmail)](mailto:oumeziane.69@gmail.com)
+[![Discussions](https://img.shields.io/badge/Discussions-purple?style=flat-square&logo=github)](https://github.com/oumeziane69-prog/network-portfolio/discussions)
 
 </div>
 
