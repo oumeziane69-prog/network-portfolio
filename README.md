@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
 [![HNO Nightly Check](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml/badge.svg?branch=main)](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
-[![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
+[![▶ Formation YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?style=flat-square&logo=adobeacrobatreader)](https://raw.githubusercontent.com/oumeziane69-prog/network-portfolio/main/docs/cv-hakim-oumeziane.pdf)
 [![Discussions](https://img.shields.io/badge/Discussions-purple?style=flat-square&logo=github)](https://github.com/oumeziane69-prog/network-portfolio/discussions)
 [![▶ Formation HTML](https://img.shields.io/badge/▶_Formation-HTML-orange?style=flat-square)](docs/formation_netdevops.html)
