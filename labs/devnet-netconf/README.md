@@ -1,22 +1,58 @@
-# Lab NETCONF — Cisco C8000V IOS XE / NETCONF Lab — Cisco C8000V IOS XE
+# Lab 010 — NETCONF/YANG — Cisco Cat8k IOS-XE / NETCONF/YANG Lab — Cisco Cat8k IOS-XE
+
+**Status: Completed ✅**
 
 ---
 
 ## FR — Description
 
-Ce lab démontre l'automatisation réseau via **NETCONF/YANG** sur un routeur virtuel Cisco C8000V.
+Ce lab démontre l'automatisation réseau via **NETCONF/YANG** sur un routeur Cisco Catalyst 8000V.
+Deux scripts Python couvrent : la récupération de la configuration complète et un get filtré
+retournant hostname + interfaces spécifiques au format JSON.
 
 | Paramètre | Valeur |
 |---|---|
-| Plateforme | Cisco C8000V IOS XE 17.15.04c |
+| Plateforme | Cisco Cat8k IOS-XE 17.9 |
 | Protocole | NETCONF (SSH port 830) |
 | Bibliothèque Python | ncclient 0.7.1 |
-| Modèles YANG | `ietf-interfaces`, `Cisco-IOS-XE-native` |
+| Version Python | 3.8 |
+| Modèle YANG | `Cisco-IOS-XE-native` |
 
-### Opérations démontrées
+### Activation de NETCONF sur IOS-XE
 
-- **get interfaces** — récupère l'état opérationnel de toutes les interfaces via `ietf-interfaces`
-- **get-config OSPF** — extrait la configuration OSPF en XML via `Cisco-IOS-XE-native`
+```
+R1# conf t
+R1(config)# netconf-yang
+R1(config)# end
+R1# show netconf-yang status
+```
+
+### Scripts
+
+| Script | Opération | Sortie |
+|---|---|---|
+| `netconf_get.py` | `get-config` sans filtre | XML — configuration complète |
+| `netconf_interfaces.py` | `get-config` filtré (subtree) | JSON — hostname + interfaces ciblées |
+
+### Interfaces récupérées par le filtre
+
+- `GigabitEthernet1`
+- `Vlan20`, `Vlan21`
+- `VirtualPortGroup31`
+
+### Point clé — syntaxe ncclient
+
+La syntaxe `filter=("subtree", to_ele(...))` est **obligatoire** pour passer un filtre XML
+sous forme d'objet ElementTree à ncclient :
+
+```python
+from ncclient.xml_ import to_ele
+
+response = conn.get_config(
+    source="running",
+    filter=("subtree", to_ele(FILTER_XML)),
+)
+```
 
 ### Prérequis
 
@@ -36,25 +72,60 @@ export DEVNET_PASS=<PASSWORD-HERE>
 
 ```bash
 python netconf_get.py
+python netconf_interfaces.py
 ```
 
 ---
 
 ## EN — Description
 
-This lab demonstrates network automation via **NETCONF/YANG** on a Cisco C8000V virtual router.
+This lab demonstrates network automation via **NETCONF/YANG** on a Cisco Catalyst 8000V router.
+Two Python scripts cover: full running-config retrieval and a filtered get returning hostname
+and specific interfaces as JSON.
 
 | Parameter | Value |
 |---|---|
-| Platform | Cisco C8000V IOS XE 17.15.04c |
+| Platform | Cisco Cat8k IOS-XE 17.9 |
 | Protocol | NETCONF (SSH port 830) |
 | Python library | ncclient 0.7.1 |
-| YANG models | `ietf-interfaces`, `Cisco-IOS-XE-native` |
+| Python version | 3.8 |
+| YANG model | `Cisco-IOS-XE-native` |
 
-### Demonstrated operations
+### Enabling NETCONF on IOS-XE
 
-- **get interfaces** — retrieves the operational state of all interfaces via `ietf-interfaces`
-- **get-config OSPF** — extracts OSPF configuration as XML via `Cisco-IOS-XE-native`
+```
+R1# conf t
+R1(config)# netconf-yang
+R1(config)# end
+R1# show netconf-yang status
+```
+
+### Scripts
+
+| Script | Operation | Output |
+|---|---|---|
+| `netconf_get.py` | `get-config` with no filter | XML — full running config |
+| `netconf_interfaces.py` | `get-config` filtered (subtree) | JSON — hostname + targeted interfaces |
+
+### Interfaces returned by the filter
+
+- `GigabitEthernet1`
+- `Vlan20`, `Vlan21`
+- `VirtualPortGroup31`
+
+### Key point — ncclient syntax
+
+The `filter=("subtree", to_ele(...))` syntax is **required** to pass an XML filter
+as an ElementTree object to ncclient:
+
+```python
+from ncclient.xml_ import to_ele
+
+response = conn.get_config(
+    source="running",
+    filter=("subtree", to_ele(FILTER_XML)),
+)
+```
 
 ### Prerequisites
 
@@ -74,45 +145,57 @@ export DEVNET_PASS=<PASSWORD-HERE>
 
 ```bash
 python netconf_get.py
+python netconf_interfaces.py
 ```
 
 ---
 
 ## Output example / Exemple de sortie
 
-```xml
-=== GET interfaces (ietf-interfaces) ===
-<?xml version="1.0" encoding="UTF-8"?>
-<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-  <data>
-    <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-      <interface>
-        <name>GigabitEthernet1</name>
-        <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
-          ianaift:ethernetCsmacd
-        </type>
-        <enabled>true</enabled>
-      </interface>
-    </interfaces>
-  </data>
-</rpc-reply>
+### netconf_get.py
 
-=== GET-CONFIG OSPF (Cisco-IOS-XE-native) ===
-<?xml version="1.0" encoding="UTF-8"?>
-<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+```
+=== GET full running config (no filter) ===
+<?xml version="1.0" ?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="urn:uuid:...">
   <data>
     <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
-      <router>
-        <ospf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-ospf">
-          <id>1</id>
-          <network>
-            <ip><NETWORK-HERE></ip>
-            <mask><MASK-HERE></mask>
-            <area><AREA-HERE></area>
-          </network>
-        </ospf>
-      </router>
+      <hostname>Cat8k-Lab</hostname>
+      <version>17.9</version>
+      <interface>
+        ...
+      </interface>
     </native>
   </data>
 </rpc-reply>
+```
+
+### netconf_interfaces.py
+
+```json
+{
+  "hostname": "Cat8k-Lab",
+  "interfaces": {
+    "GigabitEthernet1": {
+      "name": "1",
+      "ip_address": "<IP-HERE>",
+      "description": "MGMT",
+      "shutdown": false
+    },
+    "Vlan20": {
+      "name": "20",
+      "ip_address": "<IP-HERE>",
+      "shutdown": false
+    },
+    "Vlan21": {
+      "name": "21",
+      "shutdown": false
+    },
+    "VirtualPortGroup31": {
+      "name": "31",
+      "ip_address": "<IP-HERE>",
+      "shutdown": false
+    }
+  }
+}
 ```
