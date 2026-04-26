@@ -1,0 +1,33 @@
+! ============================================================
+! QoS MQC Lab — R1 (Cisco Catalyst 8000 IOS-XE)
+! LLQ (VoIP priority 128 kbps) + CBWFQ (Data 256 kbps)
+! Applied: service-policy output GigabitEthernet1
+! ============================================================
+
+! --- ACL: classify VoIP (RTP UDP 16384-32767) ---
+ip access-list extended ACL-VOIP
+ permit udp any any range 16384 32767
+
+! --- ACL: classify Data (TCP any) ---
+ip access-list extended ACL-DATA
+ permit tcp any any
+
+! --- Class-maps ---
+class-map match-all CM-VOIP
+ match access-group name ACL-VOIP
+
+class-map match-all CM-DATA
+ match access-group name ACL-DATA
+
+! --- Policy-map: LLQ + CBWFQ + fair-queue default ---
+policy-map PM-QOS
+ class CM-VOIP
+  priority 128
+ class CM-DATA
+  bandwidth 256
+ class class-default
+  fair-queue
+
+! --- Apply outbound on WAN interface ---
+interface GigabitEthernet1
+ service-policy output PM-QOS
