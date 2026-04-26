@@ -1,0 +1,113 @@
+! ============================================================
+! Cisco Cat8k IOS-XE 17.12.2 — BGP Filtering Lab
+! AS 65001 | Router-ID 2.2.2.2
+! DevNet Sandbox — eBGP peer AS 65002 @ 10.10.20.50
+! ============================================================
+
+hostname Cat8k-BGP-Lab
+
+!
+! ── Interfaces ──────────────────────────────────────────────
+!
+interface Loopback0
+ description Router-ID / BGP prefix
+ ip address 2.2.2.2 255.255.255.255
+!
+interface Loopback1
+ description Internal subnet — advertised outbound
+ ip address 172.16.1.1 255.255.255.0
+!
+interface Loopback2
+ description Internal subnet — filtered outbound
+ ip address 192.168.20.1 255.255.255.0
+!
+interface GigabitEthernet1
+ description eBGP uplink to AS65002
+ ip address 10.10.20.254 255.255.255.0
+ negotiation auto
+ no shutdown
+!
+
+!
+! ── IP Routing ──────────────────────────────────────────────
+!
+ip routing
+ip bgp-community new-format
+
+!
+! ── Prefix-lists ────────────────────────────────────────────
+!
+ip prefix-list PL-OUT seq 10 permit 172.16.1.0/24
+ip prefix-list PL-OUT seq 20 permit 2.2.2.2/32
+ip prefix-list PL-OUT seq 30 deny 0.0.0.0/0 le 32
+
+!
+! ── AS-path access-lists ────────────────────────────────────
+!
+! ACL 1: permit only locally originated routes (empty AS-path)
+ip as-path access-list 1 permit ^$
+!
+! ACL 2: permit routes received directly from AS 65002
+ip as-path access-list 2 permit ^65002$
+!
+! ACL 3: deny routes that transited through AS 65003
+ip as-path access-list 3 deny _65003_
+ip as-path access-list 3 permit .*
+
+!
+! ── Route-maps ──────────────────────────────────────────────
+!
+! RM-OUT: outbound filter toward AS65002
+!   - match PL-OUT (allow 172.16.1.0/24 and 2.2.2.2/32)
+!   - set local-pref 200 and community 65001:100
+route-map RM-OUT permit 10
+ match ip address prefix-list PL-OUT
+ set local-preference 200
+ set community 65001:100
+route-map RM-OUT deny 20
+!
+! RM-COMMUNITY: additive community tagging for selected prefixes
+route-map RM-COMMUNITY permit 10
+ match ip address prefix-list PL-OUT
+ set community 65001:200 additive
+route-map RM-COMMUNITY deny 20
+
+!
+! ── BGP ─────────────────────────────────────────────────────
+!
+router bgp 65001
+ bgp router-id 2.2.2.2
+ bgp log-neighbor-changes
+ !
+ ! Advertise local prefixes into BGP table
+ network 2.2.2.2 mask 255.255.255.255
+ network 172.16.1.0 mask 255.255.255.0
+ network 192.168.20.0 mask 255.255.255.0
+ !
+ ! eBGP neighbor AS 65002
+ neighbor 10.10.20.50 remote-as 65002
+ neighbor 10.10.20.50 description DevNet-Peer-AS65002
+ neighbor 10.10.20.50 send-community
+ neighbor 10.10.20.50 route-map RM-OUT out
+ !
+ ! Address-family explicit config
+ address-family ipv4
+  network 2.2.2.2 mask 255.255.255.255
+  network 172.16.1.0 mask 255.255.255.0
+  network 192.168.20.0 mask 255.255.255.0
+  neighbor 10.10.20.50 activate
+  neighbor 10.10.20.50 send-community
+  neighbor 10.10.20.50 route-map RM-OUT out
+ exit-address-family
+
+!
+! ── Verification commands ────────────────────────────────────
+!
+! show bgp ipv4 unicast summary
+! show bgp ipv4 unicast neighbors 10.10.20.50 advertised-routes
+! show bgp ipv4 unicast 172.16.1.0/24
+! show bgp ipv4 unicast 192.168.20.0/24
+! show ip prefix-list PL-OUT
+! show ip as-path access-list
+! show route-map RM-OUT
+! show bgp ipv4 unicast community 65001:100
