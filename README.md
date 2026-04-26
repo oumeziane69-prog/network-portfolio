@@ -10,6 +10,7 @@
 [![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?style=flat-square&logo=adobeacrobatreader)](https://raw.githubusercontent.com/oumeziane69-prog/network-portfolio/main/docs/cv-hakim-oumeziane.pdf)
 [![Discussions](https://img.shields.io/badge/Discussions-purple?style=flat-square&logo=github)](https://github.com/oumeziane69-prog/network-portfolio/discussions)
+[![▶ Formation HTML](https://img.shields.io/badge/▶_Formation-HTML-orange?style=flat-square)](docs/formation_netdevops.html)
 
 </div>
 
