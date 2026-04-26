@@ -90,3 +90,6 @@ Format:
 - Labs DevNet : OSPF multi-area, GRE over IPSec, QoS MQC, SD-WAN Lite (PBR+IP SLA)
 - PRs mergées : #94 #95 #96 #97 #98 #99 #100
 - HNO bloqué jusqu'au 1er mai (carte expirée)
+- Lab BGP Filtering : prefix-list, AS-path ACL, route-map, communities (cat8000v AS65001, IOS-XE 17.12.2)
+- Lab NETCONF : get-config BGP/YANG, edit-config interface Loopback2
+- PR #103 merged — labs/bgp-filtering/ ajouté sur main
