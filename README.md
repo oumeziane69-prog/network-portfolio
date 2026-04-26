@@ -5,12 +5,10 @@
 ### Administrateur Réseaux & Télécoms | NetDevOps Engineer
 
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
-[![HNO Nightly Check](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml/badge.svg)](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml)
+[![HNO Nightly Check](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml/badge.svg?branch=main)](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
-[![▶ Formation Pipeline](https://img.shields.io/badge/▶%20Formation-Pipeline%20CI%2FCD-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
-[![▶ Formation NotebookLM](https://img.shields.io/badge/▶%20Formation-NotebookLM%20v2-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
-[![CV](https://img.shields.io/badge/CV-PDF-blue?logo=adobeacrobatreader)](https://github.com/oumeziane69-prog/network-portfolio/raw/main/docs/cv-hakim-oumeziane.pdf)
-[![Email](https://img.shields.io/badge/Email-oumeziane.69%40gmail.com-D14836?style=flat-square&logo=gmail)](mailto:oumeziane.69@gmail.com)
+[![▶ YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/vfQ1HxVoSHo)
+[![CV](https://img.shields.io/badge/CV-PDF-blue?style=flat-square&logo=adobeacrobatreader)](https://raw.githubusercontent.com/oumeziane69-prog/network-portfolio/main/docs/cv-hakim-oumeziane.pdf)
 [![Discussions](https://img.shields.io/badge/Discussions-purple?style=flat-square&logo=github)](https://github.com/oumeziane69-prog/network-portfolio/discussions)
 
 </div>
@@ -167,7 +165,7 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 | Certification / Compétence | Domaine | Statut |
 |---------------------------|---------|--------|
-| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | 🔄 En cours |
+| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | ⏸️ En pause |
 | **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 📅 Planifié |
 | **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 📅 Planifié |
 | **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 📅 Planifié |
@@ -245,6 +243,54 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 > Les labs pratiques associés à ces compétences sont disponibles dans le dossier [`labs/`](labs/).
 
 ---
+
+## 🔬 Labs actifs / Active Labs
+
+| Lab | Stack | Statut |
+|-----|-------|--------|
+| **DevNet** | | |
+| `devnet-bgp` | C8000V · BGP · IOS-XE | ✅ Complété |
+| `devnet-bgp-attributes` | IOS-XE · BGP · Local-Pref · MED | ✅ Complété |
+| `devnet-bgp-ebgp` | IOS-XE · eBGP AS65001/65002 | ✅ Complété |
+| `devnet-bgp-filtering` | IOS-XE · BGP · prefix-list | ✅ Complété |
+| `devnet-mpls` | IOS-XE · MPLS · LDP | ✅ Complété |
+| `devnet-mpls-l3vpn` | IOS-XE · LDP · MP-BGP · VRF | ✅ Complété |
+| `devnet-netconf` | C8000V · ncclient · YANG | ✅ Complété |
+| `devnet-ospf` | C8000V · OSPF Area 0 | ✅ Complété |
+| `devnet-ospf-vpn` | Cat8kv · OSPF · OpenConnect VPN | ✅ Complété |
+| `devnet-redistribution` | IOS-XE · OSPF → BGP redistribution | ✅ Complété |
+| **Routing** | | |
+| `routing/bgp-ibgp-ebgp` | IOS-XE · iBGP · eBGP · Route Reflector | ✅ Complété |
+| `routing/juniper-junos-basics` | vSRX · JunOS · BGP eBGP | 🚧 En cours |
+| `routing/mpls-l3vpn` | IOS-XE · LDP · VRF · MP-BGP | ✅ Complété |
+| `routing/mpls-traffic-engineering` | IOS-XE · RSVP-TE · FRR | 🚧 En cours |
+| `routing/ospf-multi-area` | IOS-XE · OSPF · ABR/ASBR · stub/NSSA | ✅ Complété |
+| **Firewall** | | |
+| `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 🚧 En cours |
+| `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | 🚧 En cours |
+| `firewall/stormshield-sns` | SNS OS · IPS ASQ · VPN SSL/IPSec | 📅 Planifié |
+| **Security Services** | | |
+| `security-services/ids-ips-suricata` | Suricata · ELK · custom rules | 🚧 En cours |
+| `security-services/radius-dot1x` | FreeRADIUS · 802.1X · MAB · Cisco | ✅ Complété |
+| `security-services/vpn-ipsec-site-to-site` | FortiGate · IKEv2 · AES-256-GCM · X.509 | ✅ Complété |
+| **OT Industrial** | | |
+| `ot-industrial/iec62443-overview` | IEC 62443 · SL 1-4 · zones/conduits | 🚧 En cours |
+| `ot-industrial/purdue-model-segmentation` | Purdue · IDMZ · SCADA/HMI/PLC | ✅ Complété |
+| **Transmission** | | |
+| `transmission` | Faisceau hertzien · Fibre optique · OTDR | ✅ Complété |
+
+---
+
+## 📚 Formation NetDevOps
+
+Pipeline CI/CD complet pour automatiser le déploiement de configurations réseau multi-constructeurs, de la génération IA au déploiement physique via Netmiko.
+
+📄 [Voir la formation](docs/formation_netdevops.html)
+
+[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red)](https://youtu.be/vfQ1HxVoSHo)
+
+---
+
 
 ## 📊 GitHub Stats
 
