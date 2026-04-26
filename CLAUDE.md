@@ -83,3 +83,10 @@ Format:
 - Ajout compteur fichiers 24h HNO : 4 repos PR #103/70/55/83
 - Fix Node.js 20→24 Actions : 4 repos PR #104/71/+2
 - Test multi-agents : concluant, timeout sur configs-reseau (7 fichiers)
+
+### 2026-04-26
+- GitHub Discussions activé sur network-portfolio
+- README : badges corrigés, 24 labs listés, NSE4 on hold, badge Formation HTML, badge YouTube
+- Labs DevNet : OSPF multi-area, GRE over IPSec, QoS MQC, SD-WAN Lite (PBR+IP SLA)
+- PRs mergées : #94 #95 #96 #97 #98 #99 #100
+- HNO bloqué jusqu'au 1er mai (carte expirée)
