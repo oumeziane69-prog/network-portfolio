@@ -115,3 +115,7 @@ Format:
 ### 2026-04-27 (suite 4)
 - Lab OSPF multi-area : router-id 2.2.2.2, ABR Area 0/Area 1, LSA Type 3 inter-area
 - PR #115 merged — labs/ospf-multiarea/ ajouté sur main
+
+### 2026-04-27 (suite 5)
+- Lab GRE Tunnel : Tunnel0 192.168.100.1/30, source Gi1, dest 10.10.20.50, up/up
+- PR #117 merged — labs/gre-tunnel/ ajouté sur main
