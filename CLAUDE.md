@@ -93,3 +93,8 @@ Format:
 - Lab BGP Filtering : prefix-list, AS-path ACL, route-map, communities (cat8000v AS65001, IOS-XE 17.12.2)
 - Lab NETCONF : get-config BGP/YANG, edit-config interface Loopback2
 - PR #103 merged — labs/bgp-filtering/ ajouté sur main
+
+### 2026-04-27
+- Lab RESTCONF : GET BGP (HTTP 200 JSON), PATCH Loopback20 (HTTP 204)
+- PR #107 merged — labs/restconf/ ajouté sur main
+- Stack programmabilité complète validée : CLI → NETCONF → RESTCONF → Netmiko → pyATS
