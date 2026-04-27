@@ -46,7 +46,7 @@ PE1 (1.1.1.1) ──[Gi0/0]── P (2.2.2.2) ──[Gi0/1]── PE2 (3.3.3.3)
 
 ## Statut / Status
 
-🚧 En cours de construction
+✅ Complété / Completed
 
 ---
 
