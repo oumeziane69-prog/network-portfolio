@@ -48,13 +48,6 @@
 | 🐙 Git / GitHub | Versioning, branching strategy / Versioning & branching |
 | 🤖 Renovate Bot | Mises à jour de dépendances automatisées / Automated dependency updates |
 
-### Pipeline NetDevOps
-
-\`\`\`
-Claude AI  ──►  Claude Code  ──►  GitHub Actions  ──►  Netmiko  ──►  Équipements
-(stratégie)    (génère+push)      (validation CI)      (Python)       (déploiement)
-\`\`\`
-
 ---
 
 ## 📁 Projets / Projects
@@ -190,7 +183,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 |--------------------|--------|--------|
 | DMZ multi-niveau | Architecture IT/OT, IDMZ, segmentation Purdue | ✅ Maîtrisé |
 | VPN IPSec site-à-site | IKEv2, AES-256-GCM, PFS, certificats X.509 | ✅ Maîtrisé |
-| IDS/IPS (Suricata) | Règles, EVE JSON, intégration ELK, tuning | 🚧 En cours |
+| IDS/IPS (Suricata) | Règles, EVE JSON, intégration ELK, tuning | ✅ Maîtrisé |
 | RADIUS / 802.1X | FreeRADIUS, EAP-TLS, PEAP, MAB fallback, VLAN dynamique | ✅ Maîtrisé |
 | [Matrice de flux IT/OT](docs/flux-matrix-IT-OT.md) | Modèle Purdue, default deny, protocoles OT | ✅ Maîtrisé |
 | Zero Trust | Principes, micro-segmentation, identity-based access | 🚧 En cours |
@@ -201,7 +194,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 
 | Compétence / Skill | Détail | Statut |
 |--------------------|--------|--------|
-| [IEC 62443](docs/iec62443-overview.md) | Zones/conduits, SL 1-4, FR 1-7, gap analysis | 🚧 En cours |
+| [IEC 62443](docs/iec62443-overview.md) | Zones/conduits, SL 1-4, FR 1-7, gap analysis | ✅ Maîtrisé |
 | Modèle de Purdue | Niveaux 0-4, IDMZ, segmentation SCADA/HMI/PLC | ✅ Maîtrisé |
 | Protocoles OT | Modbus TCP, DNP3, OPC-UA, S7Comm | 🚧 En cours |
 | Sécurité SCADA | Hardening, whitelisting applicatif, IDS OT | 📅 Planifié |
@@ -291,7 +284,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 ---
 
 
-## 📊 GitHub Stats
+## 📈 GitHub Stats
 
 <div align="center">
 
