@@ -37,7 +37,7 @@ SRX1 (AS 65001)  ←──eBGP──→  SRX2 (AS 65002)
 
 ## Statut / Status
 
-🚧 En cours de construction
+✅ Complété / Completed
 
 ---
 
