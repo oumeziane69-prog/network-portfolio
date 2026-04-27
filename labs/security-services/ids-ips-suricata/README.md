@@ -11,19 +11,11 @@
 ## Topologie prévue / Planned Topology
 
 ```
-[Topology placeholder — full diagram to be added]
-
-Mode IDS (passive / SPAN port):
-[Switch]──SPAN port──►[Suricata IDS]──►[ELK Stack (Kibana)]
-    |
-[LAN clients + servers]
-
-Mode IPS (inline):
-[Router/FW]──►[Suricata IPS (NFQUEUE/AF_PACKET)]──►[LAN]
-                   |
-              Block / Alert
-                   |
-            [ELK Stack (Kibana)]
+  Mode IDS (passive AF_PACKET / SPAN):
+  [Switch SPAN] → [Suricata 7.x Ubuntu 22.04] → EVE JSON → [Filebeat] → [ELK Stack / Kibana]
+  Mode IPS (inline NFQUEUE):
+  [FGT-INTERNAL] → [Suricata NFQUEUE bridge] → [LAN-OT] | Drop/Alert → [ELK Stack]
+  HOME_NET: 10.0.10.0/24, 172.16.10-20-30.0/24 | OT protocols: Modbus/DNP3/S7Comm/OPC-UA/EIP
 ```
 
 **Équipements / Equipment:** Suricata VM (Linux) + ELK Stack VM + réseau de test
@@ -32,7 +24,7 @@ Mode IPS (inline):
 
 ## Statut / Status
 
-🚧 En cours de construction
+✅ Complété / Completed
 
 ---
 

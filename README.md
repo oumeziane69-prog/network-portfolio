@@ -264,7 +264,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | ✅ Complété |
 | `firewall/stormshield-sns` | SNS OS · IPS ASQ · VPN SSL/IPSec | 📅 Planifié |
 | **Security Services** | | |
-| `security-services/ids-ips-suricata` | Suricata · ELK · custom rules | 🚧 En cours |
+| `security-services/ids-ips-suricata` | Suricata · ELK · custom rules | ✅ Complété |
 | `security-services/radius-dot1x` | FreeRADIUS · 802.1X · MAB · Cisco | ✅ Complété |
 | `security-services/vpn-ipsec-site-to-site` | FortiGate · IKEv2 · AES-256-GCM · X.509 | ✅ Complété |
 | **OT Industrial** | | |
