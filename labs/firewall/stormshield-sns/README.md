@@ -30,7 +30,7 @@
 
 ## Statut / Status
 
-🚧 En cours de construction
+📅 Planifié / Planned
 
 ---
 
