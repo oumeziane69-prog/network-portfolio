@@ -268,7 +268,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `security-services/radius-dot1x` | FreeRADIUS · 802.1X · MAB · Cisco | ✅ Complété |
 | `security-services/vpn-ipsec-site-to-site` | FortiGate · IKEv2 · AES-256-GCM · X.509 | ✅ Complété |
 | **OT Industrial** | | |
-| `ot-industrial/iec62443-overview` | IEC 62443 · SL 1-4 · zones/conduits | 🚧 En cours |
+| `ot-industrial/iec62443-overview` | IEC 62443 · SL 1-4 · zones/conduits | ✅ Complété |
 | `ot-industrial/purdue-model-segmentation` | Purdue · IDMZ · SCADA/HMI/PLC | ✅ Complété |
 | **Transmission** | | |
 | `transmission` | Faisceau hertzien · Fibre optique · OTDR | ✅ Complété |
