@@ -98,3 +98,8 @@ Format:
 - Lab RESTCONF : GET BGP (HTTP 200 JSON), PATCH Loopback20 (HTTP 204)
 - PR #107 merged — labs/restconf/ ajouté sur main
 - Stack programmabilité complète validée : CLI → NETCONF → RESTCONF → Netmiko → pyATS
+
+### 2026-04-27 (suite)
+- Lab EEM : HEARTBEAT (timer 60s), BGP-NEIGHBOR-DOWN (syslog), SAVE-NOTIFIER (cli pattern)
+- Test live : event manager run HEARTBEAT → syslog confirmé
+- PR #109 merged — labs/eem/ ajouté sur main
