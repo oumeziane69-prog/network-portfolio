@@ -1,0 +1,58 @@
+! ============================================================
+! EEM Lab — Cisco Cat8k IOS-XE 17.12.2
+! Applets: HEARTBEAT | BGP-NEIGHBOR-DOWN | SAVE-NOTIFIER
+! Paste in global configuration mode (conf t)
+! ============================================================
+
+! ------------------------------------------------------------
+! HEARTBEAT
+! Triggers every 60 seconds (watchdog timer).
+! Logs a syslog message and collects "show ip bgp summary".
+! ------------------------------------------------------------
+event manager applet HEARTBEAT
+ event timer watchdog time 60
+ action 1.0 syslog msg "HEARTBEAT: BGP health check triggered"
+ action 2.0 cli command "enable"
+ action 3.0 cli command "show ip bgp summary"
+ action 4.0 syslog msg "HEARTBEAT: BGP summary collected"
+!
+
+! ------------------------------------------------------------
+! BGP-NEIGHBOR-DOWN
+! Triggers on any syslog message matching BGP-5-ADJCHANGE.*Down.
+! Automatically collects BGP diagnostics for post-mortem analysis.
+! ------------------------------------------------------------
+event manager applet BGP-NEIGHBOR-DOWN
+ event syslog pattern "BGP-5-ADJCHANGE.*Down"
+ action 1.0 syslog msg "BGP-NEIGHBOR-DOWN: neighbor state change detected"
+ action 2.0 cli command "enable"
+ action 3.0 cli command "show ip bgp summary"
+ action 4.0 cli command "show ip bgp neighbors"
+ action 5.0 cli command "show ip route bgp"
+ action 6.0 syslog msg "BGP-NEIGHBOR-DOWN: diagnostics collection complete"
+!
+
+! ------------------------------------------------------------
+! SAVE-NOTIFIER
+! Triggers asynchronously when the operator types "wr".
+! Does NOT block or skip the write memory command (skip no).
+! Sends a syslog notification to track configuration saves.
+! ------------------------------------------------------------
+event manager applet SAVE-NOTIFIER
+ event cli pattern "wr" sync no skip no
+ action 1.0 syslog msg "SAVE-NOTIFIER: write memory detected — configuration save in progress"
+!
+
+! ============================================================
+! Verification commands (run after applying config)
+! ============================================================
+!
+! show event manager policy registered
+! show event manager history events
+! event manager run HEARTBEAT
+! show logging | include HA_EM
+! show logging | include HEARTBEAT
+! show logging | include BGP-NEIGHBOR-DOWN
+! show logging | include SAVE-NOTIFIER
+!
+! ============================================================
