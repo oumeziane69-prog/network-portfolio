@@ -111,3 +111,7 @@ Format:
 ### 2026-04-27 (suite 3)
 - Lab Jinja2 : template BGP neighbor, render + push Netmiko live sur cat8000v
 - PR #113 merged — labs/jinja2/ ajouté sur main
+
+### 2026-04-27 (suite 4)
+- Lab OSPF multi-area : router-id 2.2.2.2, ABR Area 0/Area 1, LSA Type 3 inter-area
+- PR #115 merged — labs/ospf-multiarea/ ajouté sur main
