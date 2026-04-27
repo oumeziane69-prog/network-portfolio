@@ -157,23 +157,6 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 
 ---
 
-## 🗺️ Roadmap & Certifications
-
-```
-NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
- (NGFW)  (Archi)  (Opérateur)   (OT/FR)
-```
-
-| Certification / Compétence | Domaine | Statut |
-|---------------------------|---------|--------|
-| **NSE 4** — Fortinet Network Security Professional | Firewall / NGFW | ⏸️ En pause |
-| **NSE 7** — Fortinet Network Security Architect | Architecture sécurité | 📅 Planifié |
-| **MPLS / L3VPN** — Approfondissement opérateur | Routage avancé | 📅 Planifié |
-| **Stormshield SNS-100** — Administrateur SNS | Firewall industriel FR | 📅 Planifié |
-| **Node.js 20 → 24** — Mise à jour runtime CI | JavaScript / Automation | 🔄 En cours (juin 2026) |
-| **Renovate Bot** — Automatisation des dépendances | DevOps / Maintenance | 🔄 En cours |
-
----
 
 ## 🎯 Compétences techniques / Technical Skills Matrix
 
@@ -209,14 +192,16 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 | VPN IPSec site-à-site | IKEv2, AES-256-GCM, PFS, certificats X.509 | ✅ Maîtrisé |
 | IDS/IPS (Suricata) | Règles, EVE JSON, intégration ELK, tuning | 🚧 En cours |
 | RADIUS / 802.1X | FreeRADIUS, EAP-TLS, PEAP, MAB fallback, VLAN dynamique | ✅ Maîtrisé |
-| Matrice de flux IT/OT | Modèle Purdue, default deny, protocoles OT | ✅ Maîtrisé |
+| [Matrice de flux IT/OT](docs/flux-matrix-IT-OT.md) | Modèle Purdue, default deny, protocoles OT | ✅ Maîtrisé |
 | Zero Trust | Principes, micro-segmentation, identity-based access | 🚧 En cours |
+
+> 📄 [Cas d'usage sécurité / Security use cases](docs/security-usecases.md)
 
 ### Sécurité industrielle OT / OT Industrial Security
 
 | Compétence / Skill | Détail | Statut |
 |--------------------|--------|--------|
-| IEC 62443 | Zones/conduits, SL 1-4, FR 1-7, gap analysis | 🚧 En cours |
+| [IEC 62443](docs/iec62443-overview.md) | Zones/conduits, SL 1-4, FR 1-7, gap analysis | 🚧 En cours |
 | Modèle de Purdue | Niveaux 0-4, IDMZ, segmentation SCADA/HMI/PLC | ✅ Maîtrisé |
 | Protocoles OT | Modbus TCP, DNP3, OPC-UA, S7Comm | 🚧 En cours |
 | Sécurité SCADA | Hardening, whitelisting applicatif, IDS OT | 📅 Planifié |
@@ -227,8 +212,8 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 
 | Compétence / Skill | Détail | Statut |
 |--------------------|--------|--------|
-| DAT (Dossier d'Architecture Technique) | Topologie, matrice de flux, règles firewall, risques | ✅ Maîtrisé |
-| DEX (Document d'Exploitation) | Procédure, rollback, contrôles post-intervention | ✅ Maîtrisé |
+| [DAT (Dossier d'Architecture Technique)](docs/templates/DAT-template.md) — [exemple DMZ industrielle](docs/DAT-example-dmz-industrial.md) | Topologie, matrice de flux, règles firewall, risques | ✅ Maîtrisé |
+| [DEX (Document d'Exploitation)](docs/templates/DEX-template.md) | Procédure, rollback, contrôles post-intervention | ✅ Maîtrisé |
 | Schémas réseau (ASCII / draw.io) | Diagrammes logiques et physiques | ✅ Maîtrisé |
 | Audit et rapports de sécurité | Synthèse de vulnérabilités, plan de remédiation | 🚧 En cours |
 
@@ -320,21 +305,6 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 ---
 
-## 🔬 Labs actifs / Active Labs
-
-| Lab | Stack | Statut |
-|-----|-------|--------|
-| MPLS VRF L3VPN | IOS-XE · LDP · BGP | ✅ Complété |
-| BGP eBGP AS65001/65002 | IOS-XE · MED/Local-Pref | ✅ Complété |
-| Netmiko Pipeline | Python · GitHub Actions | ✅ Complété |
-| NETCONF/YANG | ncclient · Jinja2 | ✅ Complété |
-| pyATS/Genie | Cat8k · OSPF | ✅ Complété |
-
-[![GitHub followers](https://img.shields.io/github/followers/oumeziane69-prog?label=Followers&style=social)](https://github.com/oumeziane69-prog)
-[![GitHub stars](https://img.shields.io/github/stars/oumeziane69-prog?label=Stars&style=social)](https://github.com/oumeziane69-prog)
-
----
-
 ## 🗺️ Roadmap
 
 **FR** — Suivi de progression des labs, certifications et projets NetDevOps. Tableau de bord complet disponible sur GitHub Project.
@@ -351,7 +321,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 | NETCONF/YANG lab | Lab | Cisco | Medium | ✅ Completed |
 | pyATS lab | Lab | Cisco | Medium | ✅ Completed |
 | CI/CD NetDevOps pipeline | Documentation | Python | High | ✅ Completed |
-| NSE4 Fortinet | Certification | Fortinet | High | 🔨 In Progress |
+| NSE4 Fortinet ([study guide](docs/certif-prep/nse4-study-guide.md) · [cheatsheet](docs/certif-prep/nse4-cheatsheet.md)) | Certification | Fortinet | High | 🔨 In Progress |
 | DevNet Associate | Certification | Cisco | High | 🎯 Roadmap |
 
 ---
