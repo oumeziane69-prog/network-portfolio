@@ -119,3 +119,7 @@ Format:
 ### 2026-04-27 (suite 5)
 - Lab GRE Tunnel : Tunnel0 192.168.100.1/30, source Gi1, dest 10.10.20.50, up/up
 - PR #117 merged — labs/gre-tunnel/ ajouté sur main
+
+### 2026-04-27 (suite 6)
+- Lab QoS MQC : CM-BGP/ICMP/MANAGEMENT, PM-QOS priority+bandwidth, service-policy Gi1
+- PR #119 merged — labs/qos/ ajouté sur main
