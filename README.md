@@ -266,6 +266,14 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 | `routing/mpls-l3vpn` | IOS-XE · LDP · VRF · MP-BGP | ✅ Complété |
 | `routing/mpls-traffic-engineering` | IOS-XE · RSVP-TE · FRR | 🚧 En cours |
 | `routing/ospf-multi-area` | IOS-XE · OSPF · ABR/ASBR · stub/NSSA | ✅ Complété |
+| `routing/gre-over-ipsec` | IOS-XE · GRE · IPSec · IKEv2 | ✅ Complété |
+| `routing/qos` | IOS-XE · MQC · DSCP · policing | ✅ Complété |
+| `routing/sdwan-lite` | IOS-XE · PBR · IP SLA · SD-WAN | ✅ Complété |
+| `bgp-filtering` | C8000V · BGP · prefix-list · AS-path · communities | ✅ Complété |
+| `gre-tunnel` | IOS-XE · GRE · Tunnel0 · static routing | ✅ Complété |
+| `ipsla` | IOS-XE · IP SLA · icmp-echo · track · floating route | ✅ Complété |
+| `ospf-multiarea` | IOS-XE · OSPFv2 · ABR · Area 0/Area 1 · LSA 3 | ✅ Complété |
+| `qos` | IOS-XE · MQC · class-map · priority · bandwidth | ✅ Complété |
 | **Firewall** | | |
 | `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 🚧 En cours |
 | `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | 🚧 En cours |
@@ -279,6 +287,11 @@ NSE4 ──► NSE7 ──► MPLS/L3VPN ──► SNS-100
 | `ot-industrial/purdue-model-segmentation` | Purdue · IDMZ · SCADA/HMI/PLC | ✅ Complété |
 | **Transmission** | | |
 | `transmission` | Faisceau hertzien · Fibre optique · OTDR | ✅ Complété |
+| **Programmabilité / Programmability** | | |
+| `netconf` | C8000V · NETCONF · YANG · ncclient | ✅ Complété |
+| `restconf` | C8000V · RESTCONF · HTTP · JSON · YANG | ✅ Complété |
+| `eem` | IOS-XE · EEM · syslog · timer 60s | ✅ Complété |
+| `jinja2` | Python · Jinja2 · Netmiko · BGP template | ✅ Complété |
 
 ---
 
@@ -346,10 +359,10 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 ## 📬 Contact
 
 Tu peux me retrouver sur **LinkedIn**, par **email** ou via mon profil **GitHub** ci-dessus.
-📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)
+📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV PDF](docs/cv-hakim-oumeziane.pdf) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)
 
 *Feel free to reach out via **LinkedIn**, **email**, or my **GitHub** profile above.*
-*📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)*
+*📧 [oumeziane.69@gmail.com](mailto:oumeziane.69@gmail.com) · 📄 [CV PDF](docs/cv-hakim-oumeziane.pdf) · 📄 [CV Canva](https://www.canva.com/design/DAHFDa3H5No/view)*
 
 ---
 
