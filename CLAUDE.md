@@ -107,3 +107,7 @@ Format:
 ### 2026-04-27 (suite 2)
 - Lab IP SLA : icmp-echo 10.10.20.50, RTT=1ms, track 1 Up, route flottante AD=10
 - PR #111 merged — labs/ipsla/ ajouté sur main
+
+### 2026-04-27 (suite 3)
+- Lab Jinja2 : template BGP neighbor, render + push Netmiko live sur cat8000v
+- PR #113 merged — labs/jinja2/ ajouté sur main
