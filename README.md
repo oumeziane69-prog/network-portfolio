@@ -247,7 +247,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `devnet-redistribution` | IOS-XE · OSPF → BGP redistribution | ✅ Complété |
 | **Routing** | | |
 | `routing/bgp-ibgp-ebgp` | IOS-XE · iBGP · eBGP · Route Reflector | ✅ Complété |
-| `routing/juniper-junos-basics` | vSRX · JunOS · BGP eBGP | 🚧 En cours |
+| `routing/juniper-junos-basics` | vSRX · JunOS · BGP eBGP | ✅ Complété |
 | `routing/mpls-l3vpn` | IOS-XE · LDP · VRF · MP-BGP | ✅ Complété |
 | `routing/mpls-traffic-engineering` | IOS-XE · RSVP-TE · FRR | 🚧 En cours |
 | `routing/ospf-multi-area` | IOS-XE · OSPF · ABR/ASBR · stub/NSSA | ✅ Complété |
