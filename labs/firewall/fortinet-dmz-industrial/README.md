@@ -11,21 +11,18 @@
 ## Topologie prévue / Planned Topology
 
 ```
-[Topology placeholder — full diagram to be added]
-
   Internet
      |
- [FortiGate] (perimeter)
-  /    |    \
-LAN   DMZ   OT Network
-(IT)  (Web, (SCADA,
-      SFTP)  Historian)
+[FGT-EDGE 600E]  WAN | DMZ-IT 172.16.10.0/24 | LAN-IT 10.0.10.0/24
+     |
+[FGT-INTERNAL 200F]  DMZ-IT-ext 172.16.10.2/24 | DMZ-OT 172.16.20.0/24 | LAN-OT 172.16.30.0/24
 
-  LAN  ──►  DMZ   : allowed (restricted)
-  LAN  ──►  OT    : denied by default
-  DMZ  ──►  OT    : denied
-  OT   ──►  DMZ   : historian polling only (port 443)
-  OT   ──►  Internet : denied
+  LAN-IT  ──►  DMZ-IT   : Jump Server (SSH/RDP), Historian (HTTPS) — allowed
+  LAN-IT  ──►  Internet  : HTTP/HTTPS via SNAT (AppCtrl + URLfilter)
+  LAN-IT  ──►  LAN-OT   : denied — must go via Jump Server in DMZ-IT
+  DMZ-OT  ──►  LAN-OT   : OPC-UA historian polling only (IPS strict)
+  LAN-OT  ──►  Internet  : denied absolute
+  LAN-OT  ──►  LAN-IT   : denied absolute
 ```
 
 **Équipements / Equipment:** FortiGate VM (FortiOS 7.x) + FortiSwitch simulé
@@ -34,7 +31,7 @@ LAN   DMZ   OT Network
 
 ## Statut / Status
 
-🚧 En cours de construction
+✅ Complété / Completed
 
 ---
 

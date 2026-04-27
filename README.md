@@ -261,7 +261,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `qos` | IOS-XE · MQC · class-map · priority · bandwidth | ✅ Complété |
 | **Firewall** | | |
 | `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 📅 Planifié |
-| `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | 🚧 En cours |
+| `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | ✅ Complété |
 | `firewall/stormshield-sns` | SNS OS · IPS ASQ · VPN SSL/IPSec | 📅 Planifié |
 | **Security Services** | | |
 | `security-services/ids-ips-suricata` | Suricata · ELK · custom rules | 🚧 En cours |
