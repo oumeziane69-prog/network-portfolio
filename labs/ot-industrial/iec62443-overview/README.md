@@ -11,7 +11,8 @@
 ## Topologie prévue / Planned Topology
 
 ```
-[Topology placeholder — full diagram to be added]
+  Zone 1 (SL1-2 — IT/ERP) ↔ Conduit C1 (FW+ACL) ↔ Zone 2 (SL2-3 — SCADA/HMI/Historian) ↔ Conduit C2 (FW strict+IDS) ↔ Zone 3 (SL3-4 — PLCs/DCS/RTUs)
+  Référence complète : docs/iec62443-overview.md
 
   Zone 1 (SL2 — Enterprise IT)
   +─────────────────────+
@@ -35,7 +36,7 @@
 
 ## Statut / Status
 
-🚧 En cours de construction
+✅ Complété / Completed
 
 ---
 
@@ -61,3 +62,9 @@
 - Risk Assessment selon IEC 62443-3-2
 - Démarche de conformité : gap analysis, plan de remédiation
 - Relation avec NIST CSF, ISO 27001, NIS2 dans un contexte OT
+
+---
+
+## Référence / Reference
+
+📄 [docs/iec62443-overview.md](../../docs/iec62443-overview.md)
