@@ -1,0 +1,14 @@
+router bgp {{ local_as }}
+ bgp router-id {{ router_id }}
+ bgp log-neighbor-changes
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ip }} remote-as {{ neighbor.remote_as }}
+ neighbor {{ neighbor.ip }} description {{ neighbor.description }}
+{% if neighbor.update_source is defined %}
+ neighbor {{ neighbor.ip }} update-source {{ neighbor.update_source }}
+{% endif %}
+{% if neighbor.next_hop_self is defined and neighbor.next_hop_self %}
+ neighbor {{ neighbor.ip }} next-hop-self
+{% endif %}
+{% endfor %}
+!
