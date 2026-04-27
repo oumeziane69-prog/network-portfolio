@@ -1,0 +1,58 @@
+! ============================================================
+! Lab: IP SLA + Object Tracking + Floating Static Route
+! Platform : IOS-XE (Cat8000v / CSR1000v)
+! Tested on: IOS-XE 17.12.2
+! ============================================================
+
+! --- IP SLA 1 : ICMP Echo toward primary gateway target ---
+ip sla 1
+ icmp-echo 10.10.20.50
+ frequency 10
+ timeout 5000
+ threshold 500
+!
+ip sla schedule 1 life forever start-time now
+
+! --- Object Tracking : bind Track 1 to SLA 1 reachability ---
+track 1 ip sla 1 reachability
+
+! --- Default route : primary (tracked) + floating backup ---
+ip route 0.0.0.0 0.0.0.0 10.10.20.254 track 1
+ip route 0.0.0.0 0.0.0.0 10.10.20.1   10
+
+! ============================================================
+! Verification
+! ============================================================
+! show ip sla statistics 1
+! show ip sla configuration 1
+! show track 1
+! show ip route 0.0.0.0
+! ============================================================
+
+! --- Expected output (nominal) ---
+!
+! R1# show ip sla statistics 1
+! IPSLAs Latest Operation Statistics
+! IPSLA operation id: 1
+! Latest RTT: 1 milliseconds
+! Latest operation start time: ...
+! Latest operation return code: OK
+! Number of successes: <n>
+! Number of failures: 0
+! Operation time to live: Forever
+!
+! R1# show track 1
+! Track 1
+!   IP SLA 1 reachability
+!   Reachability is Up
+!     1 change, last change ...
+!   Latest operation return code: OK
+!   Latest RTT (millisecs) 1
+!   Tracked by:
+!     Static IP Routing 0
+!
+! R1# show ip route 0.0.0.0
+! S*  0.0.0.0/0 [1/0] via 10.10.20.254   <- primary active
+!                                         (withdrawn if Track 1 Down)
+! (backup S* [10/0] via 10.10.20.1 installs when primary is removed)
+! ============================================================
