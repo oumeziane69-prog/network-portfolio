@@ -260,7 +260,7 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `ospf-multiarea` | IOS-XE · OSPFv2 · ABR · Area 0/Area 1 · LSA 3 | ✅ Complété |
 | `qos` | IOS-XE · MQC · class-map · priority · bandwidth | ✅ Complété |
 | **Firewall** | | |
-| `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 🚧 En cours |
+| `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 📅 Planifié |
 | `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | 🚧 En cours |
 | `firewall/stormshield-sns` | SNS OS · IPS ASQ · VPN SSL/IPSec | 📅 Planifié |
 | **Security Services** | | |
