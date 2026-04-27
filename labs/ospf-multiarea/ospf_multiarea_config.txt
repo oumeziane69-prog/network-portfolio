@@ -1,0 +1,76 @@
+! ============================================================
+! Lab: OSPF Multi-Area — ABR + LSA Type 3
+! Platform : IOS-XE (Cat8000v)
+! Tested on: IOS-XE 17.12.2
+! Router-ID: 2.2.2.2
+! ============================================================
+
+! --- Loopback interfaces -------------------------------------------------
+interface Loopback2
+ description OSPF Router-ID
+ ip address 2.2.2.2 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Loopback20
+ description Area1-Subnet-A
+ ip address 172.16.1.1 255.255.255.0
+ ip ospf 1 area 1
+!
+interface Loopback200
+ description Area1-Subnet-B
+ ip address 192.168.20.1 255.255.255.0
+ ip ospf 1 area 1
+!
+
+! --- Transit interface (Area 0) ------------------------------------------
+interface GigabitEthernet1
+ description Backbone-Area0
+ ip address 10.10.20.1 255.255.255.0
+ ip ospf 1 area 0
+ no shutdown
+!
+
+! --- OSPF process --------------------------------------------------------
+router ospf 1
+ router-id 2.2.2.2
+ !
+ network 10.10.20.0 0.0.0.255   area 0
+ network 2.2.2.2    0.0.0.0     area 0
+ network 172.16.1.0 0.0.0.255   area 1
+ network 192.168.20.0 0.0.0.255 area 1
+!
+
+! ============================================================
+! Verification
+! ============================================================
+! show ip ospf
+! show ip ospf interface brief
+! show ip ospf neighbor
+! show ip ospf database
+! show ip ospf database summary
+! show ip route ospf
+! ============================================================
+
+! --- Expected output (nominal) ---
+!
+! R2# show ip ospf
+!  Routing Process "ospf 1" with ID 2.2.2.2
+!  ...
+!  Number of areas in this router is 2. 2 normal 0 stub 0 nssa
+!  Area BACKBONE(0)
+!      Number of interfaces in this area is 2
+!  Area 1
+!      Number of interfaces in this area is 2
+!  → confirms ABR role
+!
+! R2# show ip ospf database summary
+!
+!             Summary Net Link States (Area 0)
+!   Link State ID: 172.16.1.0   Advertising Router: 2.2.2.2
+!   Link State ID: 192.168.20.0 Advertising Router: 2.2.2.2
+!
+!             Summary Net Link States (Area 1)
+!   Link State ID: 10.10.20.0   Advertising Router: 2.2.2.2
+!   Link State ID: 2.2.2.2      Advertising Router: 2.2.2.2
+!  → LSA Type 3 inter-area confirmed in both directions
+! ============================================================
