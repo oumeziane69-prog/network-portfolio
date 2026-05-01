@@ -321,6 +321,16 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 | CI/CD NetDevOps pipeline | Documentation | Python | High | ✅ Completed |
 | NSE4 Fortinet ([study guide](docs/certif-prep/nse4-study-guide.md) · [cheatsheet](docs/certif-prep/nse4-cheatsheet.md)) | Certification | Fortinet | High | 🔨 In Progress |
 | DevNet Associate | Certification | Cisco | High | 🎯 Roadmap |
+| Cat8000v OSPF multi-area | Lab | Cisco IOS-XE | High | ✅ Completed |
+| Cat8000v GRE Tunnel | Lab | Cisco IOS-XE | High | ✅ Completed |
+| Cat8000v QoS LLQ | Lab | Cisco IOS-XE | Medium | ✅ Completed |
+| Cat8000v SD-WAN lite | Lab | Cisco IOS-XE | High | ✅ Completed |
+| Cat8000v BGP communities | Lab | Cisco IOS-XE | High | ✅ Completed |
+| Cat8000v NAT overload | Lab | Cisco IOS-XE | Medium | ✅ Completed |
+| Cat8000v EIGRP+OSPF redistribution | Lab | Cisco IOS-XE | High | ✅ Completed |
+| Cat8000v HSRP/VRRP | Lab | Cisco IOS-XE | Medium | ✅ Completed |
+| Cat8000v ACL time-based | Lab | Cisco IOS-XE | Medium | ✅ Completed |
+| Netmiko backup script Cat8000v | Script | Python/Netmiko | High | ✅ Completed |
 
 ---
 
