@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-oumeziane69--prog-181717?style=flat-square&logo=github)](https://github.com/oumeziane69-prog)
 [![HNO Nightly Check](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml/badge.svg?branch=principal)](https://github.com/oumeziane69-prog/network-portfolio/actions/workflows/hno-nightly-check.yml)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/oumeziane69/)
-[![▶ Formation YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?logo=youtube)](https://youtu.be/3CaPH8SWNH4)
+[![▶ Formation YouTube](https://img.shields.io/badge/▶_Formation-YouTube-red?style=flat-square&logo=youtube)](https://youtu.be/3CaPH8SWNH4)
 [![CV](https://img.shields.io/badge/CV-PDF-blue?style=flat-square&logo=adobeacrobatreader)](https://raw.githubusercontent.com/oumeziane69-prog/network-portfolio/main/docs/cv-hakim-oumeziane.pdf)
 [![Discussions](https://img.shields.io/badge/Discussions-purple?style=flat-square&logo=github)](https://github.com/oumeziane69-prog/network-portfolio/discussions)
 [![▶ Formation HTML](https://img.shields.io/badge/▶_Formation-HTML-orange?style=flat-square)](docs/formation_netdevops.html)
@@ -247,11 +247,16 @@ creds = vault.decrypt("<ENCRYPTED-BLOB-HERE>")
 | `routing/gre-over-ipsec` | IOS-XE · GRE · IPSec · IKEv2 | ✅ Complété |
 | `routing/qos` | IOS-XE · MQC · DSCP · policing | ✅ Complété |
 | `routing/sdwan-lite` | IOS-XE · PBR · IP SLA · SD-WAN | ✅ Complété |
-| `bgp-filtering` | C8000V · BGP · prefix-list · AS-path · communities | ✅ Complété |
-| `gre-tunnel` | IOS-XE · GRE · Tunnel0 · static routing | ✅ Complété |
-| `ipsla` | IOS-XE · IP SLA · icmp-echo · track · floating route | ✅ Complété |
-| `ospf-multiarea` | IOS-XE · OSPFv2 · ABR · Area 0/Area 1 · LSA 3 | ✅ Complété |
-| `qos` | IOS-XE · MQC · class-map · priority · bandwidth | ✅ Complété |
+| **Cat8000v DevNet Sandbox** | | |
+| `ospf-multi-area` | Cisco IOS-XE · OSPF multi-area ABR · LSA Type 1/3 | ✅ Complété |
+| `gre-tunnel` | Cisco IOS-XE · GRE tunnel up/up · dual loopback | ✅ Complété |
+| `qos-llq` | Cisco IOS-XE · LLQ class-map VOIP/BUSINESS · policy-map | ✅ Complété |
+| `sdwan-lite` | Cisco IOS-XE · Dual uplink PBR · IP SLA tracking | ✅ Complété |
+| `bgp-communities` | Cisco IOS-XE · BGP AS65001 · community 65001:100/200 | ✅ Complété |
+| `nat-overload` | Cisco IOS-XE · PAT overload · ACL-NAT · inside/outside | ✅ Complété |
+| `eigrp-ospf-redistribution` | Cisco IOS-XE · EIGRP AS100 · 3 prefixes redistributed | ✅ Complété |
+| `hsrp-vrrp` | Cisco IOS-XE · HSRP v2 · virtual IP · preempt · tracking | ✅ Complété |
+| `acl-timebased` | Cisco IOS-XE · BUSINESS-HOURS time-range · permit/deny | ✅ Complété |
 | **Firewall** | | |
 | `firewall/checkpoint-basics` | R81.x · SmartConsole · VPN | 📅 Planifié |
 | `firewall/fortinet-dmz-industrial` | FortiOS 7.x · IT/OT · IDMZ | ✅ Complété |
@@ -279,7 +284,7 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 📄 [Voir la formation](docs/formation_netdevops.html)
 
-[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red)](https://youtu.be/vfQ1HxVoSHo)
+[![▶ Voir la vidéo](https://img.shields.io/badge/▶_Vidéo-YouTube-red?style=flat-square)](https://youtu.be/vfQ1HxVoSHo)
 
 ---
 
@@ -335,7 +340,7 @@ Tu peux me retrouver sur **LinkedIn**, par **email** ou via mon profil **GitHub*
 
 *Active development happens in private repos — this portfolio showcases architecture, labs & documentation.*
 
-*Dernière mise à jour : Avril 2026 / Last updated: April 2026*
+*Dernière mise à jour : Mai 2026 / Last updated: May 2026*
 
 </div>
 
