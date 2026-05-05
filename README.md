@@ -288,11 +288,11 @@ Pipeline CI/CD complet pour automatiser le déploiement de configurations résea
 
 <div align="center">
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=oumeziane69-prog&show_icons=true&theme=dark&hide_border=true&count_private=true)
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=oumeziane69-prog&show_icons=true&theme=dark&hide_border=true&count_private=true&cache_seconds=1800)
 
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=oumeziane69-prog&layout=compact&theme=dark&hide_border=true)
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=oumeziane69-prog&layout=compact&theme=dark&hide_border=true&cache_seconds=1800)
 
-![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
+![GitHub Streak](https://streak-stats.demolab.com/?user=oumeziane69-prog&theme=dark&hide_border=true)
 
 </div>
 
